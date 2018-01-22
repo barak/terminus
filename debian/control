@@ -2,11 +2,19 @@ Source: terminus
 Maintainer: Sergio Costas <rastersoft@gmail.com>
 Priority: optional
 Section: misc
-Build-Depends: build-essential, po-debconf, valac, libc6-dev, libatk1.0-dev, libcairo2-dev, libgtk-3-dev, libgdk-pixbuf2.0-dev, libgee-0.8-dev, libglib2.0-dev, libkeybinder-3.0-dev, libpango1.0-dev, libvte-2.91-dev, libx11-dev, cmake, gettext, pkg-config, gcc, g++, make, intltool
+Standards-Version: 4.1.3
+Build-Depends: debhelper (>= 11),
+	po-debconf, valac, libc6-dev, libatk1.0-dev, libcairo2-dev,
+	libgtk-3-dev, libgdk-pixbuf2.0-dev, libgee-0.8-dev,
+	libglib2.0-dev, libkeybinder-3.0-dev, libpango1.0-dev,
+	libvte-2.91-dev, libx11-dev, cmake, gettext, pkg-config
+Homepage: https://github.com/rastersoft/terminus
 
 Package: terminus
 Architecture: any
-Version: 0.10.0
-Depends: libatk1.0-0, libglib2.0-0, libcairo2, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libgdk-pixbuf2.0-0, libcairo-gobject2, libgee-0.8-2, libkeybinder-3.0-0, libvte-2.91-0, lib32z1, libgnutls30, libx11-6, libglib2.0-bin
-Description: A new terminal for XWindows
- .
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Drop-down Quake-console-like terminal for X11 and Wayland
+ This is a new-generation (post-Guake) terminal for X11 and Wayland,
+ which features a hot-key drop-down mode.  Other features include a
+ scroll-back buffer, tabs, split screen both horizontal and vertical,
+ and the usual compatibility features.
