@@ -127,11 +127,11 @@ Fortunately, Terminus includes a Gnome Shell extension that allows to show the Q
 terminal. If you have installed Terminus, just exit your session, enter again, and enable
 the extension with gnome-tweak-tool.
 
-Another way is using the desktop keybindings to launch the script "terminus_showhide.sh",
+Another way is using the desktop keybindings to launch the script "terminus_showhide",
 which makes use of the DBus remote control to show and hide the Quake-like terminal.
 
 In Gnome Shell it is as easy as opening the Settings window, choose the "Keyboard" icon,
-and add there the desired hotkey, associating it with "terminus_showhide.sh" program.
+and add there the desired hotkey, associating it with "terminus_showhide" program.
 
 **Q:** I translated Terminus, but the color and palette schemes aren't translated. Why?  
 **A:** You have to also translate the ".color_scheme" files located at data/local.
