@@ -8,5 +8,3 @@ case "$1" in
 	update-alternatives --quiet --remove x-terminal-emulator /usr/bin/terminus
 	;;
 esac
-
-#DEBHELPER#

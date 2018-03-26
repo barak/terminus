@@ -13,8 +13,8 @@ Homepage: https://github.com/rastersoft/terminus
 Package: terminus
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Drop-down Quake-console-like terminal for X11 and Wayland
+Description: Drop-down or in-window terminal for X11 and Wayland
  This is a new-generation (post-Guake) terminal for X11 and Wayland,
- which features a hot-key drop-down mode.  Other features include a
- scroll-back buffer, tabs, split screen both horizontal and vertical,
- and the usual compatibility features.
+ which features a hot-key Quake-console-like drop-down mode.  Other
+ features include a scroll-back buffer, tabs, split screen both
+ horizontal and vertical, and the usual compatibility features.

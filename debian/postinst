@@ -10,5 +10,3 @@ case "$1" in
 	      x-terminal-emulator /usr/bin/terminus 20
         ;;
 esac
-
-#DEBHELPER#
