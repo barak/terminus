@@ -3,7 +3,7 @@ Maintainer: Sergio Costas <rastersoft@gmail.com>
 Priority: optional
 Section: misc
 Standards-Version: 4.1.3
-Homepage: https://github.com/rastersoft/terminus
+Homepage: https://gitlab.com/rastersoft/terminus
 Build-Depends: build-essential, po-debconf, valac (>=0.30), libc6-dev, libgee-0.8-dev, libkeybinder-3.0-dev, libvte-2.91-dev, cmake, intltool
 
 Package: terminus
