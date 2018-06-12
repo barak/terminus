@@ -38,6 +38,7 @@ if GTK_3_20
   terminus_vala_args += ['-D', 'GTK_3_20']
   terminus_c_args += ['-DGTK_3_20']
 endif
+terminus_link_args = ['-rdynamic']
 
-executable('terminus',terminus_sources,dependencies: terminus_deps,vala_args: terminus_vala_args,c_args: terminus_c_args,install: true)
+executable('terminus',terminus_sources,dependencies: terminus_deps,vala_args: terminus_vala_args,c_args: terminus_c_args,link_args: terminus_link_args,install: true)
 

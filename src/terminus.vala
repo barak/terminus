@@ -19,7 +19,7 @@
 using Gtk;
 using Gee;
 
-//project version = 0.11.0
+//project version = 1.0.0
 
 namespace Terminus {
 	TerminusRoot     main_root;
@@ -55,7 +55,6 @@ namespace Terminus {
 			}
 
 			var    color = Gdk.RGBA();
-			string key;
 
 			color.parse(Terminus.settings.get_string("fg-color"));
 			if (!this.text_fg.equal(color)) {
@@ -486,23 +485,23 @@ namespace Terminus {
 
 	[DBus(name = "com.rastersoft.terminus")]
 	public class RemoteControl : GLib.Object {
-		public int do_ping(int v) {
+		public int do_ping(int v) throws GLib.Error, GLib.DBusError {
 			return (v + 1);
 		}
 
-		public void disable_keybind() {
+		public void disable_keybind() throws GLib.Error, GLib.DBusError {
 			bindkey.unset_bindkey();
 		}
 
-		public void show_guake() {
+		public void show_guake() throws GLib.Error, GLib.DBusError {
 			main_root.show_hide_global(0);
 		}
 
-		public void hide_guake() {
+		public void hide_guake() throws GLib.Error, GLib.DBusError {
 			main_root.show_hide_global(1);
 		}
 
-		public void swap_guake() {
+		public void swap_guake() throws GLib.Error, GLib.DBusError {
 			main_root.show_hide_global(2);
 		}
 	}
