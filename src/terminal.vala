@@ -439,13 +439,13 @@ namespace Terminus {
 
 		private void update_title() {
 			string s_title = this.vte_terminal.get_window_title();
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = this.vte_terminal.get_current_file_uri();
 			}
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = this.vte_terminal.get_current_directory_uri();
 			}
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = "/bin/bash";
 			}
 			this.top_container.set_tab_title(s_title);

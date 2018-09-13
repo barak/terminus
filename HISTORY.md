@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 1.1.0 (2018-09-13)
+      * Fixes empty title bar
+      * Updated spanish translation
 * Version 1.0.0 (2018-06-12)
       * Now includes a close button in each terminal
 * Version 0.11.0 (2018-03-25)

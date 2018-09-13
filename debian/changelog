@@ -1,3 +1,9 @@
+terminus (1.1.0-Debian1) sid; urgency=low
+
+  * Fixes empty title bar
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 13 Sep 2018 23:55:00 +0200
+
 terminus (1.0.0-Debian1) sid; urgency=low
 
   * Now includes a close button in each terminal
