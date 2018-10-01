@@ -32,6 +32,7 @@ namespace Terminus {
 		private Vte.Terminal vte_terminal;
 		private Gtk.Label title;
 		private Gtk.EventBox titlebox;
+		private Gtk.EventBox closeButton;
 		private Gtk.Menu menu;
 		private Gtk.MenuItem item_copy;
 		private Terminus.Container top_container;
@@ -74,10 +75,26 @@ namespace Terminus {
 
 			this.title    = new Gtk.Label("");
 			this.titlebox = new Gtk.EventBox();
+			// a titlebox to have access to the background color
 			this.titlebox.add(this.title);
 
+			this.closeButton = new Gtk.EventBox();
+			var label = new Gtk.Label("<span size=\"small\">   X   </span>");
+			label.use_markup = true;
+			this.closeButton.button_release_event.connect( (event) => {
+#if VALA_0_40
+                                Posix.kill(this.pid, Posix.Signal.KILL);
+#else
+                                Posix.kill(this.pid, Posix.SIGKILL);
+#endif
+			 return false;});
+			this.closeButton.add(label);
+			var titleContainer = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+			titleContainer.pack_start(this.titlebox, true, true);
+			titleContainer.pack_start(this.closeButton, false, true);
+
 			var newbox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-			this.pack_start(this.titlebox, false, true);
+			this.pack_start(titleContainer, false, true);
 			this.pack_start(newbox, true, true);
 
 			this.vte_terminal = new Vte.Terminal();
@@ -422,13 +439,13 @@ namespace Terminus {
 
 		private void update_title() {
 			string s_title = this.vte_terminal.get_window_title();
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = this.vte_terminal.get_current_file_uri();
 			}
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = this.vte_terminal.get_current_directory_uri();
 			}
-			if (s_title == null) {
+			if ((s_title == null) || (s_title == "")) {
 				s_title = "/bin/bash";
 			}
 			this.top_container.set_tab_title(s_title);

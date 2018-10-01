@@ -42,7 +42,6 @@ namespace Terminus {
 		private Gtk.ComboBox palette_scheme;
 		private Gtk.ListStore palette_schemes;
 		private Gtk.ComboBox cursor_shape;
-		private Gtk.ListStore cursor_liststore;
 		private Gtk.ListStore keybindings;
 
 

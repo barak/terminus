@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: terminus
-Source: https://github.com/rastersoft/terminus
+Source: https://gitlab.com/rastersoft/terminus
 
 Files:     *
 Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
