@@ -19,7 +19,7 @@
 using Gtk;
 using Gee;
 
-//project version = 1.1.0
+//project version = 1.2.0
 
 namespace Terminus {
 	TerminusRoot     main_root;
@@ -390,7 +390,7 @@ namespace Terminus {
 					continue;
 				}
 				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
-					print("Usage: terminus [--guake] [--check_guake]\n");
+					print("Usage: terminus [--guake] [--check_guake] [--nobindkey]\n");
 					exit_at_end = true;
 				}
 			}
