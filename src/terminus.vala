@@ -259,17 +259,28 @@ namespace Terminus {
 			}
 
 			if (this.tmp_launch_terminal || this.tmp_launch_guake) {
-				Bus.own_name(BusType.SESSION, "com.rastersoft.terminus", BusNameOwnerFlags.NONE, this.on_bus_aquired, () => {
+				Bus.own_name(BusType.SESSION, "com.rastersoft.terminus", BusNameOwnerFlags.NONE, this.on_bus_aquired,
+				() => {
+					if (this.tmp_launch_terminal) {
+						this.create_window(false);
+					}
+					this.tmp_launch_terminal = false;
 					if (this.tmp_launch_guake) {
-					    this.create_window(true);
+						this.create_window(true);
 					}
 					this.tmp_launch_guake = false;
 					Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
 					this.ready = true;
 					if (this.extcall != -1) {
-					    show_hide_global(this.extcall);
+						show_hide_global(this.extcall);
 					}
-				}, () => {});
+				}, () => {
+					RemoteControlInterface server = Bus.get_proxy_sync(BusType.SESSION, "com.rastersoft.terminus", "/com/rastersoft/terminus");
+					if (this.tmp_launch_terminal) {
+						server.show_terminal();
+					}
+					Gtk.main_quit();
+				});
 				Gtk.main();
 			}
 		}
@@ -309,10 +320,6 @@ namespace Terminus {
 			} catch (IOError e) {
 				GLib.stderr.printf("Could not register service\n");
 			}
-			if (this.tmp_launch_terminal) {
-				this.create_window(false);
-			}
-			this.tmp_launch_terminal = false;
 		}
 
 		public void keybind_settings_changed(string key) {
@@ -353,13 +360,13 @@ namespace Terminus {
 			window.ended.connect((w) => {
 				window_list.remove(w);
 				if (w == this.guake_window) {
-				    Terminus.bindkey.show_guake.disconnect(this.show_hide);
-				    this.guake_window   = null;
-				    this.guake_terminal = null;
-				    this.create_window(true);
+					Terminus.bindkey.show_guake.disconnect(this.show_hide);
+					this.guake_window   = null;
+					this.guake_terminal = null;
+					this.create_window(true);
 				}
 				if (window_list.size == 0) {
-				    Gtk.main_quit();
+					Gtk.main_quit();
 				}
 			});
 			window.new_window.connect(() => {
@@ -504,6 +511,25 @@ namespace Terminus {
 		public void swap_guake() throws GLib.Error, GLib.DBusError {
 			main_root.show_hide_global(2);
 		}
+
+		public void show_terminal() throws GLib.Error, GLib.DBusError {
+			main_root.create_window(false);
+		}
+	}
+
+	[DBus(name = "com.rastersoft.terminus")]
+	public interface RemoteControlInterface : GLib.Object {
+		public abstract int do_ping(int v) throws GLib.Error, GLib.DBusError;
+
+		public abstract void disable_keybind() throws GLib.Error, GLib.DBusError;
+
+		public abstract void show_guake() throws GLib.Error, GLib.DBusError;
+
+		public abstract void hide_guake() throws GLib.Error, GLib.DBusError;
+
+		public abstract void swap_guake() throws GLib.Error, GLib.DBusError;
+
+		public abstract void show_terminal() throws GLib.Error, GLib.DBusError;
 	}
 }
 
