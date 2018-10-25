@@ -1,6 +1,14 @@
+terminus (1.2.0-Debian1) sid; urgency=low
+
+  * Fixes Guake hotkey don't working on X11 with another terminus open
+  * Added missing parameter in the help
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 19 Oct 2018 23:55:00 +0200
+
 terminus (1.1.0-Debian1) sid; urgency=low
 
   * Fixes empty title bar
+  * Updated spanish translation
 
  -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 13 Sep 2018 23:55:00 +0200
 

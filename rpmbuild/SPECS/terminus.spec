@@ -1,5 +1,5 @@
 Name: terminus
-Version: 1.1.0
+Version: 1.2.0
 Release: 1
 License: Unknown/not set
 Summary: A new terminal for XWindows
