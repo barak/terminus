@@ -1,7 +1,8 @@
 # History of versions #
 
 * Version 1.3.0 (2019-01-06)
-  * Allows to use the -e and -x parameters to create a new window an launch a command inside
+  * Added the -e and -x parameters to create a new window an launch a command inside
+  * Added the --working-directory parameter
   * Fixed the .desktop file to fully follow the standard
   * Added an screenshot in the README.md file
 * Version 1.2.0 (2018-10-19)
