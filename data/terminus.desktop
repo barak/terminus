@@ -9,8 +9,8 @@ Comment=A terminal with the capabilities of Guake and Terminator
 TryExec=terminus
 Categories=GNOME;GTK;Utility;TerminalEmulator;System;
 X-Ubuntu-Gettext-Domain=terminus
-X-Ayatana-Desktop-Shortcuts=NewWindow;
-[NewWindow Shortcut Group]
+X-Ayatana-Desktop-Shortcuts=X-NewWindow;
+[X-NewWindow Shortcut Group]
 Name=Open a New Window
 Exec=terminus
 TargetEnvironment=Unity
