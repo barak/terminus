@@ -6,8 +6,7 @@ namespace Terminus {
 		public string[] command;
 
 		public Parameters(string [] argv) {
-			int  param_counter = 0;
-			bool exit_at_end   = false;
+			int param_counter = 0;
 
 			this.bind_keys    = true;
 			this.launch_guake = false;
@@ -23,9 +22,8 @@ namespace Terminus {
 					continue;
 				}
 				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
-                    print("Usage: terminus [--guake] [--check_guake] [--nobindkey] [-e command to launch and params]\n");
-                    print("When using the '-e' parameter, it must be the last one.\n");
-					exit_at_end = true;
+					this.show_usage(0);
+					break;
 				}
 				if (argv[param_counter] == "--guake") {
 					this.launch_guake = true;
@@ -40,13 +38,28 @@ namespace Terminus {
 					continue;
 				}
 				if (argv[param_counter] == "-e") {
+					param_counter++;
+					if (param_counter == argv.length) {
+						print(_("The -e param requires a command after it\n"));
+						this.show_usage(-1);
+					}
+					this.command  = {};
+					this.command += argv[param_counter];
+					continue;
+				}
+				if (argv[param_counter] == "-x") {
+					this.command = {};
 					add_commands = true;
 					continue;
 				}
 			}
-			if (exit_at_end) {
-				Posix.exit(0);
-			}
+		}
+
+		private void show_usage(int retval) {
+			print(_("""Usage: terminus [--guake] [--check_guake] [--nobindkey] [-e single command to launch] [-x command to launch and params]
+When using the '-x' parameter, it must be the last one.
+"""));
+			Posix.exit(retval);
 		}
 	}
 }

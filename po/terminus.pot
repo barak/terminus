@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: terminus 1.0.0\n"
+"Project-Id-Version: terminus 1.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-13 23:23+0200\n"
+"POT-Creation-Date: 2019-02-06 23:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,27 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: src/params.vala:43
+msgid "The -e param requires a command after it\n"
+msgstr ""
+
+#: src/params.vala:59
+msgid ""
+"Usage: terminus [--guake] [--check_guake] [--nobindkey] [-e single command "
+"to launch] [-x command to launch and params]\n"
+"When using the '-x' parameter, it must be the last one.\n"
+msgstr ""
+
 #: src/settings.vala:69
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/settings.vala:308 src/terminal.vala:193
+#: src/settings.vala:308 src/terminal.vala:201
 msgid "New window"
 msgstr ""
 
-#: src/settings.vala:309 src/terminal.vala:187
+#: src/settings.vala:309 src/terminal.vala:195
 msgid "New tab"
 msgstr ""
 
@@ -50,72 +61,72 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: src/terminal.vala:146
+#: src/terminal.vala:154
 msgid "Copy"
 msgstr ""
 
-#: src/terminal.vala:155
+#: src/terminal.vala:163
 msgid "Paste"
 msgstr ""
 
-#: src/terminal.vala:165
+#: src/terminal.vala:173
 msgid "Split horizontally"
 msgstr ""
 
-#: src/terminal.vala:177
+#: src/terminal.vala:185
 msgid "Split vertically"
 msgstr ""
 
-#: src/terminal.vala:201
+#: src/terminal.vala:209
 msgid "Preferences"
 msgstr ""
 
-#: src/terminal.vala:210
+#: src/terminal.vala:218
 msgid "Close"
 msgstr ""
 
-#: src/terminus.vala:112 src/terminus.vala:163
+#: src/terminus.vala:114 src/terminus.vala:165
 #, c-format
 msgid "Error: palette file %s has unrecognized content at line %d\n"
 msgstr ""
 
-#: src/terminus.vala:125
+#: src/terminus.vala:127
 #, c-format
 msgid ""
 "Error: palette file %s has opens a bracket at line %d without closing it\n"
 msgstr ""
 
-#: src/terminus.vala:138
+#: src/terminus.vala:140
 #, c-format
 msgid "Error: palette file %s has an unrecognized color at line %d\n"
 msgstr ""
 
-#: src/terminus.vala:148
+#: src/terminus.vala:150
 #, c-format
 msgid "Warning: palette file %s has more than 16 colors\n"
 msgstr ""
 
-#: src/terminus.vala:173
+#: src/terminus.vala:175
 #, c-format
 msgid "Error: Palette file %s has less than 16 colors\n"
 msgstr ""
 
-#: src/terminus.vala:177
+#: src/terminus.vala:179
 #, c-format
 msgid "Error: Palette file %s has no palette name\n"
 msgstr ""
 
-#: src/terminus.vala:181
+#: src/terminus.vala:183
 #, c-format
 msgid "Error: Palette file %s has text_fg color but not text_bg color\n"
 msgstr ""
 
-#: src/terminus.vala:185
+#: src/terminus.vala:187
 #, c-format
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr ""
 
-#: src/terminus.vala:239
+#: src/terminus.vala:242
 msgid "Custom colors"
 msgstr ""
 
