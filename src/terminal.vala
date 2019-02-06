@@ -145,7 +145,7 @@ namespace Terminus {
 				}
 				parameters.command = {};
 			}
-			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, null, cmd, GLib.Environ.get(), 0, null, out this.pid);
+			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, parameters.working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
 			this.vte_terminal.child_exited.connect(() => {
 				this.ended(this);
 			});
