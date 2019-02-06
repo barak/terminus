@@ -26,6 +26,8 @@ namespace Terminus {
 	GLib.Settings    settings         = null;
 	GLib.Settings    keybind_settings = null;
 	Terminus.Bindkey bindkey;
+	Parameters       parameters = null;
+	int tid_counter             = 0;
 
 	class Terminuspalette : Object {
 		public bool custom;
@@ -54,7 +56,7 @@ namespace Terminus {
 				return false;
 			}
 
-			var    color = Gdk.RGBA();
+			var color = Gdk.RGBA();
 
 			color.parse(Terminus.settings.get_string("fg-color"));
 			if (!this.text_fg.equal(color)) {
@@ -198,8 +200,8 @@ namespace Terminus {
 
 	class TerminusRoot : Object {
 		private Gee.List<Terminus.Window> window_list;
-		private bool launch_guake = false;
-		private bool check_guake = false;
+		private bool launch_guake;
+		private bool check_guake;
 		private Terminus.Base ? guake_terminal;
 		private Terminus.Window ? guake_window;
 		private bool ready;
@@ -225,7 +227,8 @@ namespace Terminus {
 
 			this.window_list = new Gee.ArrayList<Terminus.Window>();
 
-			this.check_params(argv);
+			this.launch_guake = parameters.launch_guake;
+			this.check_guake  = parameters.check_guake;
 
 			this.tmp_launch_terminal = true;
 			this.tmp_launch_guake    = false;
@@ -259,25 +262,27 @@ namespace Terminus {
 			}
 
 			if (this.tmp_launch_terminal || this.tmp_launch_guake) {
-				Bus.own_name(BusType.SESSION, "com.rastersoft.terminus", BusNameOwnerFlags.NONE, this.on_bus_aquired,
-				() => {
+				Bus.own_name(BusType.SESSION, "com.rastersoft.terminus", BusNameOwnerFlags.NONE, this.on_bus_aquired, () => {
+					// if there is no other Terminus process, we are responsible for everything
 					if (this.tmp_launch_terminal) {
-						this.create_window(false);
+					    this.create_window(false);
 					}
 					this.tmp_launch_terminal = false;
 					if (this.tmp_launch_guake) {
-						this.create_window(true);
+					    this.create_window(true);
 					}
 					this.tmp_launch_guake = false;
 					Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
 					this.ready = true;
 					if (this.extcall != -1) {
-						show_hide_global(this.extcall);
+					    show_hide_global(this.extcall);
 					}
 				}, () => {
+					// if there is another Terminus process, ask it to open a new window and exit
 					RemoteControlInterface server = Bus.get_proxy_sync(BusType.SESSION, "com.rastersoft.terminus", "/com/rastersoft/terminus");
 					if (this.tmp_launch_terminal) {
-						server.show_terminal();
+					    int tid;
+					    server.show_terminal(parameters.command, out tid);
 					}
 					Gtk.main_quit();
 				});
@@ -341,62 +346,40 @@ namespace Terminus {
 			return false;
 		}
 
-		public void create_window(bool guake_mode) {
+		public int create_window(bool guake_mode) {
 			Terminus.Window window;
 
 			if (guake_mode) {
 				if (this.guake_terminal == null) {
 					this.guake_terminal = new Terminus.Base();
 				}
-				window            = new Terminus.Window(true, this.guake_terminal);
+				window            = new Terminus.Window(true, tid_counter, this.guake_terminal);
 				this.guake_window = window;
 				Terminus.bindkey.show_guake.connect(this.show_hide);
 				this.guake_window.focus_in_event.connect(this.focus_in);
 				this.guake_window.focus_out_event.connect(this.focus_out);
 			} else {
-				window = new Terminus.Window(false);
+				window = new Terminus.Window(false, tid_counter);
 			}
+			tid_counter++;
 
 			window.ended.connect((w) => {
 				window_list.remove(w);
 				if (w == this.guake_window) {
-					Terminus.bindkey.show_guake.disconnect(this.show_hide);
-					this.guake_window   = null;
-					this.guake_terminal = null;
-					this.create_window(true);
+				    Terminus.bindkey.show_guake.disconnect(this.show_hide);
+				    this.guake_window   = null;
+				    this.guake_terminal = null;
+				    this.create_window(true);
 				}
 				if (window_list.size == 0) {
-					Gtk.main_quit();
+				    Gtk.main_quit();
 				}
 			});
 			window.new_window.connect(() => {
 				this.create_window(false);
 			});
 			window_list.add(window);
-		}
-
-		public void check_params(string[] argv) {
-			int  param_counter = 0;
-			bool exit_at_end   = false;
-
-			while (param_counter < argv.length) {
-				param_counter++;
-				if (argv[param_counter] == "--guake") {
-					this.launch_guake = true;
-					continue;
-				}
-				if (argv[param_counter] == "--check_guake") {
-					this.check_guake = true;
-					continue;
-				}
-				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
-					print("Usage: terminus [--guake] [--check_guake] [--nobindkey]\n");
-					exit_at_end = true;
-				}
-			}
-			if (exit_at_end) {
-				Posix.exit(0);
-			}
+			return window.terminal_id;
 		}
 
 		public void show_hide() {
@@ -450,23 +433,6 @@ namespace Terminus {
 		}
 	}
 
-	bool check_params(string[] argv) {
-		int param_counter = 0;
-
-		if (check_wayland() == 1) {
-			// under Wayland we can't use bindkeys the bindkeys library
-			return false;
-		}
-
-		while (param_counter < argv.length) {
-			param_counter++;
-			if (argv[param_counter] == "--nobindkey") {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/**
 	 * Ensures that the palette stored in the settings is valid
 	 * If not, replaces the ofending elements
@@ -512,8 +478,9 @@ namespace Terminus {
 			main_root.show_hide_global(2);
 		}
 
-		public void show_terminal() throws GLib.Error, GLib.DBusError {
-			main_root.create_window(false);
+		public void show_terminal(string[] argv, out int tid) throws GLib.Error, GLib.DBusError {
+			parameters.command = argv;
+			tid = main_root.create_window(false);
 		}
 	}
 
@@ -529,7 +496,7 @@ namespace Terminus {
 
 		public abstract void swap_guake() throws GLib.Error, GLib.DBusError;
 
-		public abstract void show_terminal() throws GLib.Error, GLib.DBusError;
+		public abstract void show_terminal(string[] argv, out int tid) throws GLib.Error, GLib.DBusError;
 	}
 }
 
@@ -541,9 +508,10 @@ int main(string[] argv) {
 
 	Gtk.init(ref argv);
 
+	Terminus.parameters       = new Terminus.Parameters(argv);
 	Terminus.settings         = new GLib.Settings("org.rastersoft.terminus");
 	Terminus.keybind_settings = new GLib.Settings("org.rastersoft.terminus.keybindings");
-	Terminus.bindkey          = new Terminus.Bindkey(Terminus.check_params(argv));
+	Terminus.bindkey          = new Terminus.Bindkey(Terminus.parameters.bind_keys);
 
 	Terminus.check_palette();
 

@@ -1,6 +1,8 @@
 # Terminus #
 
-A new terminal for XWindows (and Wayland)
+A new terminal for XWindows and Wayland
+
+![Terminus screenshot](terminus.png)
 
 ## What is it ##
 

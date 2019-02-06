@@ -81,13 +81,14 @@ namespace Terminus {
 			this.closeButton = new Gtk.EventBox();
 			var label = new Gtk.Label("<span size=\"small\">   X   </span>");
 			label.use_markup = true;
-			this.closeButton.button_release_event.connect( (event) => {
+			this.closeButton.button_release_event.connect((event) => {
 #if VALA_0_40
-                                Posix.kill(this.pid, Posix.Signal.KILL);
+				Posix.kill(this.pid, Posix.Signal.KILL);
 #else
-                                Posix.kill(this.pid, Posix.SIGKILL);
+				Posix.kill(this.pid, Posix.SIGKILL);
 #endif
-			 return false;});
+				return false;
+			});
 			this.closeButton.add(label);
 			var titleContainer = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 			titleContainer.pack_start(this.titlebox, true, true);
@@ -137,6 +138,13 @@ namespace Terminus {
 
 			string[] cmd = {};
 			cmd += Terminus.settings.get_string("shell-command");
+			if (parameters.command.length != 0) {
+				cmd += "-c";
+				foreach (var command in parameters.command) {
+					cmd += command;
+				}
+				parameters.command = {};
+			}
 			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, null, cmd, GLib.Environ.get(), 0, null, out this.pid);
 			this.vte_terminal.child_exited.connect(() => {
 				this.ended(this);

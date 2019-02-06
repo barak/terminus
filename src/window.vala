@@ -37,6 +37,8 @@ namespace Terminus {
 		public signal void ended(Terminus.Window window);
 		public signal void new_window();
 
+		public int terminal_id;
+
 		private int current_size;
 		private int mouseY;
 		private Gtk.Paned paned;
@@ -62,7 +64,8 @@ namespace Terminus {
 #endif
 		}
 
-		public Window(bool guake_mode, Terminus.Base ? terminal = null) {
+		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null) {
+			this.terminal_id = id;
 			this.is_guake    = guake_mode;
 			this.initialized = 0;
 
@@ -133,8 +136,8 @@ namespace Terminus {
 					}
 
 					int y;
-					y = (int) (event.y_root);
-					int newval = y - this.mouseY;
+					y                  = (int) (event.y_root);
+					int newval         = y - this.mouseY;
 					this.current_size += newval;
 					this.mouseY        = y;
 					this.resize(this.get_monitor_width(), this.current_size);
