@@ -11,3 +11,7 @@ override_dh_auto_configure:
 
 override_dh_installchangelogs:
 	dh_installchangelogs HISTORY.md
+
+override_dh_dwz:
+	@echo "skipping dh_dwz which gets a mysterious error:"
+	@echo "dh_dwz: dwz -q -- debian/terminus/usr/bin/terminus returned exit code 1"
