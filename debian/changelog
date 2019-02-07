@@ -1,3 +1,11 @@
+terminus (1.3.0-Debian1) sid; urgency=low
+
+  * Allows to use the -e and -x parameters to create a new window an launch a command inside
+  * Fixed the .desktop file to fully follow the standard
+  * Added an screenshot in the README.md file
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 06 Jan 2019 23:55:00 +0200
+
 terminus (1.2.0-Debian1) sid; urgency=low
 
   * Fixes Guake hotkey don't working on X11 with another terminus open

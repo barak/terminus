@@ -2,33 +2,92 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Sergio Costas <rastersoft@gmail.com>, 2016, 2018.
+# Sergio Costas <rastersoft@gmail.com>, 2016-2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-13 23:23+0200\n"
-"PO-Revision-Date: 2018-09-13 23:29+0200\n"
+"POT-Creation-Date: 2019-02-07 00:30+0100\n"
+"PO-Revision-Date: 2019-02-07 00:30+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
-"Language: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.30.1\n"
+
+#: src/params.vala:81
+#, c-format
+msgid ""
+"The '%s' parameter requires a path after it.\n"
+"\n"
+msgstr ""
+"El parámetro '%s' necesita una ruta detrás de él.\n"
+"\n"
+
+#: src/params.vala:86
+#, c-format
+msgid ""
+"The '%s' parameter requires a command after it.\n"
+"\n"
+msgstr ""
+"El parámetro '%s' necesita un comando detrás de él.\n"
+"\n"
+
+#: src/params.vala:91
+msgid ""
+"Usage:\n"
+"  terminus [OPTION...] [-- COMMAND ...]\n"
+"\n"
+"Help commands:\n"
+"  -h, --help                    show this help\n"
+"\n"
+"Options:\n"
+"  -x, --execute, --             launches a new Terminus window and execute "
+"the remainder of the command line inside the terminal\n"
+"  -e, --command=STRING          launches a new Terminus window and execute "
+"the argument inside the terminal\n"
+"  --working-directory=DIRNAME   sets the terminal directory to DIRNAME\n"
+"  --guake                       launch Terminus in background\n"
+"  --check_guake                 launch Terminus in background and return if "
+"there is already another Terminus process\n"
+"  --nobindkey                   don't try to bind the Quake-mode key (useful "
+"for gnome shell)\n"
+"\n"
+msgstr ""
+"Uso:\n"
+"  terminus [OPCION...] [-- COMANDO ...]\n"
+"\n"
+"Comandos de ayuda:\n"
+"  -h, --help                    muestra esta ayuda\n"
+"\n"
+"Options:\n"
+"  -x, --execute, --             lanza una nueva ventana de Terminus y "
+"ejecuta el resto de la línea de comandos dentro del terminal\n"
+"  -e, --command=STRING          lanza una nueva ventana de Terminus y "
+"ejecuta el argumento dentro del terminal\n"
+"  --working-directory=DIRNAME   establece el directorio dentro del terminal "
+"a DIRNAME\n"
+"  --guake                       lanza Terminus en segundo plano\n"
+"  --check_guake                 lanza Terminus en segundo plano y retorna si "
+"ya existe otro proceso de Terminus corriendo\n"
+"  --nobindkey                   no intentar apropiarse de la tecla para "
+"mostrar el modo Quake (útil para gnome shell)\n"
+"\n"
 
 #: src/settings.vala:69
 #, c-format
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: src/settings.vala:308 src/terminal.vala:193
+#: src/settings.vala:308 src/terminal.vala:201
 msgid "New window"
 msgstr "Nueva ventana"
 
-#: src/settings.vala:309 src/terminal.vala:187
+#: src/settings.vala:309 src/terminal.vala:195
 msgid "New tab"
 msgstr "Nueva pestaña"
 
@@ -52,72 +111,72 @@ msgstr "Acción"
 msgid "Key"
 msgstr "Tecla"
 
-#: src/terminal.vala:146
+#: src/terminal.vala:154
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/terminal.vala:155
+#: src/terminal.vala:163
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/terminal.vala:165
+#: src/terminal.vala:173
 msgid "Split horizontally"
 msgstr "Dividir horizontalmente"
 
-#: src/terminal.vala:177
+#: src/terminal.vala:185
 msgid "Split vertically"
 msgstr "Dividir verticalmente"
 
-#: src/terminal.vala:201
+#: src/terminal.vala:209
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/terminal.vala:210
+#: src/terminal.vala:218
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/terminus.vala:112 src/terminus.vala:163
+#: src/terminus.vala:114 src/terminus.vala:165
 #, c-format
 msgid "Error: palette file %s has unrecognized content at line %d\n"
 msgstr "Error: la paleta %s tiene contenido extraño en la línea %d\n"
 
-#: src/terminus.vala:125
+#: src/terminus.vala:127
 #, c-format
 msgid ""
 "Error: palette file %s has opens a bracket at line %d without closing it\n"
 msgstr "Error: la paleta %s abre un corchete en la línea %d sin cerrarlo\n"
 
-#: src/terminus.vala:138
+#: src/terminus.vala:140
 #, c-format
 msgid "Error: palette file %s has an unrecognized color at line %d\n"
 msgstr "Error: la paleta %s tiene un color desconocido en la línea %d\n"
 
-#: src/terminus.vala:148
+#: src/terminus.vala:150
 #, c-format
 msgid "Warning: palette file %s has more than 16 colors\n"
 msgstr "Aviso: la paleta %s tiene más de 16 colores\n"
 
-#: src/terminus.vala:173
+#: src/terminus.vala:175
 #, c-format
 msgid "Error: Palette file %s has less than 16 colors\n"
 msgstr "Error: la paleta %s tiene menos de 16 colores\n"
 
-#: src/terminus.vala:177
+#: src/terminus.vala:179
 #, c-format
 msgid "Error: Palette file %s has no palette name\n"
 msgstr "Error: la paleta %s no tiene nombre de paleta\n"
 
-#: src/terminus.vala:181
+#: src/terminus.vala:183
 #, c-format
 msgid "Error: Palette file %s has text_fg color but not text_bg color\n"
 msgstr "Error: la paleta %s tiene color text_fg, pero no color text_bg\n"
 
-#: src/terminus.vala:185
+#: src/terminus.vala:187
 #, c-format
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr "Error: la paleta %s tiene color text_bg, pero no color text_fg\n"
 
-#: src/terminus.vala:239
+#: src/terminus.vala:242
 msgid "Custom colors"
 msgstr "Colores personalizados"
 
@@ -260,6 +319,15 @@ msgstr ""
 #: data/interface/properties.ui:1004
 msgid "About"
 msgstr "Acerca de"
+
+#~ msgid ""
+#~ "Usage: terminus [--guake] [--check_guake] [--nobindkey] [-e single "
+#~ "command to launch] [-x command to launch and params]\n"
+#~ "When using the '-x' parameter, it must be the last one.\n"
+#~ msgstr ""
+#~ "Uso: terminus [--guake] [--check_guake] [--nobindkey] [-e single command "
+#~ "to launch] [-x command to launch and params]\n"
+#~ "When using the '-x' parameer, it must be the last one.\n"
 
 #~ msgid "Black on light yellow"
 #~ msgstr "Negro sobre amarillo claro"
