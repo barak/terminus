@@ -69,3 +69,5 @@ binary: data/terminus_showhide
 
 *full_icon: Hicolor Applications data/icons/terminus.svg
 
+*binary_dependency: /usr/bin/glib-compile-schemas
+

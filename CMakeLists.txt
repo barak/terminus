@@ -44,6 +44,9 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} vte-2.91)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
+if ( (NOT EXISTS "/usr/bin/glib-compile-schemas"))
+	message(FATAL_ERROR "Can't find any of the files /usr/bin/glib-compile-schemas")
+endif()
 
 find_program ( WHERE_GRESOURCE glib-compile-resources )
 if ( NOT WHERE_GRESOURCE )
