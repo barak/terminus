@@ -4,6 +4,9 @@ GTK_3_20 = (get_option('GTK_3_20') != '')
 
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
+find_program ('glib-compile-resources')
+find_program ('gtk-update-icon-cache', 'gtk-update-icon-cache.3.0')
+find_program ('glib-compile-schemas')
 gdk_3_0_dep = dependency('gdk-3.0')
 gtk_3_0_dep = dependency('gtk+-3.0')
 gee_0_8_dep = dependency('gee-0.8')
@@ -16,6 +19,7 @@ vte_2_91_dep = dependency('vte-2.91')
 subdir('po')
 cfg_dbus_data = configuration_data()
 cfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))
+meson.add_install_script('/home/raster/workspace/terminus/meson_scripts/update_icon.py')
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','extension.js'))
 
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','metadata.json'))

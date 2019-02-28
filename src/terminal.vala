@@ -43,6 +43,8 @@ namespace Terminus {
 		private Gdk.EventKey new_window_key;
 		private Gdk.EventKey next_tab_key;
 		private Gdk.EventKey previous_tab_key;
+		private Gdk.EventKey copy;
+		private Gdk.EventKey paste;
 		private bool had_focus;
 
 		public signal void ended(Terminus.Terminal terminal);
@@ -231,11 +233,15 @@ namespace Terminus {
 			this.new_window_key   = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 			this.next_tab_key     = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 			this.previous_tab_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.copy             = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.paste            = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 
 			keybind_settings_changed("new-window");
 			keybind_settings_changed("new-tab");
 			keybind_settings_changed("next-tab");
 			keybind_settings_changed("previous-tab");
+			keybind_settings_changed("copy");
+			keybind_settings_changed("paste");
 
 			Terminus.settings.changed.connect(this.settings_changed);
 			Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
@@ -288,6 +294,16 @@ namespace Terminus {
 			case "previous-tab":
 				this.previous_tab_key.keyval = keyval;
 				this.previous_tab_key.state  = state;
+				break;
+
+			case "copy":
+				this.copy.keyval = keyval;
+				this.copy.state = state;
+				break;
+
+			case "paste":
+				this.paste.keyval = keyval;
+				this.paste.state = state;
 				break;
 
 			default:
@@ -439,6 +455,16 @@ namespace Terminus {
 
 			if ((eventkey.keyval == this.previous_tab_key.keyval) && (eventkey.state == this.previous_tab_key.state)) {
 				this.main_container.prev_tab();
+				return true;
+			}
+
+			if ((eventkey.keyval == this.copy.keyval) && (eventkey.state == this.copy.state)) {
+				this.vte_terminal.copy_primary();
+				return true;
+			}
+
+			if ((eventkey.keyval == this.paste.keyval) && (eventkey.state == this.paste.state)) {
+				this.vte_terminal.paste_primary();
 				return true;
 			}
 

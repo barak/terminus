@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.4.0 (2019-02-28)
+  * Added keybindings for COPY and PASTE
 * Version 1.3.0 (2019-02-06)
   * Added the -e and -x parameters to create a new window an launch a command inside
   * Added the --working-directory parameter

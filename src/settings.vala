@@ -310,6 +310,8 @@ namespace Terminus {
 			this.add_keybinding(_("Next tab"), "next-tab");
 			this.add_keybinding(_("Previous tab"), "previous-tab");
 			this.add_keybinding(_("Show guake terminal"), "guake-mode");
+			this.add_keybinding(_("Copy text into the clipboard"), "copy");
+			this.add_keybinding(_("Paste text from the clipboard"), "paste");
 
 			var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
 			keybindings_view.activate_on_single_click = true;

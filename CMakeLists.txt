@@ -44,13 +44,23 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} vte-2.91)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
-if ( (NOT EXISTS "/usr/bin/glib-compile-schemas"))
-	message(FATAL_ERROR "Can't find any of the files /usr/bin/glib-compile-schemas")
+
+find_program ( WHERE_glib_compile_resources glib-compile-resources )
+if ( NOT WHERE_glib_compile_resources )
+	MESSAGE(FATAL_ERROR "Error! external program 'glib-compile-resources' is not installed.")
 endif()
 
-find_program ( WHERE_GRESOURCE glib-compile-resources )
-if ( NOT WHERE_GRESOURCE )
-	MESSAGE(FATAL_ERROR "Error! GLIB-COMPILE-RESOURCES is not installed.")
+find_program ( WHERE_gtk_update_icon_cache gtk-update-icon-cache )
+if ( NOT WHERE_gtk_update_icon_cache )
+	find_program ( WHERE_gtk_update_icon_cache gtk-update-icon-cache.3.0 )
+	if ( NOT WHERE_gtk_update_icon_cache )
+		MESSAGE(FATAL_ERROR "Error! none of the external programs 'gtk-update-icon-cache', 'gtk-update-icon-cache.3.0',  are installed.")
+	endif()
+endif()
+
+find_program ( WHERE_glib_compile_schemas glib-compile-schemas )
+if ( NOT WHERE_glib_compile_schemas )
+	MESSAGE(FATAL_ERROR "Error! external program 'glib-compile-schemas' is not installed.")
 endif()
 
 add_subdirectory(po)
