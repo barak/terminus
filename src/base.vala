@@ -36,7 +36,7 @@ namespace Terminus {
 		}
 
 		public void new_terminal_tab() {
-			var term = new Terminus.Container(this, null);
+			var term = new Terminus.Container(this, null, null, null);
 			term.ended.connect((w) => {
 				this.delete_page(term);
 			});

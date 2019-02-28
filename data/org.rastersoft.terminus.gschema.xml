@@ -153,5 +153,25 @@
       <summary>Paste text from clipboard</summary>
       <description></description>
     </key>
+    <key type="s" name="terminal-left">
+      <default><![CDATA['<Shift><Ctrl>Left']]></default>
+      <summary>Select the terminal at the left</summary>
+      <description></description>
+    </key>
+    <key type="s" name="terminal-right">
+      <default><![CDATA['<Shift><Ctrl>Right']]></default>
+      <summary>Select the terminal at the right</summary>
+      <description></description>
+    </key>
+    <key type="s" name="terminal-up">
+      <default><![CDATA['<Shift><Ctrl>Up']]></default>
+      <summary>Select the terminal at the top</summary>
+      <description></description>
+    </key>
+    <key type="s" name="terminal-down">
+      <default><![CDATA['<Shift><Ctrl>Down']]></default>
+      <summary>Select the terminal at the bottom</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>
