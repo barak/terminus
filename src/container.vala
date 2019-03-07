@@ -27,6 +27,8 @@ namespace Terminus {
 	 * one.
 	 */
 
+	public enum MoveFocus {UP, DOWN, LEFT, RIGHT}
+
 	class Container : Gtk.Bin {
 		public Terminus.Container ? container1;
 		public Terminus.Container ? container2;
@@ -35,12 +37,15 @@ namespace Terminus {
 		private Terminus.Terminal ? terminal;
 		private Terminus.PanedPercentage ? paned;
 		private Terminus.Container top_container;
+		private Terminus.Container upper_container;
 		private Terminus.Base main_container;
+		private bool splited_horizontal;
 
 		public signal void ended(Terminus.Container who);
 
-		public Container(Terminus.Base main_container, Terminus.Terminal ? terminal, Terminus.Container ? top_container = null) {
+		public Container(Terminus.Base main_container, Terminus.Terminal ? terminal, Terminus.Container ? top_container, Terminus.Container ? upper_container) {
 			this.main_container = main_container;
+			this.upper_container = upper_container;
 			if (top_container == null) {
 				this.top_container = this;
 				this.notetab       = new Terminus.Notetab(this.main_container, this);
@@ -50,12 +55,13 @@ namespace Terminus {
 			}
 
 			if (terminal == null) {
-				this.terminal = new Terminus.Terminal(this.main_container, this.top_container);
+				this.terminal = new Terminus.Terminal(this.main_container, this.top_container, this);
 			} else {
 				this.terminal = terminal;
 			}
-
 			this.set_terminal_child();
+			this.container1 = null;
+			this.container2 = null;
 		}
 
 		public void set_tab_title(string title) {
@@ -104,14 +110,16 @@ namespace Terminus {
 		}
 
 		private void split(bool horizontal) {
-			this.remove(terminal);
+			this.splited_horizontal = horizontal;
+			this.remove(this.terminal);
 			this.terminal.split_horizontal.disconnect(this.split_horizontal_cb);
 			this.terminal.split_vertical.disconnect(this.split_vertical_cb);
 			this.terminal.ended.disconnect(this.ended_cb);
 
 			this.paned      = new Terminus.PanedPercentage(horizontal ? Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL, 0.5);
-			this.container1 = new Terminus.Container(this.main_container, this.terminal, this.top_container);
-			this.container2 = new Terminus.Container(this.main_container, null, this.top_container);
+			this.container1 = new Terminus.Container(this.main_container, this.terminal, this.top_container, this);
+			this.container2 = new Terminus.Container(this.main_container, null, this.top_container, this);
+			this.terminal.set_container(this.container1);
 			this.container1.ended.connect(this.ended_child);
 			this.container2.ended.connect(this.ended_child);
 			this.paned.add1(this.container1);
@@ -119,6 +127,76 @@ namespace Terminus {
 			this.add(this.paned);
 			this.paned.show_all();
 			this.terminal = null;
+		}
+
+		public void move_focus(MoveFocus direction, Terminus.Container ? sender, bool searching_up) {
+			if (sender == null) {
+				sender = this.container1;
+			}
+			if (this.terminal != null) {
+				if (searching_up) {
+					if (this.upper_container != null) {
+						this.upper_container.move_focus(direction, this, true);
+					}
+				} else {
+					this.terminal.do_grab_focus();
+				}
+				return;
+			}
+			switch (direction) {
+			case Terminus.MoveFocus.UP:
+			case Terminus.MoveFocus.DOWN:
+				if (searching_up) {
+					if (this.splited_horizontal) {
+						if ((direction == Terminus.MoveFocus.UP) && (sender == this.container2)) {
+							this.container1.move_focus(direction, this, false);
+						} else if ((direction == Terminus.MoveFocus.DOWN) && (sender == this.container1)) {
+							this.container2.move_focus(direction, this, false);
+						} else {
+							if (this.upper_container != null) {
+								this.upper_container.move_focus(direction, this, true);
+							}
+						}
+					} else {
+						if (this.upper_container != null) {
+							this.upper_container.move_focus(direction, this, true);
+						}
+					}
+				} else {
+					if (direction == Terminus.MoveFocus.UP) {
+						this.container2.move_focus(direction, this, false);
+					} else {
+						this.container1.move_focus(direction, this, false);
+					}
+				}
+			break;
+			case Terminus.MoveFocus.LEFT:
+			case Terminus.MoveFocus.RIGHT:
+				if (searching_up) {
+					if (!this.splited_horizontal) {
+						if ((direction == Terminus.MoveFocus.LEFT) && (sender == this.container2)) {
+							this.container1.move_focus(direction, this, false);
+						} else if ((direction == Terminus.MoveFocus.RIGHT) && (sender == this.container1)) {
+							this.container2.move_focus(direction, this, false);
+						} else {
+							if (this.upper_container != null) {
+								this.upper_container.move_focus(direction, this, true);
+							}
+						}
+					} else {
+						if (this.upper_container != null) {
+							this.upper_container.move_focus(direction, this, true);
+						}
+					}
+				} else {
+					if (direction == Terminus.MoveFocus.LEFT) {
+						this.container2.move_focus(direction, this, false);
+					} else {
+						this.container1.move_focus(direction, this, false);
+					}
+				}
+			break;
+			}
 		}
 
 		public void do_grab_focus() {
@@ -138,11 +216,17 @@ namespace Terminus {
 				old_container = this.container1;
 			}
 			var new_child = old_container.get_current_child();
-			this.paned.remove(this.container1);
-			this.paned.remove(this.container2);
-			this.container1.ended.disconnect(this.ended_child);
-			this.container2.ended.disconnect(this.ended_child);
-			this.remove(this.paned);
+			if (this.container1 != null) {
+				this.paned.remove(this.container1);
+				this.container1.ended.disconnect(this.ended_child);
+			}
+			if (this.container2 != null) {
+				this.paned.remove(this.container2);
+				this.container2.ended.disconnect(this.ended_child);
+			}
+			if (this.paned != null) {
+				this.remove(this.paned);
+			}
 			if (new_child is Terminus.Terminal) {
 				this.terminal = new_child as Terminus.Terminal;
 				this.set_terminal_child();
