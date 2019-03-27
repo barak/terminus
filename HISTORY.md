@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.4.1 (2019-03-26)
+  * Fixed COPY keybinding
 * Version 1.4.0 (2019-02-28)
   * Added keybindings for COPY and PASTE
   * Added keybindings to move focus between terminals in the same tab

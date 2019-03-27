@@ -19,7 +19,7 @@
 using Gtk;
 using Gee;
 
-//project version = 1.4.0
+//project version = 1.4.1
 
 namespace Terminus {
 	TerminusRoot     main_root;
