@@ -1,3 +1,9 @@
+terminus (1.4.1-Debian1) sid; urgency=low
+
+  * Fixed COPY keybinding
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 26 Mar 2019 23:55:00 +0200
+
 terminus (1.4.0-Debian1) sid; urgency=low
 
   * Added keybindings for COPY and PASTE

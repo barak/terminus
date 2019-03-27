@@ -1,5 +1,5 @@
 pkgname=terminus
-pkgver=1.4.0
+pkgver=1.4.1
 pkgrel=1
 pkgdesc="A new terminal for XWindows
 "
