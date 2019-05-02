@@ -4,10 +4,13 @@ cfg_terminus.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
-cfg_terminus.set('VERSION', '1.3.0')
+cfg_terminus.set('VERSION', '1.4.1')
 cfg_terminus.set('TESTSRCDIR', meson.source_root())
 
-cfgfile_2 = configure_file(input: 'Config.vala.base',output: 'Config.vala',configuration: cfg_terminus)
+cfgfile_2 = configure_file(
+	input: 'Config.vala.base',
+	output: 'Config.vala',
+	configuration: cfg_terminus)
 
 terminus_deps = [gdk_3_0_dep]
 terminus_deps += [gtk_3_0_dep]
@@ -41,5 +44,10 @@ if GTK_3_20
 endif
 terminus_link_args = ['-rdynamic']
 
-executable('terminus',terminus_sources,dependencies: terminus_deps,vala_args: terminus_vala_args,c_args: terminus_c_args,link_args: terminus_link_args,install: true)
+executable('terminus',terminus_sources,
+    dependencies: terminus_deps,
+    vala_args: terminus_vala_args,
+    c_args: terminus_c_args,
+    link_args: terminus_link_args,
+    install: true)
 

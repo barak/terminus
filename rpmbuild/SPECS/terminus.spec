@@ -1,45 +1,42 @@
 Name: terminus
-Version: 1.3.0
+Version: 1.4.1
 Release: 1
 License: Unknown/not set
-Summary: A new terminal for XWindows
+Summary: A new terminal for XWindows and Wayland
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: vala
 BuildRequires: glibc-headers
-BuildRequires: atk-devel
-BuildRequires: cairo-devel
 BuildRequires: gtk3-devel
-BuildRequires: gdk-pixbuf2-devel
 BuildRequires: libgee-devel
 BuildRequires: glib2-devel
 BuildRequires: keybinder3-devel
-BuildRequires: pango-devel
 BuildRequires: vte291-devel
-BuildRequires: libX11-devel
 BuildRequires: cmake
 BuildRequires: gettext
-BuildRequires: pkgconfig
+BuildRequires: pkgconf-pkg-config
 BuildRequires: make
 BuildRequires: intltool
 
-Requires: atk
-Requires: glib2
-Requires: cairo
 Requires: gtk3
 Requires: pango
 Requires: gdk-pixbuf2
 Requires: cairo-gobject
+Requires: cairo
+Requires: glib2
+Requires: atk
 Requires: libgee
 Requires: keybinder3
 Requires: vte291
 Requires: zlib
+Requires: pcre2
 Requires: gnutls
-Requires: libX11
 
 %description
-A new terminal for XWindows
+A new terminal for XWindows and Wayland
+.
+![Terminus screenshot](terminus.png)
 .
 
 %files

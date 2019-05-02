@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 00:30+0100\n"
-"PO-Revision-Date: 2019-02-07 00:30+0100\n"
+"POT-Creation-Date: 2019-03-27 20:34+0100\n"
+"PO-Revision-Date: 2019-03-27 20:37+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: es\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 3.30.1\n"
 
-#: src/params.vala:81
+#: src/params.vala:100
 #, c-format
 msgid ""
 "The '%s' parameter requires a path after it.\n"
@@ -28,7 +28,7 @@ msgstr ""
 "El parámetro '%s' necesita una ruta detrás de él.\n"
 "\n"
 
-#: src/params.vala:86
+#: src/params.vala:105
 #, c-format
 msgid ""
 "The '%s' parameter requires a command after it.\n"
@@ -37,7 +37,7 @@ msgstr ""
 "El parámetro '%s' necesita un comando detrás de él.\n"
 "\n"
 
-#: src/params.vala:91
+#: src/params.vala:110
 msgid ""
 "Usage:\n"
 "  terminus [OPTION...] [-- COMMAND ...]\n"
@@ -83,11 +83,11 @@ msgstr ""
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: src/settings.vala:308 src/terminal.vala:201
+#: src/settings.vala:308 src/terminal.vala:213
 msgid "New window"
 msgstr "Nueva ventana"
 
-#: src/settings.vala:309 src/terminal.vala:195
+#: src/settings.vala:309 src/terminal.vala:207
 msgid "New tab"
 msgstr "Nueva pestaña"
 
@@ -103,35 +103,59 @@ msgstr "Pestaña anterior"
 msgid "Show guake terminal"
 msgstr "Mostrar terminal Guake"
 
-#: src/settings.vala:319
+#: src/settings.vala:313
+msgid "Copy text into the clipboard"
+msgstr "Copiar texto al portapapeles"
+
+#: src/settings.vala:314
+msgid "Paste text from the clipboard"
+msgstr "Pegar texto desde el portapapeles"
+
+#: src/settings.vala:315
+msgid "Move focus to the terminal on the left"
+msgstr "Cambiar el foco al terminal de la izquierda"
+
+#: src/settings.vala:316
+msgid "Move focus to the terminal on the right"
+msgstr "Cambiar el foco al terminal de la derecha"
+
+#: src/settings.vala:317
+msgid "Move focus to the terminal above"
+msgstr "Cambiar el foco al terminal superior"
+
+#: src/settings.vala:318
+msgid "Move focus to the terminal below"
+msgstr "Cambiar el foco al terminal inferior"
+
+#: src/settings.vala:325
 msgid "Action"
 msgstr "Acción"
 
-#: src/settings.vala:320
+#: src/settings.vala:326
 msgid "Key"
 msgstr "Tecla"
 
-#: src/terminal.vala:154
+#: src/terminal.vala:166
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/terminal.vala:163
+#: src/terminal.vala:175
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/terminal.vala:173
+#: src/terminal.vala:185
 msgid "Split horizontally"
 msgstr "Dividir horizontalmente"
 
-#: src/terminal.vala:185
+#: src/terminal.vala:197
 msgid "Split vertically"
 msgstr "Dividir verticalmente"
 
-#: src/terminal.vala:209
+#: src/terminal.vala:221
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/terminal.vala:218
+#: src/terminal.vala:230
 msgid "Close"
 msgstr "Cerrar"
 
@@ -290,7 +314,7 @@ msgstr "Scroll si se pulsa una tecla"
 
 #: data/interface/properties.ui:910
 msgid "Scrolling"
-msgstr "Scrolling"
+msgstr "Desplazamiento"
 
 #: data/interface/properties.ui:938
 msgid "Keybindings"

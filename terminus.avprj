@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 28
+autovala_version: 30
 project_name: terminus
 vala_version: 0.30
 
@@ -13,7 +13,7 @@ custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerm
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 1.3.0
+*version: 1.4.1
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
@@ -68,4 +68,8 @@ binary: data/terminus_showhide
 *scheme: data/org.rastersoft.terminus.gschema.xml
 
 *full_icon: Hicolor Applications data/icons/terminus.svg
+
+*build_external_program: glib-compile-resources
+*build_external_program: gtk-update-icon-cache gtk-update-icon-cache.3.0
+*build_external_program: glib-compile-schemas
 
