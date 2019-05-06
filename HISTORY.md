@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.5.0 (2019-05-06)
+  * Now PASTE works with clipboard managers
 * Version 1.4.1 (2019-03-26)
   * Fixed COPY keybinding
 * Version 1.4.0 (2019-02-28)
