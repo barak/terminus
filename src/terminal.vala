@@ -72,6 +72,20 @@ namespace Terminus {
 			this.container = container;
 		}
 
+		private void do_copy() {
+			this.vte_terminal.copy_primary();
+			var primary   = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
+			var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
+			clipboard.set_text(primary.wait_for_text(), -1);
+		}
+
+		private void do_paste() {
+			var primary   = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
+			var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
+			primary.set_text(clipboard.wait_for_text(), -1);
+			this.vte_terminal.paste_primary();
+		}
+
 		public Terminal(Terminus.Base main_container, Terminus.Container top_container, Terminus.Container container) {
 			this.container = container;
 			// when creating a new terminal, it must take the focus
@@ -165,16 +179,13 @@ namespace Terminus {
 			this.menu      = new Gtk.Menu();
 			this.item_copy = new Gtk.MenuItem.with_label(_("Copy"));
 			this.item_copy.activate.connect(() => {
-				this.vte_terminal.copy_primary();
-				var primary   = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
-				var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
-				clipboard.set_text(primary.wait_for_text(), -1);
+				this.do_copy();
 			});
 			this.menu.add(this.item_copy);
 
 			var item = new Gtk.MenuItem.with_label(_("Paste"));
 			item.activate.connect(() => {
-				this.vte_terminal.paste_primary();
+				this.do_paste();
 			});
 			this.menu.add(item);
 
@@ -497,15 +508,12 @@ namespace Terminus {
 			}
 
 			if ((eventkey.keyval == this.copy.keyval) && (eventkey.state == this.copy.state)) {
-				this.vte_terminal.copy_primary();
-				var primary   = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
-				var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
-				clipboard.set_text(primary.wait_for_text(), -1);
+				this.do_copy();
 				return true;
 			}
 
 			if ((eventkey.keyval == this.paste.keyval) && (eventkey.state == this.paste.state)) {
-				this.vte_terminal.paste_primary();
+				this.do_paste();
 				return true;
 			}
 
