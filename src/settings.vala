@@ -198,7 +198,7 @@ namespace Terminus {
 				this.palette_scheme.get_active_iter(out iter);
 				GLib.Value selectedCell;
 				this.palette_schemes.get_value(iter, 1, out selectedCell);
-				selected = selectedCell.get_int();
+				selected   = selectedCell.get_int();
 				var scheme = Terminus.main_root.palettes[selected];
 				if (scheme.custom) {
 				    return;
@@ -221,7 +221,7 @@ namespace Terminus {
 				this.color_scheme.get_active_iter(out iter);
 				GLib.Value selectedCell;
 				this.color_schemes.get_value(iter, 1, out selectedCell);
-				selected = selectedCell.get_int();
+				selected   = selectedCell.get_int();
 				var scheme = Terminus.main_root.palettes[selected];
 				if (scheme.custom) {
 				    return;

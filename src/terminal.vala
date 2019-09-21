@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 using Vte;
 using Gtk;
@@ -327,32 +328,32 @@ namespace Terminus {
 
 			case "copy":
 				this.copy.keyval = keyval;
-				this.copy.state = state;
+				this.copy.state  = state;
 				break;
 
 			case "paste":
 				this.paste.keyval = keyval;
-				this.paste.state = state;
+				this.paste.state  = state;
 				break;
 
 			case "terminal-left":
 				this.terminal_left.keyval = keyval;
-				this.terminal_left.state = state;
+				this.terminal_left.state  = state;
 				break;
 
 			case "terminal-right":
 				this.terminal_right.keyval = keyval;
-				this.terminal_right.state = state;
+				this.terminal_right.state  = state;
 				break;
 
 			case "terminal-up":
 				this.terminal_up.keyval = keyval;
-				this.terminal_up.state = state;
+				this.terminal_up.state  = state;
 				break;
 
 			case "terminal-down":
 				this.terminal_down.keyval = keyval;
-				this.terminal_down.state = state;
+				this.terminal_down.state  = state;
 				break;
 
 			default:
