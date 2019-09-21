@@ -518,22 +518,22 @@ namespace Terminus {
 			}
 
 			if ((eventkey.keyval == this.terminal_up.keyval) && (eventkey.state == this.terminal_up.state)) {
-				this.container.move_focus(Terminus.MoveFocus.UP, null, true);
+				this.container.move_terminal_focus(Terminus.MoveFocus.UP, null, true);
 				return true;
 			}
 
 			if ((eventkey.keyval == this.terminal_down.keyval) && (eventkey.state == this.terminal_down.state)) {
-				this.container.move_focus(Terminus.MoveFocus.DOWN, null, true);
+				this.container.move_terminal_focus(Terminus.MoveFocus.DOWN, null, true);
 				return true;
 			}
 
 			if ((eventkey.keyval == this.terminal_left.keyval) && (eventkey.state == this.terminal_left.state)) {
-				this.container.move_focus(Terminus.MoveFocus.LEFT, null, true);
+				this.container.move_terminal_focus(Terminus.MoveFocus.LEFT, null, true);
 				return true;
 			}
 
 			if ((eventkey.keyval == this.terminal_right.keyval) && (eventkey.state == this.terminal_right.state)) {
-				this.container.move_focus(Terminus.MoveFocus.RIGHT, null, true);
+				this.container.move_terminal_focus(Terminus.MoveFocus.RIGHT, null, true);
 				return true;
 			}
 
