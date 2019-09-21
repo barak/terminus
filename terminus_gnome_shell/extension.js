@@ -7,71 +7,74 @@ const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 const MyIface = '<node>\
-<interface name="com.rastersoft.terminus">\
-  <method name="SwapGuake" />\
-  <method name="DisableKeybind" />\
-  <method name="DoPing" >\
-    <arg name="n" direction="in" type="i"/>\
-    <arg name="response" direction="out" type="i"/>\
-  </method>\
-</interface>\
+    <interface name="com.rastersoft.terminus">\
+        <method name="SwapGuake" />\
+        <method name="DisableKeybind" />\
+        <method name="DoPing" >\
+            <arg name="n" direction="in" type="i"/>\
+            <arg name="response" direction="out" type="i"/>\
+        </method>\
+    </interface>\
 </node>';
 
 const MyProxy = Gio.DBusProxy.makeProxyWrapper(MyIface);
 const GioSSS = Gio.SettingsSchemaSource;
+var terminusObject;
 
-const TerminusClass = new Lang.Class({
-   Name: 'Terminus.Launcher',
+class TerminusClass {
 
-	_init: function() {
+    constructor() {
+        this._settings = new Gio.Settings({schema: 'org.rastersoft.terminus.keybindings'});
+        this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
+        this.terminusInstance = null;
+    }
 
-		this._settings = new Gio.Settings({schema: 'org.rastersoft.terminus.keybindings'});
-		this._settingsChanged(null,"guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
-		this._settingsChangedConnect = this._settings.connect('changed',Lang.bind(this,this._settingsChanged));
+    enable() {
+        this._settingsChangedConnect = this._settings.connect('changed', (st, name) => {
+            this._settingsChanged(name);
+        });
+        let mode = Shell.ActionMode ? Shell.ActionMode.NORMAL : Shell.KeyBindingMode.ALL;
+        let flags = Meta.KeyBindingFlags.NONE;
+        Main.wm.addKeybinding(
+            "guake-mode-gnome-shell",
+            this._settings,
+            flags,
+            mode,
+            () => {
+                if (this.terminusInstance === null) {
+                    this.terminusInstance = new MyProxy(Gio.DBus.session, 'com.rastersoft.terminus','/com/rastersoft/terminus');
+                }
+                this.terminusInstance.DisableKeybindRemote( (result, error) => {
+                    this.terminusInstance.SwapGuakeSync();
+                });
+            }
+        );
+    }
 
-	   let mode = Shell.ActionMode ? Shell.ActionMode.NORMAL : Shell.KeyBindingMode.ALL;
-	   let flags = Meta.KeyBindingFlags.NONE;
-	   this.instance = null;
-	   Main.wm.addKeybinding("guake-mode-gnome-shell",
-		   this._settings,
-		   flags,
-		   mode,
-			Lang.bind(this, this.launch_function)
-	   );
-	},
-
-	destroy: function() {
-		Main.wm.removeKeybinding("guake-mode");
-	},
-
-	launch_function: function() {
-		if (this.instance === null) {
-			this.instance = new MyProxy(Gio.DBus.session, 'com.rastersoft.terminus','/com/rastersoft/terminus');
+    disable() {
+        if (this._settingsChangedConnect) {
+            this._settings.disconnect(this._settingsChangedConnect);
         }
-		this.instance.DisableKeybindRemote(Lang.bind(this, function (result, error) {
-            this.instance.SwapGuakeSync();
-        }));
-	},
+        Main.wm.removeKeybinding("guake-mode-gnome-shell");
+    }
 
-	_settingsChanged: function(st,name) {
-    	if (name == "guake-mode") {
-			var new_key = this._settings.get_string("guake-mode");
-			this._settings.set_strv("guake-mode-gnome-shell",new Array(new_key));
-		}
-	}
-});
+    _settingsChanged(name) {
+        if (name == "guake-mode") {
+            var new_key = this._settings.get_string("guake-mode");
+            this._settings.set_strv("guake-mode-gnome-shell",new Array(new_key));
+        }
+    }
+}
 
 
 function init() {
-
+    terminusObject = new TerminusClass();
 }
 
-let terminusObject;
-
 function enable() {
-	terminusObject = new TerminusClass();
+    terminusObject.enable();
 }
 
 function disable() {
-
+    terminusObject.disable();
 }
