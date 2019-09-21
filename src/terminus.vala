@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 using Gtk;
 using Gee;
@@ -207,6 +208,7 @@ namespace Terminus {
 		private bool ready;
 		private int extcall;
 		private bool guake_has_focus;
+		private string ? guake_title;
 
 		private bool tmp_launch_terminal;
 		private bool tmp_launch_guake;
@@ -222,6 +224,7 @@ namespace Terminus {
 			this.guake_terminal  = null;
 			this.guake_window    = null;
 			this.guake_has_focus = false;
+			this.guake_title     = null;
 
 			bool binded_key = Terminus.bindkey.set_bindkey(Terminus.keybind_settings.get_string("guake-mode"));
 
@@ -229,6 +232,7 @@ namespace Terminus {
 
 			this.launch_guake = parameters.launch_guake;
 			this.check_guake  = parameters.check_guake;
+			this.guake_title  = parameters.UUID;
 
 			this.tmp_launch_terminal = true;
 			this.tmp_launch_guake    = false;
@@ -278,6 +282,10 @@ namespace Terminus {
 					    show_hide_global(this.extcall);
 					}
 				}, () => {
+					// if we are checking to launch guake, and there is already a process, return an error
+					if (this.check_guake) {
+						Posix.exit(1);
+					}
 					// if there is another Terminus process, ask it to open a new window and exit
 					RemoteControlInterface server = Bus.get_proxy_sync(BusType.SESSION, "com.rastersoft.terminus", "/com/rastersoft/terminus");
 					if (this.tmp_launch_terminal) {
@@ -353,7 +361,7 @@ namespace Terminus {
 				if (this.guake_terminal == null) {
 					this.guake_terminal = new Terminus.Base();
 				}
-				window            = new Terminus.Window(true, tid_counter, this.guake_terminal);
+				window            = new Terminus.Window(true, tid_counter, this.guake_terminal, this.guake_title);
 				this.guake_window = window;
 				Terminus.bindkey.show_guake.connect(this.show_hide);
 				this.guake_window.focus_in_event.connect(this.focus_in);

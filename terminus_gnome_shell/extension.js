@@ -1,10 +1,28 @@
+/*
+ * Copyright 2016-2019 (C) Raster Software Vigo (Sergio Costas)
+ *
+ * This file is part of Terminus
+ *
+ * Terminus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Terminus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-const Main = imports.ui.main;
+const GLib = imports.gi.GLib;
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
 const Gio = imports.gi.Gio;
-const Lang = imports.lang;
-const ExtensionUtils = imports.misc.extensionUtils;
+const Main = imports.ui.main;
+const Mainloop = imports.mainloop;
 
 const MyIface = '<node>\
     <interface name="com.rastersoft.terminus">\
@@ -19,7 +37,8 @@ const MyIface = '<node>\
 
 const MyProxy = Gio.DBusProxy.makeProxyWrapper(MyIface);
 const GioSSS = Gio.SettingsSchemaSource;
-var terminusObject;
+
+let terminusObject;
 
 class TerminusClass {
 
@@ -27,6 +46,40 @@ class TerminusClass {
 		this._settings = new Gio.Settings({ schema: 'org.rastersoft.terminus.keybindings' });
 		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
+		this._shown_error = false;
+		this._launch_process();
+	}
+
+	_launch_process() {
+		let argv = [];
+		argv.push("terminus");
+		argv.push("--check_guake_wayland");
+		this._currentProcess = new LaunchSubprocess(0, "TERMINUS", "--uuid");
+		this._currentProcess.spawnv(argv);
+		this._currentProcess.subprocess.wait_async(null, () => {
+			this._reloadTime = 100;
+			if (this._currentProcess.subprocess.get_if_exited()) {
+				let retVal = this._currentProcess.subprocess.get_exit_status();
+				if (retVal == 1) {
+					Main.notify("Can't launch Terminus", "There is already an instance of Terminus running. You must kill all of them to allow Terminus guake mode to work.");
+					this._shown_error = true;
+					this._reloadTime = 1000;
+				} else {
+					this._shown_error = false;
+				}
+			} else {
+				this._shown_error = false;
+			}
+			this._desktopWindow = null;
+			this._currentProcess = null;
+			if (this._launchDesktopId) {
+				GLib.source_remove(this._launchDesktopId);
+			}
+			this._launchProcessId = Mainloop.timeout_add(this._reloadTime, () => {
+				this._launchProcessId = 0;
+				this._launch_process();
+			});
+		});
 	}
 
 	enable() {
@@ -49,11 +102,34 @@ class TerminusClass {
 				});
 			}
 		);
+		this._idMap = global.window_manager.connect_after('map', (obj, windowActor) => {
+            if (!this._currentProcess) {
+                return false;
+            }
+            let window = windowActor.get_meta_window();
+            let belongs;
+            try {
+                belongs = this._currentProcess.query_window_belongs_to(window);
+            } catch(err) {
+                belongs = false;
+            }
+            if (belongs) {
+				// This is the Guake Terminal window, so ensure that it is kept above and shown in all workspaces
+				window.make_above();
+				window.stick();
+				let ws = global.workspace_manager.get_workspace_by_index(0);
+				let area = ws.get_work_area_for_monitor(0);
+				window.move_frame(false, area.x, area.y);
+			}
+		});
 	}
 
 	disable() {
 		if (this._settingsChangedConnect) {
 			this._settings.disconnect(this._settingsChangedConnect);
+		}
+		if (this._idMap) {
+			global.window_manager.disconnect(this._idMap);
 		}
 		Main.wm.removeKeybinding("guake-mode-gnome-shell");
 	}
@@ -90,10 +166,10 @@ function disable() {
  *
  * It is compatible with https://gitlab.gnome.org/GNOME/mutter/merge_requests/754 to simplify the code
  *
- * @param {int} flags Flags for the SubprocessLauncher class
- * @param {string} process_id An string id for the debug output
+ * @param {int}    flags         Flags for the SubprocessLauncher class
+ * @param {string} process_id    An string id for the debug output
  * @param {string} cmd_parameter A command line parameter to pass when running. It will be passed only under Wayland,
- *                          so, if this parameter isn't passed, the app can assume that it is running under X11.
+ *                               so, if this parameter isn't passed, the app can assume that it is running under X11.
  */
 var LaunchSubprocess = class {
 

@@ -64,7 +64,7 @@ namespace Terminus {
 #endif
 		}
 
-		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null) {
+		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null, string ? window_title = null) {
 			this.terminal_id = id;
 			this.is_guake    = guake_mode;
 			this.initialized = 0;
@@ -95,6 +95,9 @@ namespace Terminus {
 			});
 
 			if (guake_mode) {
+				if (window_title != null) {
+					this.title = window_title;
+				}
 				this.set_properties();
 
 				this.current_size = Terminus.settings.get_int("guake-height");

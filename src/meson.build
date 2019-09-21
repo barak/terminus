@@ -4,7 +4,7 @@ cfg_terminus.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
-cfg_terminus.set('VERSION', '1.5.0')
+cfg_terminus.set('VERSION', '1.6.0')
 cfg_terminus.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_2 = configure_file(
@@ -16,9 +16,11 @@ terminus_deps = [gdk_3_0_dep]
 terminus_deps += [gtk_3_0_dep]
 terminus_deps += [gee_0_8_dep]
 terminus_deps += [gio_2_0_dep]
+terminus_deps += [gio_unix_2_0_dep]
 terminus_deps += [glib_2_0_dep]
 terminus_deps += [gobject_2_0_dep]
 terminus_deps += [keybinder_3_0_dep]
+terminus_deps += [pango_dep]
 terminus_deps += [vte_2_91_dep]
 terminus_sources = [cfgfile_2]
 terminus_sources += ['PanedPercentage.vala']

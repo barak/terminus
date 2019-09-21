@@ -33,7 +33,11 @@ namespace Terminus {
 		public signal void show_guake();
 
 		public Bindkey(bool use_bindkey) {
-			this.use_bindkey = use_bindkey;
+			if (check_wayland() != 0) {
+				this.use_bindkey = false;
+			} else {
+				this.use_bindkey = use_bindkey;
+			}
 			if (this.use_bindkey) {
 				Keybinder.init();
 			}

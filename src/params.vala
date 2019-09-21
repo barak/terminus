@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//using GIO
+//using GIO-unix
 
 namespace Terminus {
 	class Parameters : Object {
@@ -25,6 +27,7 @@ namespace Terminus {
 		public bool check_guake;
 		public string[] command;
 		public string ? working_directory;
+		public string ? UUID;
 
 		public Parameters(string [] argv) {
 			int param_counter = 0;
@@ -34,6 +37,7 @@ namespace Terminus {
 			this.check_guake       = false;
 			this.working_directory = null;
 			this.command           = {};
+			this.UUID              = null;
 
 			var add_commands = false;
 
@@ -47,6 +51,12 @@ namespace Terminus {
 				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
 					this.show_usage(0);
 					break;
+				}
+				if (argv[param_counter] == "--uuid") {
+					var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
+					this.UUID = stdinInput.read_line();
+					stdinInput.close();
+					continue;
 				}
 				if (argv[param_counter] == "--guake") {
 					this.launch_guake = true;
