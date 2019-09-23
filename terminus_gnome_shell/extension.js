@@ -104,17 +104,17 @@ class TerminusClass {
 			}
 		);
 		this._idMap = global.window_manager.connect_after('map', (obj, windowActor) => {
-            if (!this._currentProcess) {
-                return false;
-            }
-            let window = windowActor.get_meta_window();
-            let belongs;
-            try {
-                belongs = this._currentProcess.query_window_belongs_to(window);
-            } catch(err) {
-                belongs = false;
-            }
-            if (belongs) {
+			if (!this._currentProcess) {
+				return false;
+			}
+			let window = windowActor.get_meta_window();
+			let belongs;
+			try {
+				belongs = this._currentProcess.query_window_belongs_to(window);
+			} catch (err) {
+				belongs = false;
+			}
+			if (belongs) {
 				// This is the Guake Terminal window, so ensure that it is kept above and shown in all workspaces
 				window.make_above();
 				window.stick();
