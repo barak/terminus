@@ -207,7 +207,6 @@ namespace Terminus {
 		private Terminus.Window ? guake_window;
 		private bool ready;
 		private int extcall;
-		private bool guake_has_focus;
 		private string ? guake_title;
 
 		private bool tmp_launch_terminal;
@@ -223,7 +222,6 @@ namespace Terminus {
 			main_root            = this;
 			this.guake_terminal  = null;
 			this.guake_window    = null;
-			this.guake_has_focus = false;
 			this.guake_title     = null;
 
 			bool binded_key = Terminus.bindkey.set_bindkey(Terminus.keybind_settings.get_string("guake-mode"));
@@ -344,16 +342,6 @@ namespace Terminus {
 			Terminus.bindkey.show_guake.connect(this.show_hide);
 		}
 
-		public bool focus_in(Gdk.EventFocus event) {
-			this.guake_has_focus = true;
-			return false;
-		}
-
-		public bool focus_out(Gdk.EventFocus event) {
-			this.guake_has_focus = false;
-			return false;
-		}
-
 		public int create_window(bool guake_mode) {
 			Terminus.Window window;
 
@@ -364,8 +352,6 @@ namespace Terminus {
 				window            = new Terminus.Window(true, tid_counter, this.guake_terminal, this.guake_title);
 				this.guake_window = window;
 				Terminus.bindkey.show_guake.connect(this.show_hide);
-				this.guake_window.focus_in_event.connect(this.focus_in);
-				this.guake_window.focus_out_event.connect(this.focus_out);
 			} else {
 				window = new Terminus.Window(false, tid_counter);
 			}
@@ -429,12 +415,7 @@ namespace Terminus {
 
 			// mode 2
 			if (this.guake_window.visible) {
-				if ((check_wayland() != 0) && (!this.guake_has_focus)) {
-					this.guake_window.hide();
-					this.guake_window.show();
-				} else {
-					this.guake_window.hide();
-				}
+				this.guake_window.hide();
 			} else {
 				this.guake_window.present();
 			}

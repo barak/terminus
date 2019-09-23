@@ -48,20 +48,13 @@ namespace Terminus {
 		private Terminus.Base terminal;
 		private int initialized;
 
-		private int get_monitor_width() {
-#if GTK_3_20
-			return this.get_screen().get_width();
-#else
-			return this.get_display().get_monitor_at_window(this.get_window().get_effective_toplevel()).get_geometry().width;
-#endif
-		}
-
-		private int get_monitor_height() {
-#if GTK_3_20
-			return this.get_screen().get_height();
-#else
-			return this.get_display().get_monitor_at_window(this.get_window().get_effective_toplevel()).get_geometry().height;
-#endif
+		private Gdk.Rectangle get_monitor_workarea() {
+			var display = Gdk.Display.get_default();
+			var monitor = display.get_primary_monitor();
+			var workarea = monitor.get_workarea();
+			var geometry = monitor.get_geometry();
+			print("workarea: %dx%d; %dx%d\ngeometria %dx%d; %d;%d\n", workarea.x, workarea.y, workarea.width, workarea.height, geometry.x, geometry.y, geometry.width, geometry.height);
+			return workarea;
 		}
 
 		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null, string ? window_title = null) {
@@ -101,8 +94,8 @@ namespace Terminus {
 				this.set_properties();
 
 				this.current_size = Terminus.settings.get_int("guake-height");
-				if (this.current_size < 0) {
-					this.current_size = this.get_monitor_height() * 3 / 7;
+				if (this.current_size <= 0) {
+					this.current_size = this.get_monitor_workarea().height * 3 / 7;
 					Terminus.settings.set_int("guake-height", this.current_size);
 				}
 
@@ -143,7 +136,7 @@ namespace Terminus {
 					int newval         = y - this.mouseY;
 					this.current_size += newval;
 					this.mouseY        = y;
-					this.resize(this.get_monitor_width(), this.current_size);
+					this.resize(this.get_monitor_workarea().width, this.current_size);
 					this.paned.set_position(this.current_size);
 					return true;
 				});
@@ -195,9 +188,10 @@ namespace Terminus {
 		}
 
 		private void set_size() {
-			this.move(0, 0);
+			var workarea = this.get_monitor_workarea();
+			this.move(workarea.x, workarea.y);
 			this.paned.set_position(this.current_size);
-			this.resize(this.get_monitor_width(), this.current_size);
+			this.resize(workarea.width, this.current_size);
 		}
 	}
 }
