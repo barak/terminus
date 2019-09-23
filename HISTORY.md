@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 1.6.0 (2019-09-23)
+  * Now the Wayland version (under gnome shell) works like the X11 one (is shown over all windows, and in all workspaces)
+  * Now the "guake" terminal is show always in the primary monitor
 * Version 1.5.0 (2019-05-06)
   * Now PASTE works with clipboard managers
 * Version 1.4.1 (2019-03-26)
