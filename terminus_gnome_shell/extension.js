@@ -44,6 +44,7 @@ class TerminusClass {
 
 	constructor() {
 		this._settings = new Gio.Settings({ schema: 'org.rastersoft.terminus.keybindings' });
+		this._settings2 = new Gio.Settings({ schema: 'org.rastersoft.terminus' });
 		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
 		this._shown_error = false;
@@ -119,7 +120,16 @@ class TerminusClass {
 				window.stick();
 				let ws = global.workspace_manager.get_workspace_by_index(0);
 				let area = ws.get_work_area_for_monitor(0);
-				window.move_frame(false, area.x, area.y);
+				let height = this._settings2.get_int('guake-height');
+				if (height <= 0) {
+					height = int(area.height() * 3 / 7);
+					this._settings2.set_int('guake-height');
+				}
+				if (height >= area.height) {
+					height = int(area.height() * 5 / 7);
+					this._settings2.set_int('guake-height');
+				}
+				window.move_resize_frame(false, area.x, area.y, area.width, this._settings2.get_int('guake-height'));
 			}
 		});
 	}
