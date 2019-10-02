@@ -1,7 +1,5 @@
 project('terminus',['c','vala'])
 
-GTK_3_20 = (get_option('GTK_3_20') != '')
-
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
 find_program ('glib-compile-resources')

@@ -580,11 +580,7 @@ namespace Terminus {
 		public bool button_event(Gdk.EventButton event) {
 			if (event.button == 3) {
 				this.item_copy.sensitive = this.vte_terminal.get_has_selection();
-#if GTK_3_20
-				this.menu.popup(null, null, null, 3, Gtk.get_current_event_time());
-#else
 				this.menu.popup_at_pointer(event);
-#endif
 				return true;
 			}
 

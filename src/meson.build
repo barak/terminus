@@ -39,17 +39,11 @@ terminus_sources += [join_paths(meson.current_source_dir(),'checkwayland.vapi')]
 terminus_vala_args = ['--pkg','posix']
 terminus_vala_args += ['--vapidir='+join_paths(meson.source_root(),'src/vapidir')]
 terminus_vala_args += ['--gresources='+join_paths(meson.source_root(),'data/extras.gresource.xml')]
-terminus_c_args = []
-if GTK_3_20
-  terminus_vala_args += ['-D', 'GTK_3_20']
-  terminus_c_args += ['-DGTK_3_20']
-endif
 terminus_link_args = ['-rdynamic']
 
 executable('terminus',terminus_sources,
     dependencies: terminus_deps,
     vala_args: terminus_vala_args,
-    c_args: terminus_c_args,
     link_args: terminus_link_args,
     install: true)
 
