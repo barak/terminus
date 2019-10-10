@@ -1,5 +1,9 @@
 # History of versions #
 
+* Version 1.7.0 (2019-10-11)
+  * Fixed the right-click menu under Wayland
+  * Fixed several compiling warnings
+  * Removed deprecated calls
 * Version 1.6.0 (2019-09-23)
   * Now the Wayland version (under gnome shell) works like the X11 one (is shown over all windows, and in all workspaces)
   * Now the "guake" terminal is show always in the primary monitor
