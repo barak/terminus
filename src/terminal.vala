@@ -34,12 +34,16 @@ namespace Terminus {
 		private Gtk.Label title;
 		private Gtk.EventBox titlebox;
 		private Gtk.EventBox closeButton;
-		private Gtk.Menu menu;
-		private Gtk.MenuItem item_copy;
+		private Gtk.Popover menuPopover;
+		private Gtk.Button item_copy;
+		private Gtk.Box menu_container;
 		private Terminus.Container top_container;
 		private Terminus.Container container;
 		private Terminus.Base main_container;
 		private Gtk.Scrollbar right_scroll;
+		private double title_r;
+		private double title_g;
+		private double title_b;
 
 		private Gdk.EventKey new_tab_key;
 		private Gdk.EventKey new_window_key;
@@ -59,10 +63,88 @@ namespace Terminus {
 
 
 		private void add_separator() {
-			var separator = new Gtk.SeparatorMenuItem();
+			var separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
 			separator.margin_top    = 5;
 			separator.margin_bottom = 5;
-			this.menu.add(separator);
+			this.menu_container.pack_start(separator, false, true, 0);
+		}
+
+		private Gtk.Button new_menu_element(string text, string? icon = null) {
+			Gtk.Button item;
+			if (icon == null) {
+				item = new Gtk.Button.with_label(_(text));
+			} else {
+				item = new Gtk.Button();
+				var tmpbox   = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
+				var tmplabel = new Gtk.Label(_(text));
+				var tmpicon  = new Gtk.Image.from_resource(icon);
+				tmpbox.pack_start(tmpicon, false, true);
+				tmpbox.pack_start(tmplabel, false, true);
+				item.add(tmpbox);
+			}
+			item.relief = Gtk.ReliefStyle.NONE;
+			this.menu_container.pack_start(item, false, true, 0);
+			return item;
+		}
+
+		private void create_menu() {
+
+			this.menu_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			this.item_copy = this.new_menu_element("Copy");
+			this.item_copy.clicked.connect(() => {
+				this.do_copy();
+				this.menuPopover.hide();
+			});
+
+			var item = this.new_menu_element("Paste");
+			item.clicked.connect(() => {
+				this.do_paste();
+				this.menuPopover.hide();
+			});
+
+			this.add_separator();
+
+			item = this.new_menu_element("Split horizontally", "/com/rastersoft/terminus/pixmaps/horizontal.svg");
+			item.clicked.connect(() => {
+				this.split_horizontal(this);
+				this.menuPopover.hide();
+			});
+			item = this.new_menu_element("Split vertically", "/com/rastersoft/terminus/pixmaps/vertical.svg");
+			item.clicked.connect(() => {
+				this.split_vertical(this);
+				this.menuPopover.hide();
+			});
+
+			item = this.new_menu_element("New tab");
+			item.clicked.connect(() => {
+				this.main_container.new_terminal_tab();
+				this.menuPopover.hide();
+			});
+
+			item = this.new_menu_element("New window");
+			item.clicked.connect(() => {
+				this.main_container.new_terminal_window();
+				this.menuPopover.hide();
+			});
+
+			this.add_separator();
+
+			item = this.new_menu_element("Preferences");
+			item.clicked.connect(() => {
+				this.menuPopover.hide();
+				Terminus.main_root.window_properties.show_all();
+				Terminus.main_root.window_properties.present();
+			});
+
+			this.add_separator();
+
+			item = this.new_menu_element("Close");
+			item.clicked.connect(() => {
+				this.menuPopover.hide();
+				Posix.kill(this.pid, 9);
+			});
+			this.menuPopover = new Gtk.Popover(this.title);
+			this.menuPopover.add(menu_container);
 		}
 
 		public void do_grab_focus() {
@@ -102,6 +184,11 @@ namespace Terminus {
 
 			this.title    = new Gtk.Label("");
 			this.titlebox = new Gtk.EventBox();
+			this.titlebox.draw.connect((cr) => {
+				cr.set_source_rgb(this.title_r, this.title_g, this.title_b);
+				cr.paint();
+				return false;
+			});
 			// a titlebox to have access to the background color
 			this.titlebox.add(this.title);
 
@@ -127,8 +214,6 @@ namespace Terminus {
 
 			this.vte_terminal = new Vte.Terminal();
 
-			// by default, UTF-8
-			this.vte_terminal.set_encoding(null);
 
 			this.vte_terminal.window_title_changed.connect_after(() => {
 				this.update_title();
@@ -177,76 +262,7 @@ namespace Terminus {
 				this.ended(this);
 			});
 
-			this.menu      = new Gtk.Menu();
-			this.item_copy = new Gtk.MenuItem.with_label(_("Copy"));
-			this.item_copy.activate.connect(() => {
-				this.do_copy();
-			});
-			this.menu.add(this.item_copy);
-
-			var item = new Gtk.MenuItem.with_label(_("Paste"));
-			item.activate.connect(() => {
-				this.do_paste();
-			});
-			this.menu.add(item);
-
-			this.add_separator();
-
-			item = new Gtk.MenuItem();
-			var tmpbox   = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-			var tmplabel = new Gtk.Label(_("Split horizontally"));
-			var tmpicon  = new Gtk.Image.from_resource("/com/rastersoft/terminus/pixmaps/horizontal.svg");
-			tmpbox.pack_start(tmpicon, false, true);
-			tmpbox.pack_start(tmplabel, false, true);
-			item.add(tmpbox);
-			item.activate.connect(() => {
-				this.split_horizontal(this);
-			});
-			this.menu.add(item);
-
-			item     = new Gtk.MenuItem();
-			tmpbox   = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-			tmplabel = new Gtk.Label(_("Split vertically"));
-			tmpicon  = new Gtk.Image.from_resource("/com/rastersoft/terminus/pixmaps/vertical.svg");
-			tmpbox.pack_start(tmpicon, false, true);
-			tmpbox.pack_start(tmplabel, false, true);
-			item.add(tmpbox);
-			item.activate.connect(() => {
-				this.split_vertical(this);
-			});
-			this.menu.add(item);
-
-			item = new Gtk.MenuItem.with_label(_("New tab"));
-			item.activate.connect(() => {
-				this.main_container.new_terminal_tab();
-			});
-			this.menu.add(item);
-
-			item = new Gtk.MenuItem.with_label(_("New window"));
-			item.activate.connect(() => {
-				this.main_container.new_terminal_window();
-			});
-			this.menu.add(item);
-
-			this.add_separator();
-
-			item = new Gtk.MenuItem.with_label(_("Preferences"));
-			item.activate.connect(() => {
-				Terminus.main_root.window_properties.show_all();
-				Terminus.main_root.window_properties.present();
-			});
-			this.menu.add(item);
-
-			this.add_separator();
-
-			item = new Gtk.MenuItem.with_label(_("Close"));
-			item.activate.connect(() => {
-				Posix.kill(this.pid, 9);
-			});
-			this.menu.add(item);
-			this.menu.show_all();
-
-			this.show_all();
+			this.create_menu();
 
 			this.vte_terminal.button_press_event.connect(this.button_event);
 			this.vte_terminal.events = Gdk.EventMask.BUTTON_PRESS_MASK;
@@ -289,6 +305,8 @@ namespace Terminus {
 			settings_changed("terminal-bell");
 			settings_changed("allow-bold");
 			settings_changed("rewrap-on-resize");
+
+			this.show_all();
 		}
 
 		public bool update_title_cb() {
@@ -402,9 +420,9 @@ namespace Terminus {
 				this.vte_terminal.audible_bell = Terminus.settings.get_boolean(key);
 				break;
 
-			case "rewrap-on-resize":
+			/*case "rewrap-on-resize":
 				this.vte_terminal.rewrap_on_resize = Terminus.settings.get_boolean(key);
-				break;
+				break;*/
 
 			case "allow-bold":
 				this.vte_terminal.allow_bold = Terminus.settings.get_boolean(key);
@@ -554,33 +572,30 @@ namespace Terminus {
 			}
 			this.top_container.set_tab_title(s_title);
 
-			var    bgcolor = Gdk.RGBA();
 			string fg;
 			string bg;
 			if (this.vte_terminal.has_focus) {
-				bgcolor.red   = 1.0;
-				bgcolor.green = 0.0;
-				bgcolor.blue  = 0.0;
-				bgcolor.alpha = 1.0;
+				this.title_r  = 1.0;
+				this.title_g  = 0.0;
+				this.title_b  = 0.0;
 				fg            = "#FFFFFF";
 				bg            = "#FF0000";
 			} else {
-				bgcolor.red   = 0.6666666;
-				bgcolor.green = 0.6666666;
-				bgcolor.blue  = 0.6666666;
-				bgcolor.alpha = 1.0;
+				this.title_r  = 0.6666666;
+				this.title_g  = 0.6666666;
+				this.title_b  = 0.6666666;
 				fg            = "#000000";
 				bg            = "#AAAAAA";
 			}
 			this.title.use_markup = true;
 			this.title.label      = "<span foreground=\"%s\" background=\"%s\" size=\"small\">%s %ldx%ld</span>".printf(fg, bg, s_title, this.vte_terminal.get_column_count(), this.vte_terminal.get_row_count());
-			this.titlebox.override_background_color(Gtk.StateFlags.NORMAL, bgcolor);
+			this.titlebox.queue_draw();
 		}
 
 		public bool button_event(Gdk.EventButton event) {
 			if (event.button == 3) {
 				this.item_copy.sensitive = this.vte_terminal.get_has_selection();
-				this.menu.popup_at_pointer(event);
+				this.menuPopover.show_all();
 				return true;
 			}
 

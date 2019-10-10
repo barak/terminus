@@ -250,7 +250,6 @@ namespace Terminus {
 			Terminus.settings.bind("scroll-on-keystroke", main_window.get_object("scroll_on_keystroke") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("enable-guake-mode", this.enable_guake_mode, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("terminal-bell", main_window.get_object("terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
-			Terminus.settings.bind("rewrap-on-resize", main_window.get_object("rewrap_on_resize") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("allow-bold", main_window.get_object("allow_bold") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("shell-command", main_window.get_object("command_shell") as Gtk.Entry, "text", GLib.SettingsBindFlags.DEFAULT);
 

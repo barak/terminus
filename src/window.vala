@@ -52,7 +52,6 @@ namespace Terminus {
 			var display  = Gdk.Display.get_default();
 			var monitor  = display.get_primary_monitor();
 			var workarea = monitor.get_workarea();
-			var geometry = monitor.get_geometry();
 			return workarea;
 		}
 
