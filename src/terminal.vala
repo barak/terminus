@@ -184,7 +184,7 @@ namespace Terminus {
 
 			this.title    = new Gtk.Label("");
 			this.titlebox = new Gtk.EventBox();
-			this.titlebox.draw.connect((cr) => {
+			this.title.draw.connect((cr) => {
 				cr.set_source_rgb(this.title_r, this.title_g, this.title_b);
 				cr.paint();
 				return false;
