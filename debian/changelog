@@ -1,3 +1,9 @@
+terminus (1.7.1-Debian1) sid; urgency=low
+
+  * Fixed red color spilling outside the window
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2019 23:55:00 +0200
+
 terminus (1.7.0-Debian1) sid; urgency=low
 
   * Fixed the right-click menu under Wayland

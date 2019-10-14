@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.7.1 (2019-10-14)
+  * Fixed red color spilling outside the window
 * Version 1.7.0 (2019-10-11)
   * Fixed the right-click menu under Wayland
   * Fixed several compiling warnings
