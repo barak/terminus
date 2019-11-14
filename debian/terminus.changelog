@@ -1,5 +1,5 @@
-terminus (1.5.0-1) unstable; urgency=medium
+terminus (1.7.1-1) unstable; urgency=medium
 
   * Initial Release (closes: #921601)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 21 May 2019 12:42:48 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 14 Nov 2019 13:14:30 +0000
