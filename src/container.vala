@@ -27,7 +27,7 @@ namespace Terminus {
 	 * one.
 	 */
 
-	public enum MoveFocus {UP, DOWN, LEFT, RIGHT}
+	public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
 
 	class Container : Gtk.Bin {
 		public Terminus.Container ? container1;
@@ -44,7 +44,7 @@ namespace Terminus {
 		public signal void ended(Terminus.Container who);
 
 		public Container(Terminus.Base main_container, Terminus.Terminal ? terminal, Terminus.Container ? top_container, Terminus.Container ? upper_container) {
-			this.main_container = main_container;
+			this.main_container  = main_container;
 			this.upper_container = upper_container;
 			if (top_container == null) {
 				this.top_container = this;
@@ -129,14 +129,14 @@ namespace Terminus {
 			this.terminal = null;
 		}
 
-		public void move_focus(MoveFocus direction, Terminus.Container ? sender, bool searching_up) {
+		public void move_terminal_focus(MoveFocus direction, Terminus.Container ? sender, bool searching_up) {
 			if (sender == null) {
 				sender = this.container1;
 			}
 			if (this.terminal != null) {
 				if (searching_up) {
 					if (this.upper_container != null) {
-						this.upper_container.move_focus(direction, this, true);
+						this.upper_container.move_terminal_focus(direction, this, true);
 					}
 				} else {
 					this.terminal.do_grab_focus();
@@ -149,53 +149,54 @@ namespace Terminus {
 				if (searching_up) {
 					if (this.splited_horizontal) {
 						if ((direction == Terminus.MoveFocus.UP) && (sender == this.container2)) {
-							this.container1.move_focus(direction, this, false);
+							this.container1.move_terminal_focus(direction, this, false);
 						} else if ((direction == Terminus.MoveFocus.DOWN) && (sender == this.container1)) {
-							this.container2.move_focus(direction, this, false);
+							this.container2.move_terminal_focus(direction, this, false);
 						} else {
 							if (this.upper_container != null) {
-								this.upper_container.move_focus(direction, this, true);
+								this.upper_container.move_terminal_focus(direction, this, true);
 							}
 						}
 					} else {
 						if (this.upper_container != null) {
-							this.upper_container.move_focus(direction, this, true);
+							this.upper_container.move_terminal_focus(direction, this, true);
 						}
 					}
 				} else {
 					if (direction == Terminus.MoveFocus.UP) {
-						this.container2.move_focus(direction, this, false);
+						this.container2.move_terminal_focus(direction, this, false);
 					} else {
-						this.container1.move_focus(direction, this, false);
+						this.container1.move_terminal_focus(direction, this, false);
 					}
 				}
-			break;
+				break;
+
 			case Terminus.MoveFocus.LEFT:
 			case Terminus.MoveFocus.RIGHT:
 				if (searching_up) {
 					if (!this.splited_horizontal) {
 						if ((direction == Terminus.MoveFocus.LEFT) && (sender == this.container2)) {
-							this.container1.move_focus(direction, this, false);
+							this.container1.move_terminal_focus(direction, this, false);
 						} else if ((direction == Terminus.MoveFocus.RIGHT) && (sender == this.container1)) {
-							this.container2.move_focus(direction, this, false);
+							this.container2.move_terminal_focus(direction, this, false);
 						} else {
 							if (this.upper_container != null) {
-								this.upper_container.move_focus(direction, this, true);
+								this.upper_container.move_terminal_focus(direction, this, true);
 							}
 						}
 					} else {
 						if (this.upper_container != null) {
-							this.upper_container.move_focus(direction, this, true);
+							this.upper_container.move_terminal_focus(direction, this, true);
 						}
 					}
 				} else {
 					if (direction == Terminus.MoveFocus.LEFT) {
-						this.container2.move_focus(direction, this, false);
+						this.container2.move_terminal_focus(direction, this, false);
 					} else {
-						this.container1.move_focus(direction, this, false);
+						this.container1.move_terminal_focus(direction, this, false);
 					}
 				}
-			break;
+				break;
 			}
 		}
 

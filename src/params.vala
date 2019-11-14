@@ -14,8 +14,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
- 
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+//using GIO
+//using GIO-unix
 
 namespace Terminus {
 	class Parameters : Object {
@@ -24,6 +27,7 @@ namespace Terminus {
 		public bool check_guake;
 		public string[] command;
 		public string ? working_directory;
+		public string ? UUID;
 
 		public Parameters(string [] argv) {
 			int param_counter = 0;
@@ -33,6 +37,7 @@ namespace Terminus {
 			this.check_guake       = false;
 			this.working_directory = null;
 			this.command           = {};
+			this.UUID              = null;
 
 			var add_commands = false;
 
@@ -47,11 +52,27 @@ namespace Terminus {
 					this.show_usage(0);
 					break;
 				}
+				if (argv[param_counter] == "--uuid") {
+					var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
+					this.UUID = stdinInput.read_line();
+					stdinInput.close();
+					continue;
+				}
 				if (argv[param_counter] == "--guake") {
 					this.launch_guake = true;
 					continue;
 				}
 				if (argv[param_counter] == "--check_guake") {
+					if (check_wayland() != 0) {
+						Posix.exit(0);
+					}
+					this.check_guake = true;
+					continue;
+				}
+				if (argv[param_counter] == "--check_guake_wayland") {
+					if (check_wayland() == 0) {
+						Posix.exit(0);
+					}
 					this.check_guake = true;
 					continue;
 				}
@@ -118,7 +139,8 @@ Options:
   -e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
   --working-directory=DIRNAME   sets the terminal directory to DIRNAME
   --guake                       launch Terminus in background
-  --check_guake                 launch Terminus in background and return if there is already another Terminus process
+  --check_guake                 launch Terminus in background and return if there is already another Terminus process, or in Wayland
+  --check_guake_wayland         launch Terminus in background and return if there is already another Terminus process, or in X11
   --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
 
 """));

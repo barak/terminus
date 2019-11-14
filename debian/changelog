@@ -1,3 +1,24 @@
+terminus (1.7.1-Debian1) sid; urgency=low
+
+  * Fixed red color spilling outside the window
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2019 23:55:00 +0200
+
+terminus (1.7.0-Debian1) sid; urgency=low
+
+  * Fixed the right-click menu under Wayland
+  * Fixed several compiling warnings
+  * Removed deprecated calls
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 11 Oct 2019 23:55:00 +0200
+
+terminus (1.6.0-Debian1) sid; urgency=low
+
+  * Now the Wayland version (under gnome shell) works like the X11 one (is shown over all windows, and in all workspaces)
+  * Now the "guake" terminal is show always in the primary monitor
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 23 Sep 2019 23:55:00 +0200
+
 terminus (1.5.0-Debian1) sid; urgency=low
 
   * Now PASTE works with clipboard managers

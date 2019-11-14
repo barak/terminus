@@ -48,23 +48,14 @@ namespace Terminus {
 		private Terminus.Base terminal;
 		private int initialized;
 
-		private int get_monitor_width() {
-#if GTK_3_20
-			return this.get_screen().get_width();
-#else
-			return this.get_display().get_monitor_at_window(this.get_window().get_effective_toplevel()).get_geometry().width;
-#endif
+		private Gdk.Rectangle get_monitor_workarea() {
+			var display  = Gdk.Display.get_default();
+			var monitor  = display.get_primary_monitor();
+			var workarea = monitor.get_workarea();
+			return workarea;
 		}
 
-		private int get_monitor_height() {
-#if GTK_3_20
-			return this.get_screen().get_height();
-#else
-			return this.get_display().get_monitor_at_window(this.get_window().get_effective_toplevel()).get_geometry().height;
-#endif
-		}
-
-		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null) {
+		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null, string ? window_title = null) {
 			this.terminal_id = id;
 			this.is_guake    = guake_mode;
 			this.initialized = 0;
@@ -95,15 +86,17 @@ namespace Terminus {
 			});
 
 			if (guake_mode) {
+				if (window_title != null) {
+					this.title = window_title;
+				}
 				this.set_properties();
 
 				this.current_size = Terminus.settings.get_int("guake-height");
-				if (this.current_size < 0) {
-					this.current_size = this.get_monitor_height() * 3 / 7;
+				if ((this.current_size <= 0) && (check_wayland() == 0)) {
+					this.current_size = this.get_monitor_workarea().height * 3 / 7;
 					Terminus.settings.set_int("guake-height", this.current_size);
 				}
-
-				this.map.connect(this.mapped);
+				this.map.connect_after(this.mapped);
 				this.realize.connect_after(() => {
 					this.set_size();
 				});
@@ -120,7 +113,6 @@ namespace Terminus {
 				this.add(this.paned);
 				this.paned.add1(this.terminal);
 				this.fixed = new Terminus.Fixed();
-				//this.fixed.set_size_request(1,1);
 				this.paned.add2(fixed);
 				this.mouseY = -1;
 
@@ -140,7 +132,13 @@ namespace Terminus {
 					int newval         = y - this.mouseY;
 					this.current_size += newval;
 					this.mouseY        = y;
-					this.resize(this.get_monitor_width(), this.current_size);
+					if (check_wayland() == 0) {
+					    this.resize(this.get_monitor_workarea().width, this.current_size);
+					} else {
+					    int width, height;
+					    this.get_size(out width, out height);
+					    this.resize(width, this.current_size);
+					}
 					this.paned.set_position(this.current_size);
 					return true;
 				});
@@ -184,17 +182,27 @@ namespace Terminus {
 		}
 
 		private void set_properties() {
-			this.stick();
-			this.set_keep_above(true);
-			this.set_skip_taskbar_hint(true);
-			this.set_skip_pager_hint(true);
+			if (check_wayland() == 0) {
+				this.stick();
+				this.set_keep_above(true);
+				this.set_skip_taskbar_hint(true);
+				this.set_skip_pager_hint(true);
+			}
 			this.set_decorated(false);
 		}
 
 		private void set_size() {
-			this.move(0, 0);
-			this.paned.set_position(this.current_size);
-			this.resize(this.get_monitor_width(), this.current_size);
+			if (check_wayland() == 0) {
+				var workarea = this.get_monitor_workarea();
+				this.move(workarea.x, workarea.y);
+				this.paned.set_position(this.current_size);
+				this.resize(workarea.width, this.current_size);
+			} else {
+				int width, height;
+				this.get_size(out width, out height);
+				this.resize(width, this.current_size);
+				this.paned.set_position(this.current_size);
+			}
 		}
 	}
 }

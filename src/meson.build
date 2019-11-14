@@ -4,7 +4,7 @@ cfg_terminus.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
-cfg_terminus.set('VERSION', '1.5.0')
+cfg_terminus.set('VERSION', '1.7.1')
 cfg_terminus.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_2 = configure_file(
@@ -16,9 +16,11 @@ terminus_deps = [gdk_3_0_dep]
 terminus_deps += [gtk_3_0_dep]
 terminus_deps += [gee_0_8_dep]
 terminus_deps += [gio_2_0_dep]
+terminus_deps += [gio_unix_2_0_dep]
 terminus_deps += [glib_2_0_dep]
 terminus_deps += [gobject_2_0_dep]
 terminus_deps += [keybinder_3_0_dep]
+terminus_deps += [pango_dep]
 terminus_deps += [vte_2_91_dep]
 terminus_sources = [cfgfile_2]
 terminus_sources += ['PanedPercentage.vala']
@@ -37,17 +39,11 @@ terminus_sources += [join_paths(meson.current_source_dir(),'checkwayland.vapi')]
 terminus_vala_args = ['--pkg','posix']
 terminus_vala_args += ['--vapidir='+join_paths(meson.source_root(),'src/vapidir')]
 terminus_vala_args += ['--gresources='+join_paths(meson.source_root(),'data/extras.gresource.xml')]
-terminus_c_args = []
-if GTK_3_20
-  terminus_vala_args += ['-D', 'GTK_3_20']
-  terminus_c_args += ['-DGTK_3_20']
-endif
 terminus_link_args = ['-rdynamic']
 
 executable('terminus',terminus_sources,
     dependencies: terminus_deps,
     vala_args: terminus_vala_args,
-    c_args: terminus_c_args,
     link_args: terminus_link_args,
     install: true)
 

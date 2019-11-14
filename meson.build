@@ -1,7 +1,5 @@
 project('terminus',['c','vala'])
 
-GTK_3_20 = (get_option('GTK_3_20') != '')
-
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
 find_program ('glib-compile-resources')
@@ -11,9 +9,11 @@ gdk_3_0_dep = dependency('gdk-3.0')
 gtk_3_0_dep = dependency('gtk+-3.0')
 gee_0_8_dep = dependency('gee-0.8')
 gio_2_0_dep = dependency('gio-2.0')
+gio_unix_2_0_dep = dependency('gio-unix-2.0')
 glib_2_0_dep = dependency('glib-2.0')
 gobject_2_0_dep = dependency('gobject-2.0')
 keybinder_3_0_dep = dependency('keybinder-3.0')
+pango_dep = dependency('pango')
 vte_2_91_dep = dependency('vte-2.91')
 
 subdir('po')

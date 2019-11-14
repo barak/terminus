@@ -198,7 +198,7 @@ namespace Terminus {
 				this.palette_scheme.get_active_iter(out iter);
 				GLib.Value selectedCell;
 				this.palette_schemes.get_value(iter, 1, out selectedCell);
-				selected = selectedCell.get_int();
+				selected   = selectedCell.get_int();
 				var scheme = Terminus.main_root.palettes[selected];
 				if (scheme.custom) {
 				    return;
@@ -221,7 +221,7 @@ namespace Terminus {
 				this.color_scheme.get_active_iter(out iter);
 				GLib.Value selectedCell;
 				this.color_schemes.get_value(iter, 1, out selectedCell);
-				selected = selectedCell.get_int();
+				selected   = selectedCell.get_int();
 				var scheme = Terminus.main_root.palettes[selected];
 				if (scheme.custom) {
 				    return;
@@ -250,7 +250,6 @@ namespace Terminus {
 			Terminus.settings.bind("scroll-on-keystroke", main_window.get_object("scroll_on_keystroke") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("enable-guake-mode", this.enable_guake_mode, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("terminal-bell", main_window.get_object("terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
-			Terminus.settings.bind("rewrap-on-resize", main_window.get_object("rewrap_on_resize") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("allow-bold", main_window.get_object("allow_bold") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("shell-command", main_window.get_object("command_shell") as Gtk.Entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
