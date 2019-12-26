@@ -5,8 +5,7 @@
  *
  * Terminus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * the Free Software Foundation; either version 3 of the License.
  *
  * Terminus is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -83,7 +82,25 @@ class TerminusClass {
 		});
 	}
 
+	/**
+	 * Enables the extension
+	 */
 	enable() {
+		// If the desktop is still starting up, we wait until it is ready
+		if (Main.layoutManager._startingUp) {
+			this._startupPreparedId = Main.layoutManager.connect('startup-complete', () => {
+				this._innerEnable();
+			});
+		} else {
+			this._innerEnable();
+		}
+	}
+
+	_innerEnable() {
+		if (this._startupPreparedId) {
+			Main.layoutManager.disconnect(this._startupPreparedId);
+			this._startupPreparedId = null;
+		}
 		this._settingsChangedConnect = this._settings.connect('changed', (st, name) => {
 			this._settingsChanged(name);
 		});
@@ -118,20 +135,26 @@ class TerminusClass {
 				// This is the Guake Terminal window, so ensure that it is kept above and shown in all workspaces
 				window.make_above();
 				window.stick();
-				let ws = global.workspace_manager.get_workspace_by_index(0);
-				let area = ws.get_work_area_for_monitor(0);
-				let height = this._settings2.get_int('guake-height');
-				if (height <= 0) {
-					height = int(area.height() * 3 / 7);
-					this._settings2.set_int('guake-height');
-				}
-				if (height >= area.height) {
-					height = int(area.height() * 5 / 7);
-					this._settings2.set_int('guake-height');
-				}
-				window.move_resize_frame(false, area.x, area.y, area.width, this._settings2.get_int('guake-height'));
+				this._set_window_position(window);
+				window.connect('position-changed', () => {
+					this._set_window_position(window);
+				});
 			}
 		});
+	}
+
+	_set_window_position(window) {
+		let area = window.get_work_area_current_monitor();
+		let height = this._settings2.get_int('guake-height');
+		if (height <= 0) {
+			height = Math.floor(area.height * 3 / 7);
+			this._settings2.set_int('guake-height', height);
+		}
+		if (height >= area.height) {
+			height = Math.floor(area.height * 5 / 7);
+			this._settings2.set_int('guake-height', height);
+		}
+		window.move_resize_frame(false, area.x, area.y, area.width, height);
 	}
 
 	disable() {
