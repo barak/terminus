@@ -5,8 +5,7 @@
  *
  * Terminus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * the Free Software Foundation; either version 3 of the License.
  *
  * Terminus is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +19,7 @@
 using Gtk;
 using Gee;
 
-//project version = 1.7.1
+//project version = 1.8.0
 
 namespace Terminus {
 	TerminusRoot     main_root;
@@ -417,6 +416,7 @@ namespace Terminus {
 			if (this.guake_window.visible) {
 				this.guake_window.hide();
 			} else {
+				this.guake_window.set_screen(null);
 				this.guake_window.present();
 			}
 		}

@@ -1,8 +1,10 @@
-terminus (1.7.1-Debian1) sid; urgency=low
+terminus (1.8.0-Debian1) sid; urgency=low
 
+  * Now, under wayland, opens guake window in the mouse monitor
   * Fixed red color spilling outside the window
+  * Changed license to GPLv3 only
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2019 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 26 Dec 2019 23:55:00 +0200
 
 terminus (1.7.0-Debian1) sid; urgency=low
 
