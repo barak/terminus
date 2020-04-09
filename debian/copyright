@@ -4,7 +4,7 @@ Source: https://gitlab.com/rastersoft/terminus
 
 Files:     *
 Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
-License:   GPL-3.0+
+License:   GPL-3.0
 
 Files:     cmake/*
 Copyright: 2009-2010 Jakob Westhoff
@@ -18,11 +18,10 @@ Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
            2018 Barak A. Pearlmutter <bap@debian.org>
 License:   GPL-3.0+
 
-License:   GPL-3.0+
+License:   GPL-3.0
  Terminus is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
+ it under the terms of the GNU General Public License version 3
+ as published by the Free Software Foundation.
  .
  Terminus is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
