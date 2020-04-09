@@ -19,8 +19,6 @@
 using Gtk;
 using Gee;
 
-//project version = 1.8.0
-
 namespace Terminus {
 	TerminusRoot     main_root;
 	GLib.Settings    settings         = null;

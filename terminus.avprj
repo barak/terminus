@@ -1,6 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
+project_version: 1.9.0
 vala_version: 0.30
 
 custom: terminus_gnome_shell/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
@@ -72,4 +73,3 @@ binary: data/terminus_showhide
 *build_external_program: glib-compile-resources
 *build_external_program: gtk-update-icon-cache gtk-update-icon-cache.3.0
 *build_external_program: glib-compile-schemas
-

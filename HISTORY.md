@@ -1,9 +1,11 @@
 # History of versions #
 
+* Version 1.9.0 (2020-04-09)
+  * Now guarantees under Wayland that occupies the whole width
+  * Changed license to GPLv3 only
 * Version 1.8.0 (2019-12-26)
   * Now, under wayland, opens guake window in the mouse monitor
   * Fixed red color spilling outside the window
-  * Changed license to GPLv3 only
 * Version 1.7.0 (2019-10-11)
   * Fixed the right-click menu under Wayland
   * Fixed several compiling warnings

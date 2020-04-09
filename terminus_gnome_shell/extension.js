@@ -135,6 +135,7 @@ class TerminusClass {
 				// This is the Guake Terminal window, so ensure that it is kept above and shown in all workspaces
 				window.make_above();
 				window.stick();
+				window.maximize(Meta.MaximizeFlags.HORIZONTAL);
 				this._set_window_position(window);
 				window.connect('position-changed', () => {
 					this._set_window_position(window);
