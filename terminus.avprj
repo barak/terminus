@@ -12,7 +12,7 @@ custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerm
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 1.8.0
+*version: 1.9.0
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
@@ -73,3 +73,4 @@ binary: data/terminus_showhide
 *build_external_program: glib-compile-resources
 *build_external_program: gtk-update-icon-cache gtk-update-icon-cache.3.0
 *build_external_program: glib-compile-schemas
+
