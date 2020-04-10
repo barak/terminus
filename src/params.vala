@@ -137,6 +137,7 @@ namespace Terminus {
 
 Help commands:
   -h, --help                    show this help
+  -v, --version                 show version
 
 Options:
   -x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal

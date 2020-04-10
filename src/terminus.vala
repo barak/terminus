@@ -414,7 +414,9 @@ namespace Terminus {
 			if (this.guake_window.visible) {
 				this.guake_window.hide();
 			} else {
-				this.guake_window.set_screen(null);
+				if (check_wayland() == 0) {
+					this.guake_window.set_screen(null);
+				}
 				this.guake_window.present();
 			}
 		}

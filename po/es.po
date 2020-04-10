@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Sergio Costas <rastersoft@gmail.com>, 2016-2019.
+# Sergio Costas <rastersoft@gmail.com>, 2016-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-27 20:34+0100\n"
-"PO-Revision-Date: 2019-03-27 20:37+0100\n"
+"POT-Creation-Date: 2020-04-10 15:14+0200\n"
+"PO-Revision-Date: 2020-04-10 15:14+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: es\n"
@@ -17,9 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 3.30.1\n"
+"X-Generator: Gtranslator 3.36.0\n"
 
-#: src/params.vala:100
+#: src/params.vala:51
+#, c-format
+msgid "Version %s\n"
+msgstr "Versión %s\n"
+
+#: src/params.vala:125
 #, c-format
 msgid ""
 "The '%s' parameter requires a path after it.\n"
@@ -28,7 +33,7 @@ msgstr ""
 "El parámetro '%s' necesita una ruta detrás de él.\n"
 "\n"
 
-#: src/params.vala:105
+#: src/params.vala:130
 #, c-format
 msgid ""
 "The '%s' parameter requires a command after it.\n"
@@ -37,13 +42,14 @@ msgstr ""
 "El parámetro '%s' necesita un comando detrás de él.\n"
 "\n"
 
-#: src/params.vala:110
+#: src/params.vala:135
 msgid ""
 "Usage:\n"
 "  terminus [OPTION...] [-- COMMAND ...]\n"
 "\n"
 "Help commands:\n"
 "  -h, --help                    show this help\n"
+"  -v, --version                 show version\n"
 "\n"
 "Options:\n"
 "  -x, --execute, --             launches a new Terminus window and execute "
@@ -53,7 +59,9 @@ msgid ""
 "  --working-directory=DIRNAME   sets the terminal directory to DIRNAME\n"
 "  --guake                       launch Terminus in background\n"
 "  --check_guake                 launch Terminus in background and return if "
-"there is already another Terminus process\n"
+"there is already another Terminus process, or in Wayland\n"
+"  --check_guake_wayland         launch Terminus in background and return if "
+"there is already another Terminus process, or in X11\n"
 "  --nobindkey                   don't try to bind the Quake-mode key (useful "
 "for gnome shell)\n"
 "\n"
@@ -63,6 +71,7 @@ msgstr ""
 "\n"
 "Comandos de ayuda:\n"
 "  -h, --help                    muestra esta ayuda\n"
+"  -v, --version                 muestra la versión\n"
 "\n"
 "Options:\n"
 "  -x, --execute, --             lanza una nueva ventana de Terminus y "
@@ -73,134 +82,112 @@ msgstr ""
 "a DIRNAME\n"
 "  --guake                       lanza Terminus en segundo plano\n"
 "  --check_guake                 lanza Terminus en segundo plano y retorna si "
-"ya existe otro proceso de Terminus corriendo\n"
+"ya existe otro proceso de Terminus corriendo, o estamos en Wayland\n"
+"  --check_guake_wayland         lanza Terminus en segundo plano y retorna si "
+"ya existe otro proceso de Terminus corriendo, o estamos en X11\n"
 "  --nobindkey                   no intentar apropiarse de la tecla para "
 "mostrar el modo Quake (útil para gnome shell)\n"
 "\n"
 
-#: src/settings.vala:69
+#: src/settings.vala:68
 #, c-format
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: src/settings.vala:308 src/terminal.vala:213
+#: src/settings.vala:306
 msgid "New window"
 msgstr "Nueva ventana"
 
-#: src/settings.vala:309 src/terminal.vala:207
+#: src/settings.vala:307
 msgid "New tab"
 msgstr "Nueva pestaña"
 
-#: src/settings.vala:310
+#: src/settings.vala:308
 msgid "Next tab"
 msgstr "Siguiente pestaña"
 
-#: src/settings.vala:311
+#: src/settings.vala:309
 msgid "Previous tab"
 msgstr "Pestaña anterior"
 
-#: src/settings.vala:312
+#: src/settings.vala:310
 msgid "Show guake terminal"
 msgstr "Mostrar terminal Guake"
 
-#: src/settings.vala:313
+#: src/settings.vala:311
 msgid "Copy text into the clipboard"
 msgstr "Copiar texto al portapapeles"
 
-#: src/settings.vala:314
+#: src/settings.vala:312
 msgid "Paste text from the clipboard"
 msgstr "Pegar texto desde el portapapeles"
 
-#: src/settings.vala:315
+#: src/settings.vala:313
 msgid "Move focus to the terminal on the left"
 msgstr "Cambiar el foco al terminal de la izquierda"
 
-#: src/settings.vala:316
+#: src/settings.vala:314
 msgid "Move focus to the terminal on the right"
 msgstr "Cambiar el foco al terminal de la derecha"
 
-#: src/settings.vala:317
+#: src/settings.vala:315
 msgid "Move focus to the terminal above"
 msgstr "Cambiar el foco al terminal superior"
 
-#: src/settings.vala:318
+#: src/settings.vala:316
 msgid "Move focus to the terminal below"
 msgstr "Cambiar el foco al terminal inferior"
 
-#: src/settings.vala:325
+#: src/settings.vala:323
 msgid "Action"
 msgstr "Acción"
 
-#: src/settings.vala:326
+#: src/settings.vala:324
 msgid "Key"
 msgstr "Tecla"
 
-#: src/terminal.vala:166
-msgid "Copy"
-msgstr "Copiar"
-
-#: src/terminal.vala:175
-msgid "Paste"
-msgstr "Pegar"
-
-#: src/terminal.vala:185
-msgid "Split horizontally"
-msgstr "Dividir horizontalmente"
-
-#: src/terminal.vala:197
-msgid "Split vertically"
-msgstr "Dividir verticalmente"
-
-#: src/terminal.vala:221
-msgid "Preferences"
-msgstr "Preferencias"
-
-#: src/terminal.vala:230
-msgid "Close"
-msgstr "Cerrar"
-
-#: src/terminus.vala:114 src/terminus.vala:165
+#: src/terminus.vala:112 src/terminus.vala:163
 #, c-format
 msgid "Error: palette file %s has unrecognized content at line %d\n"
 msgstr "Error: la paleta %s tiene contenido extraño en la línea %d\n"
 
-#: src/terminus.vala:127
+#: src/terminus.vala:125
 #, c-format
 msgid ""
 "Error: palette file %s has opens a bracket at line %d without closing it\n"
 msgstr "Error: la paleta %s abre un corchete en la línea %d sin cerrarlo\n"
 
-#: src/terminus.vala:140
+#: src/terminus.vala:138
 #, c-format
 msgid "Error: palette file %s has an unrecognized color at line %d\n"
 msgstr "Error: la paleta %s tiene un color desconocido en la línea %d\n"
 
-#: src/terminus.vala:150
+#: src/terminus.vala:148
 #, c-format
 msgid "Warning: palette file %s has more than 16 colors\n"
 msgstr "Aviso: la paleta %s tiene más de 16 colores\n"
 
-#: src/terminus.vala:175
+#: src/terminus.vala:173
 #, c-format
 msgid "Error: Palette file %s has less than 16 colors\n"
 msgstr "Error: la paleta %s tiene menos de 16 colores\n"
 
-#: src/terminus.vala:179
+#: src/terminus.vala:177
 #, c-format
 msgid "Error: Palette file %s has no palette name\n"
 msgstr "Error: la paleta %s no tiene nombre de paleta\n"
 
-#: src/terminus.vala:183
+#: src/terminus.vala:181
 #, c-format
 msgid "Error: Palette file %s has text_fg color but not text_bg color\n"
 msgstr "Error: la paleta %s tiene color text_fg, pero no color text_bg\n"
 
-#: src/terminus.vala:187
+#: src/terminus.vala:185
 #, c-format
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr "Error: la paleta %s tiene color text_bg, pero no color text_fg\n"
 
-#: src/terminus.vala:242
+#: src/terminus.vala:241
 msgid "Custom colors"
 msgstr "Colores personalizados"
 
@@ -216,115 +203,111 @@ msgstr "Doble T"
 msgid "Underscore"
 msgstr "Guión bajo"
 
-#: data/interface/properties.ui:77
+#: data/interface/properties.ui:82
 msgid "Enable guake mode"
 msgstr "Activar el modo Guake"
 
-#: data/interface/properties.ui:96
+#: data/interface/properties.ui:101
 msgid "Cursor shape:"
-msgstr "Forma del cursor"
+msgstr "Forma del cursor:"
 
-#: data/interface/properties.ui:124
+#: data/interface/properties.ui:130
 msgid "Terminal bell"
 msgstr "\"Campana\" del terminal"
 
-#: data/interface/properties.ui:138
-msgid "Custom font:\t"
-msgstr "Fuente personalizada"
+#: data/interface/properties.ui:146
+msgid "Custom font:"
+msgstr "Fuente personalizada:"
 
-#: data/interface/properties.ui:151
-msgid "Rewrap on resize"
-msgstr "Reorganizar al cambiar de tamaño"
-
-#: data/interface/properties.ui:165
+#: data/interface/properties.ui:160
 msgid "Allow bold text"
 msgstr "Permitir negrita"
 
-#: data/interface/properties.ui:182
+#: data/interface/properties.ui:178
 msgid "Command shell:"
 msgstr "Línea de comandos:"
 
-#: data/interface/properties.ui:205
+#: data/interface/properties.ui:201
 msgid "General"
 msgstr "General"
 
-#: data/interface/properties.ui:225 data/interface/properties.ui:481
+#: data/interface/properties.ui:221 data/interface/properties.ui:477
 msgid "Built-in schemes:"
 msgstr "Esquemas incluidos:"
 
-#: data/interface/properties.ui:280
+#: data/interface/properties.ui:276
 msgid "Text"
 msgstr "Texto"
 
-#: data/interface/properties.ui:292
+#: data/interface/properties.ui:288
 msgid "Background"
 msgstr "Fondo:"
 
-#: data/interface/properties.ui:316
+#: data/interface/properties.ui:312
 msgid "Default color:"
 msgstr "Color por defecto:"
 
-#: data/interface/properties.ui:325
+#: data/interface/properties.ui:321
 msgid "Bold color:"
 msgstr "Color para negrita:"
 
-#: data/interface/properties.ui:339
+#: data/interface/properties.ui:335
 msgid "Cursor color:"
 msgstr "Color del cursor"
 
-#: data/interface/properties.ui:353
+#: data/interface/properties.ui:349
 msgid "Highlight color:"
 msgstr "Color para resaltado"
 
-#: data/interface/properties.ui:430
+#: data/interface/properties.ui:426
 msgid "<b>Text and background colors</b>"
 msgstr "<b>Colores de texto y fondo</b>"
 
-#: data/interface/properties.ui:444
+#: data/interface/properties.ui:440
 msgid "<b>Palette</b>"
 msgstr "<b>Paleta</b>"
 
-#: data/interface/properties.ui:513
+#: data/interface/properties.ui:509
 msgid "Colors palete:"
 msgstr "Paleta de colores:"
 
-#: data/interface/properties.ui:786
+#: data/interface/properties.ui:782
 msgid "Colors"
 msgstr "Colores"
 
-#: data/interface/properties.ui:811
+#: data/interface/properties.ui:807
 msgid "Scrollback lines:"
 msgstr "Lineas de scroll:"
 
-#: data/interface/properties.ui:833
+#: data/interface/properties.ui:829
 msgid "0"
 msgstr "0"
 
-#: data/interface/properties.ui:843
+#: data/interface/properties.ui:839
 msgid "Infinite Scrollback"
 msgstr "Scroll infinito"
 
-#: data/interface/properties.ui:875
+#: data/interface/properties.ui:871
 msgid "Scroll on output"
 msgstr "Scroll si hay salida"
 
-#: data/interface/properties.ui:889
+#: data/interface/properties.ui:885
 msgid "Scroll on keystroke"
 msgstr "Scroll si se pulsa una tecla"
 
-#: data/interface/properties.ui:910
+#: data/interface/properties.ui:906
 msgid "Scrolling"
 msgstr "Desplazamiento"
 
-#: data/interface/properties.ui:938
+#: data/interface/properties.ui:934
 msgid "Keybindings"
 msgstr "Teclas"
 
-#: data/interface/properties.ui:958
+#: data/interface/properties.ui:954
 msgid "Terminus"
 msgstr "Terminus"
 
-#: data/interface/properties.ui:981
+#: data/interface/properties.ui:977
 msgid ""
 "A tiled terminal emulator.\n"
 "\n"
@@ -340,9 +323,30 @@ msgstr ""
 "http://www.rastersoft.com\n"
 "rastersoft@gmail.com"
 
-#: data/interface/properties.ui:1004
+#: data/interface/properties.ui:1000
 msgid "About"
 msgstr "Acerca de"
+
+#~ msgid "Copy"
+#~ msgstr "Copiar"
+
+#~ msgid "Paste"
+#~ msgstr "Pegar"
+
+#~ msgid "Split horizontally"
+#~ msgstr "Dividir horizontalmente"
+
+#~ msgid "Split vertically"
+#~ msgstr "Dividir verticalmente"
+
+#~ msgid "Preferences"
+#~ msgstr "Preferencias"
+
+#~ msgid "Close"
+#~ msgstr "Cerrar"
+
+#~ msgid "Rewrap on resize"
+#~ msgstr "Reorganizar al cambiar de tamaño"
 
 #~ msgid ""
 #~ "Usage: terminus [--guake] [--check_guake] [--nobindkey] [-e single "

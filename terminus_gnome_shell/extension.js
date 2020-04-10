@@ -146,7 +146,7 @@ class TerminusClass {
 
 	_set_window_position(window) {
 		let area = window.get_work_area_current_monitor();
-		let height = this._settings2.get_int('guake-height');
+		/*let height = this._settings2.get_int('guake-height');
 		if (height <= 0) {
 			height = Math.floor(area.height * 3 / 7);
 			this._settings2.set_int('guake-height', height);
@@ -154,8 +154,8 @@ class TerminusClass {
 		if (height >= area.height) {
 			height = Math.floor(area.height * 5 / 7);
 			this._settings2.set_int('guake-height', height);
-		}
-		window.move_resize_frame(false, area.x, area.y, area.width, height);
+		}*/
+		window.move_frame(false, area.x, area.y);
 	}
 
 	disable() {
