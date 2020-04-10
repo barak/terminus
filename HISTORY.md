@@ -2,7 +2,9 @@
 
 * Version 1.9.0 (2020-04-09)
   * Now guarantees under Wayland that occupies the whole width
+  * Added --version parameter
   * Changed license to GPLv3 only
+  * Fixed Debian files
 * Version 1.8.0 (2019-12-26)
   * Now, under wayland, opens guake window in the mouse monitor
   * Fixed red color spilling outside the window

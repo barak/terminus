@@ -47,6 +47,11 @@ namespace Terminus {
 					this.command += argv[param_counter];
 					continue;
 				}
+				if ((argv[param_counter] == "-v") || (argv[param_counter] == "--version")) {
+					print(_("Version %s\n".printf(Constants.VERSION)));
+					Posix.exit(0);
+					break;
+				}
 				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
 					this.show_usage(0);
 					break;
