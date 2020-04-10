@@ -19,8 +19,6 @@
 using Gtk;
 using Gee;
 
-//project version = 1.8.0
-
 namespace Terminus {
 	TerminusRoot     main_root;
 	GLib.Settings    settings         = null;
@@ -416,7 +414,9 @@ namespace Terminus {
 			if (this.guake_window.visible) {
 				this.guake_window.hide();
 			} else {
-				this.guake_window.set_screen(null);
+				if (check_wayland() == 0) {
+					this.guake_window.set_screen(null);
+				}
 				this.guake_window.present();
 			}
 		}

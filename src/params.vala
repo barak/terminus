@@ -47,6 +47,11 @@ namespace Terminus {
 					this.command += argv[param_counter];
 					continue;
 				}
+				if ((argv[param_counter] == "-v") || (argv[param_counter] == "--version")) {
+					print(_("Version %s\n".printf(Constants.VERSION)));
+					Posix.exit(0);
+					break;
+				}
 				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
 					this.show_usage(0);
 					break;
@@ -132,6 +137,7 @@ namespace Terminus {
 
 Help commands:
   -h, --help                    show this help
+  -v, --version                 show version
 
 Options:
   -x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal
