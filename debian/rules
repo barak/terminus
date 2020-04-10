@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/pkg-info.mk
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 VALAFLAGS:=$(foreach w,$(CPPFLAGS) $(CFLAGS) $(LDFLAGS),-X $(w))
 
@@ -12,6 +13,16 @@ override_dh_auto_configure:
 override_dh_installchangelogs:
 	dh_installchangelogs HISTORY.md
 
+override_dh_installman: debian/terminus.1
+	dh_installman
+
 override_dh_dwz:
 	@echo "skipping dh_dwz which gets a mysterious error:"
 	@echo "dh_dwz: dwz -q -- debian/terminus/usr/bin/terminus returned exit code 1"
+
+# automatically-generated man page
+debian/terminus.1:
+	help2man --no-info \
+	 --version-string="$(DEB_VERSION)" \
+	 --name="$(shell egrep '^Description: ' debian/control | head -1 | sed 's/Description: //')" \
+	 obj-*/src/terminus > $@
