@@ -16,7 +16,7 @@ License:   BSD-2-Clause
 Files:     debian/*
 Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
            2018 Barak A. Pearlmutter <bap@debian.org>
-License:   GPL-3.0+
+License:   GPL-3.0
 
 License:   GPL-3.0
  Terminus is free software; you can redistribute it and/or modify
