@@ -3,5 +3,4 @@
 /.debhelper/
 /debhelper-build-stamp
 /files
-/terminus.1
 /terminus/
