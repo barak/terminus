@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.10.0 (2020-04-15)
+  * Now it receives the focus under X11
 * Version 1.9.0 (2020-04-09)
   * Now guarantees under Wayland that occupies the whole width
   * Added --version parameter

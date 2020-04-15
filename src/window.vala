@@ -99,13 +99,6 @@ namespace Terminus {
 				this.realize.connect_after(() => {
 					this.set_size();
 				});
-				this.window_state_event.connect((event) => {
-					if ((event.new_window_state & Gdk.WindowState.MAXIMIZED) != 0) {
-					    this.unmaximize();
-					    this.set_size();
-					}
-					return false;
-				});
 				this.paned             = new Gtk.Paned(Gtk.Orientation.VERTICAL);
 				this.paned.wide_handle = true;
 				this.paned.events      = Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK;
@@ -176,7 +169,6 @@ namespace Terminus {
 
 		public void mapped() {
 			this.set_properties();
-			this.present();
 			this.set_size();
 		}
 
