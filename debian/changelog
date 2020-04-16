@@ -1,3 +1,9 @@
+terminus (1.11.0-Debian1) sid; urgency=low
+
+  * Fix resize and freeze under Wayland
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 16 Apr 2020 23:55:00 +0200
+
 terminus (1.10.0-Debian1) sid; urgency=low
 
   * Now it receives the focus under X11
