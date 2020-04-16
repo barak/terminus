@@ -135,9 +135,11 @@ class TerminusClass {
 				// This is the Guake Terminal window, so ensure that it is kept above and shown in all workspaces
 				window.make_above();
 				window.stick();
-				window.maximize(Meta.MaximizeFlags.HORIZONTAL);
 				this._set_window_position(window);
 				window.connect('position-changed', () => {
+					this._set_window_position(window);
+				});
+				window.connect('size-changed', () => {
 					this._set_window_position(window);
 				});
 			}
@@ -146,7 +148,7 @@ class TerminusClass {
 
 	_set_window_position(window) {
 		let area = window.get_work_area_current_monitor();
-		window.move_frame(false, area.x, area.y);
+		window.move_resize_frame(false, area.x, area.y, area.width, this._settings2.get_int("guake-height"));
 	}
 
 	disable() {

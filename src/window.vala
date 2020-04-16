@@ -132,6 +132,7 @@ namespace Terminus {
 					    this.resize(width, this.current_size);
 					}
 					this.paned.set_position(this.current_size);
+					Terminus.settings.set_int("guake-height", this.current_size);
 					return true;
 				});
 
@@ -150,7 +151,6 @@ namespace Terminus {
 					    return false;
 					}
 					this.mouseY = -1;
-					Terminus.settings.set_int("guake-height", this.current_size);
 					return true;
 				});
 
