@@ -1,3 +1,10 @@
+terminus (1.11.0-1) unstable; urgency=medium
+
+  * New upstream release
+  * Refresh terminus(1)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 20 Apr 2020 09:14:34 +0100
+
 terminus (1.9.0-2) unstable; urgency=medium
 
   * Fix help2 issue (don't do it at build time, because chroots/autobuilders.)
