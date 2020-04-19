@@ -1,7 +1,21 @@
+terminus (1.11.0-Debian1) sid; urgency=low
+
+  * Fix resize and freeze under Wayland
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 16 Apr 2020 23:55:00 +0200
+
+terminus (1.10.0-Debian1) sid; urgency=low
+
+  * Now it receives the focus under X11
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 15 Apr 2020 23:55:00 +0200
+
 terminus (1.9.0-Debian1) sid; urgency=low
 
   * Now guarantees under Wayland that occupies the whole width
+  * Added --version parameter
   * Changed license to GPLv3 only
+  * Fixed Debian files
 
  -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 09 Apr 2020 23:55:00 +0200
 

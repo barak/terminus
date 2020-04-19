@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 1.9.0
+project_version: 1.11.0
 vala_version: 0.30
 
 custom: terminus_gnome_shell/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
@@ -12,7 +12,7 @@ custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerm
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 1.9.0
+*version: 1.11.0
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
