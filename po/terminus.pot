@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 23:29+0200\n"
+"POT-Creation-Date: 2020-04-24 21:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,11 +66,11 @@ msgstr ""
 msgid "Version %s"
 msgstr ""
 
-#: src/settings.vala:306
+#: src/settings.vala:306 src/terminal.vala:123
 msgid "New window"
 msgstr ""
 
-#: src/settings.vala:307
+#: src/settings.vala:307 src/terminal.vala:117
 msgid "New tab"
 msgstr ""
 
@@ -116,6 +116,30 @@ msgstr ""
 
 #: src/settings.vala:324
 msgid "Key"
+msgstr ""
+
+#: src/terminal.vala:92
+msgid "Copy"
+msgstr ""
+
+#: src/terminal.vala:98
+msgid "Paste"
+msgstr ""
+
+#: src/terminal.vala:106
+msgid "Split horizontally"
+msgstr ""
+
+#: src/terminal.vala:111
+msgid "Split vertically"
+msgstr ""
+
+#: src/terminal.vala:131
+msgid "Preferences"
+msgstr ""
+
+#: src/terminal.vala:140
+msgid "Close"
 msgstr ""
 
 #: src/terminus.vala:112 src/terminus.vala:163

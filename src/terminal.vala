@@ -71,11 +71,11 @@ namespace Terminus {
 		private Gtk.Button new_menu_element(string text, string? icon = null) {
 			Gtk.Button item;
 			if (icon == null) {
-				item = new Gtk.Button.with_label(_(text));
+				item = new Gtk.Button.with_label(text);
 			} else {
 				item = new Gtk.Button();
 				var tmpbox   = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-				var tmplabel = new Gtk.Label(_(text));
+				var tmplabel = new Gtk.Label(text);
 				var tmpicon  = new Gtk.Image.from_resource(icon);
 				tmpbox.pack_start(tmpicon, false, true);
 				tmpbox.pack_start(tmplabel, false, true);
@@ -89,13 +89,13 @@ namespace Terminus {
 		private void create_menu() {
 
 			this.menu_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-			this.item_copy = this.new_menu_element("Copy");
+			this.item_copy = this.new_menu_element(_("Copy"));
 			this.item_copy.clicked.connect(() => {
 				this.do_copy();
 				this.menuPopover.hide();
 			});
 
-			var item = this.new_menu_element("Paste");
+			var item = this.new_menu_element(_("Paste"));
 			item.clicked.connect(() => {
 				this.do_paste();
 				this.menuPopover.hide();
@@ -103,24 +103,24 @@ namespace Terminus {
 
 			this.add_separator();
 
-			item = this.new_menu_element("Split horizontally", "/com/rastersoft/terminus/pixmaps/horizontal.svg");
+			item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
 			item.clicked.connect(() => {
 				this.split_horizontal(this);
 				this.menuPopover.hide();
 			});
-			item = this.new_menu_element("Split vertically", "/com/rastersoft/terminus/pixmaps/vertical.svg");
+			item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
 			item.clicked.connect(() => {
 				this.split_vertical(this);
 				this.menuPopover.hide();
 			});
 
-			item = this.new_menu_element("New tab");
+			item = this.new_menu_element(_("New tab"));
 			item.clicked.connect(() => {
 				this.main_container.new_terminal_tab();
 				this.menuPopover.hide();
 			});
 
-			item = this.new_menu_element("New window");
+			item = this.new_menu_element(_("New window"));
 			item.clicked.connect(() => {
 				this.main_container.new_terminal_window();
 				this.menuPopover.hide();
@@ -128,7 +128,7 @@ namespace Terminus {
 
 			this.add_separator();
 
-			item = this.new_menu_element("Preferences");
+			item = this.new_menu_element(_("Preferences"));
 			item.clicked.connect(() => {
 				this.menuPopover.hide();
 				Terminus.main_root.window_properties.show_all();
@@ -137,7 +137,7 @@ namespace Terminus {
 
 			this.add_separator();
 
-			item = this.new_menu_element("Close");
+			item = this.new_menu_element(_("Close"));
 			item.clicked.connect(() => {
 				this.menuPopover.hide();
 				Posix.kill(this.pid, 9);

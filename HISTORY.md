@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.12.0 (2020-04-24)
+  * Fix popup menu translations
 * Version 1.11.0 (2020-04-16)
   * Fix resize and freeze under Wayland
 * Version 1.10.0 (2020-04-15)
