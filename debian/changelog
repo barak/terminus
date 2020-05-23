@@ -1,3 +1,10 @@
+terminus (1.12.0-1) unstable; urgency=medium
+
+  * New upstream relase
+  * Debhelper 13
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 23 May 2020 10:52:40 +0100
+
 terminus (1.11.0-1) unstable; urgency=medium
 
   * New upstream release
