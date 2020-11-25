@@ -53,7 +53,11 @@ class TerminusClass {
 	_launch_process() {
 		let argv = [];
 		argv.push("terminus");
-		argv.push("--check_guake_wayland");
+		if (Meta.is_wayland_compositor()) {
+			argv.push("--check_guake_wayland");
+		} else {
+			argv.push("--check_guake_x11");
+		}
 		this._currentProcess = new LaunchSubprocess(0, "TERMINUS", "--uuid");
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
@@ -139,6 +143,7 @@ class TerminusClass {
 				window.make_above();
 				window.stick();
 				this._set_window_position(window);
+				window.focus(0);
 				window.connect('position-changed', () => {
 					this._set_window_position(window);
 				});
@@ -175,19 +180,15 @@ class TerminusClass {
 
 function init() {
 	// delegate everything to the main program when running under X11
-	if (Meta.is_wayland_compositor())
-		terminusObject = new TerminusClass();
+	terminusObject = new TerminusClass();
 }
 
 function enable() {
-	if (Meta.is_wayland_compositor())
-		terminusObject.enable();
+	terminusObject.enable();
 }
 
 function disable() {
-	if (Meta.is_wayland_compositor()) {
-		terminusObject.disable();
-	}
+	terminusObject.disable();
 }
 
 /**
@@ -208,9 +209,7 @@ var LaunchSubprocess = class {
 		this._cmd_parameter = cmd_parameter;
 		this._UUID = null;
 		this._flags = flags | Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_MERGE;
-		if (Meta.is_wayland_compositor()) {
-			this._flags |= Gio.SubprocessFlags.STDIN_PIPE;
-		}
+		this._flags |= Gio.SubprocessFlags.STDIN_PIPE;
 		this._launcher = new Gio.SubprocessLauncher({ flags: this._flags });
 		this.subprocess = null;
 		this.process_running = false;
@@ -218,18 +217,16 @@ var LaunchSubprocess = class {
 
 	spawnv(argv) {
 		let UUID_string = null;
-		if (Meta.is_wayland_compositor()) {
-			/*
-			 * Generate a random UUID to allow the extension to identify the window. It must be random
-			 * to avoid other programs to cheat and pose themselves as the true process. This also means that
-			 * launching the program from the command line won't give "superpowers" to it,
-			 * but will work like any other program. Of course, under X11 it doesn't matter, but it does
-			 * under Wayland.
-			 */
-			this._UUID = GLib.uuid_string_random();
-			UUID_string = this._UUID + '\n';
-			argv.push(this._cmd_parameter);
-		}
+		/*
+		 * Generate a random UUID to allow the extension to identify the window. It must be random
+		 * to avoid other programs to cheat and pose themselves as the true process. This also means that
+		 * launching the program from the command line won't give "superpowers" to it,
+		 * but will work like any other program. Of course, under X11 it doesn't matter, but it does
+		 * under Wayland.
+		 */
+		this._UUID = GLib.uuid_string_random();
+		UUID_string = this._UUID + '\n';
+		argv.push(this._cmd_parameter);
 		this.subprocess = this._launcher.spawnv(argv);
 		if (this.subprocess) {
 			/*
@@ -268,9 +265,6 @@ var LaunchSubprocess = class {
 	 * @param {MetaWindow} window The window to check.
 	 */
 	query_window_belongs_to(window) {
-		if (!Meta.is_wayland_compositor()) {
-			throw new Error("Not in wayland");
-		}
 		if (this._UUID == null) {
 			throw new Error("No process running");
 		}

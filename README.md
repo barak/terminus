@@ -49,6 +49,9 @@ to have it. You can also launch it from a terminal.
 
 Currently the number of options modificable is small, but more will become available.
 
+Under Gnome Shell (and derived desktops) be sure to enable the extension, to allow
+you to launch the Guake mode terminal.
+
 ## Creating new palettes ##
 
 It is very easy to add new palettes to Terminus. Just edit a file with *.color_scheme*
@@ -102,9 +105,10 @@ itself, but not the foreground/background colors.
 
 ## FAQ ##
 
-**Q:** I use Gnome-Shell and when I show the Quake terminal, it doesn't get the focus.  
-**A:** It seems that installing the "Steal my focus" extension fix it. It can be found at
-https://extensions.gnome.org/extension/234/steal-my-focus/
+**Q:** I use Gnome-Shell/Ubuntu desktop and when I show the Quake terminal, it doesn't get the focus.  
+**A:** Be sure to install and enable the Terminus extension, even under X11.
+Then do a *killall terminus* to relaunch it from the extension, and everything
+should work fine.
 
 **Q:** I'm using Wayland, and pressing Alt+F12 (or my keybinding) doesn't show the Quake-like
 terminal.  
