@@ -61,7 +61,10 @@ class TerminusClass {
 			if (this._currentProcess.subprocess.get_if_exited()) {
 				let retVal = this._currentProcess.subprocess.get_exit_status();
 				if (retVal == 1) {
-					Main.notify("Can't launch Terminus", "There is already an instance of Terminus running. You must kill all of them to allow Terminus guake mode to work.");
+					if (!this._shown_error) {
+						// show it only once
+						Main.notify("Can't launch Terminus", "There is already an instance of Terminus running. You must kill all of them to allow Terminus guake mode to work.");
+					}
 					this._shown_error = true;
 					this._reloadTime = 1000;
 				} else {
