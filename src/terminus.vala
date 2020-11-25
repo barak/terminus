@@ -415,7 +415,7 @@ namespace Terminus {
 				this.guake_window.hide();
 			} else {
 				if (check_wayland() == 0) {
-					this.guake_window.set_screen(null);
+					this.guake_window.set_screen(Gdk.Screen.get_default());
 				}
 				this.guake_window.present();
 			}
