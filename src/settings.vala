@@ -333,7 +333,7 @@ namespace Terminus {
 
 			if (key == "fg-color") {
 				changed_text_colors = true;
-				var color     = (this.fg_color as Gtk.ColorChooser).rgba;
+				var color     = this.fg_color.rgba;
 				var htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				if (Terminus.settings.get_string("fg-color") != htmlcolor) {
 					Terminus.settings.set_string("fg-color", htmlcolor);
@@ -343,7 +343,7 @@ namespace Terminus {
 
 			if (key == "bg-color") {
 				changed_text_colors = true;
-				var color     = (this.bg_color as Gtk.ColorChooser).rgba;
+				var color     = this.bg_color.rgba;
 				var htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				if (Terminus.settings.get_string("bg-color") != htmlcolor) {
 					Terminus.settings.set_string("bg-color", htmlcolor);
@@ -353,7 +353,7 @@ namespace Terminus {
 			if (key == "bold-color") {
 				string htmlcolor;
 				if (this.use_bold_color.active) {
-					var color = (this.bold_color as Gtk.ColorChooser).rgba;
+					var color = this.bold_color.rgba;
 					htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				} else {
 					htmlcolor = "";
@@ -365,7 +365,7 @@ namespace Terminus {
 			if ((key == "cursor-fg-color") || changed_text_colors) {
 				string htmlcolor;
 				if (this.use_cursor_color.active) {
-					var color = (this.cursor_color_fg as Gtk.ColorChooser).rgba;
+					var color = this.cursor_color_fg.rgba;
 					htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				} else {
 					htmlcolor = "";
@@ -377,7 +377,7 @@ namespace Terminus {
 			if ((key == "cursor-bg-color") || changed_text_colors) {
 				string htmlcolor;
 				if (this.use_cursor_color.active) {
-					var color = (this.cursor_color_bg as Gtk.ColorChooser).rgba;
+					var color = this.cursor_color_bg.rgba;
 					htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				} else {
 					htmlcolor = "";
@@ -389,7 +389,7 @@ namespace Terminus {
 			if (key == "highlight-fg-color") {
 				string htmlcolor;
 				if (this.use_highlight_color.active) {
-					var color = (this.highlight_color_fg as Gtk.ColorChooser).rgba;
+					var color = this.highlight_color_fg.rgba;
 					htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				} else {
 					htmlcolor = "";
@@ -401,7 +401,7 @@ namespace Terminus {
 			if (key == "highlight-bg-color") {
 				string htmlcolor;
 				if (this.use_highlight_color.active) {
-					var color = (this.highlight_color_bg as Gtk.ColorChooser).rgba;
+					var color = this.highlight_color_bg.rgba;
 					htmlcolor = "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green), (uint) (255 * color.blue));
 				} else {
 					htmlcolor = "";
