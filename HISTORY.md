@@ -1,7 +1,9 @@
 # History of versions #
 
 * Version 1.13.0 (2020-11-23)
-  * Now the guake mode gets the focus under X11
+  * Now the guake mode REALLY gets the focus under X11 in gnome shell
+  * If there is already a terminus instance when the extension is launched, it only shows the notification once
+  * Fixed several warnings
 * Version 1.12.0 (2020-04-24)
   * Fix popup menu translations
 * Version 1.11.0 (2020-04-16)
