@@ -70,6 +70,16 @@ namespace Terminus {
 					if (check_wayland() != 0) {
 						Posix.exit(0);
 					}
+					if (GLib.Environment.get_variable("XDG_CURRENT_DESKTOP").index_of("GNOME") != -1) {
+						Posix.exit(0); // under Gnome Shell and family, always rely on the extension
+					}
+					this.check_guake = true;
+					continue;
+				}
+				if (argv[param_counter] == "--check_guake_x11") {
+					if (check_wayland() != 0) {
+						Posix.exit(0);
+					}
 					this.check_guake = true;
 					continue;
 				}
@@ -144,8 +154,9 @@ Options:
   -e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
   --working-directory=DIRNAME   sets the terminal directory to DIRNAME
   --guake                       launch Terminus in background
-  --check_guake                 launch Terminus in background and return if there is already another Terminus process, or in Wayland
+  --check_guake                 launch Terminus in background and return if there is already another Terminus process, or in Wayland, or in GNOME Shell
   --check_guake_wayland         launch Terminus in background and return if there is already another Terminus process, or in X11
+  --check_guake_x11             launch Terminus in background and return if there is already another Terminus process, or in Wayland
   --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
 
 """));
