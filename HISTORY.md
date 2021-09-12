@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 1.14.0 (2021-09-12)
+  * Support for Gnome Shell 40
+  * Removed "bold" property (is deprecated)
 * Version 1.13.0 (2020-11-23)
   * Now the guake mode REALLY gets the focus under X11 in gnome shell
   * If there is already a terminus instance when the extension is launched, it only shows the notification once
