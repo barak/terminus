@@ -57,7 +57,6 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="double-buffered">False</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="margin-top">8</property>
@@ -68,7 +67,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="double-buffered">False</property>
                 <property name="font">Sans 12</property>
                 <property name="preview-text"/>
               </object>
@@ -194,9 +192,6 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="double-buffered">False</property>
-            <property name="margin-left">8</property>
-            <property name="margin-right">8</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="margin-top">8</property>
@@ -205,7 +200,6 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="double-buffered">False</property>
                 <property name="halign">start</property>
                 <property name="margin-start">8</property>
                 <property name="label" translatable="yes">Built-in schemes:</property>
@@ -297,7 +291,6 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="double-buffered">False</property>
                 <property name="halign">start</property>
                 <property name="margin-start">8</property>
                 <property name="label" translatable="yes">Default color:</property>
@@ -313,7 +306,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
-                <property name="double-buffered">False</property>
                 <property name="margin-start">8</property>
                 <property name="draw-indicator">True</property>
               </object>
@@ -342,7 +334,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
-                <property name="double-buffered">False</property>
                 <property name="margin-start">8</property>
                 <property name="draw-indicator">True</property>
               </object>
@@ -783,7 +774,6 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="double-buffered">False</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="margin-top">8</property>
@@ -924,7 +914,6 @@
           <object class="GtkTreeView" id="keybindings">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="double-buffered">False</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="margin-top">8</property>
@@ -953,7 +942,6 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="double-buffered">False</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="margin-top">8</property>
