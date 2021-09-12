@@ -423,9 +423,9 @@ namespace Terminus {
 				this.vte_terminal.rewrap_on_resize = Terminus.settings.get_boolean(key);
 				break;*/
 
-			case "allow-bold":
+			/*case "allow-bold":
 				this.vte_terminal.allow_bold = Terminus.settings.get_boolean(key);
-				break;
+				break;*/
 
 			case "fg-color":
 				this.vte_terminal.set_color_foreground(color);
