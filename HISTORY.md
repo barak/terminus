@@ -2,6 +2,7 @@
 
 * Version 1.14.0 (2021-09-12)
   * Support for Gnome Shell 40
+  * Now it uses again a true menu for right-click
   * Removed "bold" property (is deprecated)
 * Version 1.13.0 (2020-11-23)
   * Now the guake mode REALLY gets the focus under X11 in gnome shell
