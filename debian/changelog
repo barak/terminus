@@ -2,8 +2,9 @@ terminus (1.14.0-1) unstable; urgency=medium
 
   * New upstream release
   * Update standards version to 4.6.0, no changes needed.
+  * Refresh debian/terminus.1
 
- -- Barak A. Pearlmutter <bap@debian.org>  Fri, 17 Sep 2021 14:55:10 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 17 Sep 2021 15:06:44 +0100
 
 terminus (1.13.0-1) unstable; urgency=medium
 
