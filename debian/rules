@@ -10,6 +10,10 @@ VALAFLAGS:=$(foreach w,$(CPPFLAGS) $(CFLAGS) $(LDFLAGS),-X $(w))
 override_dh_auto_configure:
 	dh_auto_configure -- -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF
 
+execute_after_dh_auto_install:
+	@echo "Remove inappropriate file installed by upstream build scripts."
+	-rm --verbose debian/terminus/usr/share/terminus/CMakeLists.txt
+
 override_dh_installchangelogs:
 	dh_installchangelogs HISTORY.md
 
