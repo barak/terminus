@@ -33,9 +33,8 @@ namespace Terminus {
 		private Gtk.Label title;
 		private Gtk.EventBox titlebox;
 		private Gtk.EventBox closeButton;
-		private Gtk.Popover menuPopover;
-		private Gtk.Button item_copy;
-		private Gtk.Box menu_container;
+		private Gtk.MenuItem item_copy;
+		private Gtk.Menu menu_container;
 		private Terminus.Container top_container;
 		private Terminus.Container container;
 		private Terminus.Base main_container;
@@ -62,18 +61,16 @@ namespace Terminus {
 
 
 		private void add_separator() {
-			var separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-			separator.margin_top    = 5;
-			separator.margin_bottom = 5;
-			this.menu_container.pack_start(separator, false, true, 0);
+			var separator = new Gtk.SeparatorMenuItem();
+			this.menu_container.append(separator);
 		}
 
-		private Gtk.Button new_menu_element(string text, string? icon = null) {
-			Gtk.Button item;
+		private Gtk.MenuItem new_menu_element(string text, string? icon = null) {
+			Gtk.MenuItem item;
 			if (icon == null) {
-				item = new Gtk.Button.with_label(text);
+				item = new Gtk.MenuItem.with_label(text);
 			} else {
-				item = new Gtk.Button();
+				item = new Gtk.MenuItem();
 				var tmpbox   = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
 				var tmplabel = new Gtk.Label(text);
 				var tmpicon  = new Gtk.Image.from_resource(icon);
@@ -81,56 +78,48 @@ namespace Terminus {
 				tmpbox.pack_start(tmplabel, false, true);
 				item.add(tmpbox);
 			}
-			item.relief = Gtk.ReliefStyle.NONE;
-			this.menu_container.pack_start(item, false, true, 0);
+			this.menu_container.append(item);
 			return item;
 		}
 
 		private void create_menu() {
 
-			this.menu_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			this.menu_container = new Gtk.Menu();
 			this.item_copy = this.new_menu_element(_("Copy"));
-			this.item_copy.clicked.connect(() => {
+			this.item_copy.activate.connect(() => {
 				this.do_copy();
-				this.menuPopover.hide();
 			});
 
 			var item = this.new_menu_element(_("Paste"));
-			item.clicked.connect(() => {
+			item.activate.connect(() => {
 				this.do_paste();
-				this.menuPopover.hide();
 			});
 
 			this.add_separator();
 
 			item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
-			item.clicked.connect(() => {
+			item.activate.connect(() => {
 				this.split_horizontal(this);
-				this.menuPopover.hide();
 			});
 			item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
-			item.clicked.connect(() => {
+			item.activate.connect(() => {
 				this.split_vertical(this);
-				this.menuPopover.hide();
 			});
 
 			item = this.new_menu_element(_("New tab"));
-			item.clicked.connect(() => {
+			item.activate.connect(() => {
 				this.main_container.new_terminal_tab();
-				this.menuPopover.hide();
 			});
 
 			item = this.new_menu_element(_("New window"));
-			item.clicked.connect(() => {
+			item.activate.connect(() => {
 				this.main_container.new_terminal_window();
-				this.menuPopover.hide();
 			});
 
 			this.add_separator();
 
 			item = this.new_menu_element(_("Preferences"));
-			item.clicked.connect(() => {
-				this.menuPopover.hide();
+			item.activate.connect(() => {
 				Terminus.main_root.window_properties.show_all();
 				Terminus.main_root.window_properties.present();
 			});
@@ -138,12 +127,10 @@ namespace Terminus {
 			this.add_separator();
 
 			item = this.new_menu_element(_("Close"));
-			item.clicked.connect(() => {
-				this.menuPopover.hide();
+			item.activate.connect(() => {
 				Posix.kill(this.pid, 9);
 			});
-			this.menuPopover = new Gtk.Popover(this.title);
-			this.menuPopover.add(menu_container);
+			this.menu_container.show_all();
 		}
 
 		public void do_grab_focus() {
@@ -423,9 +410,9 @@ namespace Terminus {
 				this.vte_terminal.rewrap_on_resize = Terminus.settings.get_boolean(key);
 				break;*/
 
-			case "allow-bold":
+			/*case "allow-bold":
 				this.vte_terminal.allow_bold = Terminus.settings.get_boolean(key);
-				break;
+				break;*/
 
 			case "fg-color":
 				this.vte_terminal.set_color_foreground(color);
@@ -594,7 +581,7 @@ namespace Terminus {
 		public bool button_event(Gdk.EventButton event) {
 			if (event.button == 3) {
 				this.item_copy.sensitive = this.vte_terminal.get_has_selection();
-				this.menuPopover.show_all();
+				this.menu_container.popup_at_pointer(event);
 				return true;
 			}
 

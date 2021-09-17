@@ -1,5 +1,5 @@
 Name: terminus
-Version: 1.13.0
+Version: 1.14.0
 Release: 1
 License: Unknown/not set
 Summary: A new terminal for XWindows and Wayland
