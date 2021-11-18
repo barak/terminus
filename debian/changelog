@@ -1,3 +1,9 @@
+terminus (1.14.0-2) unstable; urgency=medium
+
+  * Remove build dependency on libpcre3-dev (closes: #999944)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 18 Nov 2021 12:22:39 +0000
+
 terminus (1.14.0-1) unstable; urgency=medium
 
   * New upstream release
