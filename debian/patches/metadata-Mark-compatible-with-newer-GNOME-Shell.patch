@@ -1,0 +1,18 @@
+From: Jeremy Bicha <jbicha@ubuntu.com>
+Date: Fri, 25 Mar 2022 09:28:37 -0400
+Subject: metadata: Mark compatible with newer GNOME Shell
+
+---
+ terminus_gnome_shell/metadata.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/terminus_gnome_shell/metadata.json b/terminus_gnome_shell/metadata.json
+index e15a609..1ee9453 100644
+--- a/terminus_gnome_shell/metadata.json
++++ b/terminus_gnome_shell/metadata.json
+@@ -1,4 +1,4 @@
+ {"uuid": "showTerminusQuakeWindow@rastersoft.com",
+ "name": "Show Terminus Quake Mode",
+-"shell-version": ["3.22", "3.24", "3.26", "3.28", "3.36", "3.38", "40", "41"],
++"shell-version": ["3.22", "3.24", "3.26", "3.28", "3.36", "3.38", "40", "41", "42"],
+ "description": "Allows to show the Quake-like terminal from Terminus by pressing the defined hotkey. Useful when using Wayland, since there Terminus can't create hotkeys and must rely on the desktop."}
