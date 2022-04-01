@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.14.1 (2022-03-29)
+  * Support for Gnome Shell 42
 * Version 1.14.0 (2021-09-12)
   * Support for Gnome Shell 40
   * Now it uses again a true menu for right-click

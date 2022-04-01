@@ -1,8 +1,8 @@
 Name: terminus
-Version: 1.14.0
+Version: 1.14.1
 Release: 1
 License: Unknown/not set
-Summary: A new terminal for XWindows and Wayland
+Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator
 
 BuildRequires: gcc
 BuildRequires: gcc-c++

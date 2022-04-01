@@ -1,8 +1,8 @@
-pkgname=terminus
-pkgver=1.14.0
-pkgrel=1
-pkgdesc="A new terminal for XWindows
-"
+pkgname=rastersoft-terminus
+pkgver=1.14.1
+pkgrel=2
+pkgdesc="X & Wayland terminal that mixes the capabilities of Guake and Terminator"
+license=('GPL3')
 arch=('i686' 'x86_64')
 depends=( 'atk' 'glib2' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'libgee' 'libkeybinder3' 'vte3' 'zlib' 'gnutls' 'libx11' )
 makedepends=( 'vala' 'glibc' 'atk' 'cairo' 'gtk3' 'gdk-pixbuf2' 'libgee' 'glib2' 'libkeybinder3' 'pango' 'vte3' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' )
