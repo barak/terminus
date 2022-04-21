@@ -42,12 +42,12 @@ let terminusObject;
 class TerminusClass {
 
 	constructor() {
+		this._enabled = false;
 		this._settings = new Gio.Settings({ schema: 'org.rastersoft.terminus.keybindings' });
 		this._settings2 = new Gio.Settings({ schema: 'org.rastersoft.terminus' });
 		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
 		this._shown_error = false;
-		this._launch_process();
 	}
 
 	_launch_process() {
@@ -62,6 +62,9 @@ class TerminusClass {
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
 			this._reloadTime = 100;
+			if (this._enabled === false) {
+				return;
+			}
 			if (this._currentProcess.subprocess.get_if_exited()) {
 				let retVal = this._currentProcess.subprocess.get_exit_status();
 				if (retVal == 1) {
@@ -104,6 +107,8 @@ class TerminusClass {
 	}
 
 	_innerEnable() {
+		this._enabled = true;
+		this._launch_process();
 		if (this._startupPreparedId) {
 			Main.layoutManager.disconnect(this._startupPreparedId);
 			this._startupPreparedId = null;
@@ -160,6 +165,7 @@ class TerminusClass {
 	}
 
 	disable() {
+		this._enabled = false;
 		if (this._settingsChangedConnect) {
 			this._settings.disconnect(this._settingsChangedConnect);
 		}
