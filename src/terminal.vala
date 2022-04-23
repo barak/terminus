@@ -108,7 +108,7 @@ namespace Terminus {
 
 			item = this.new_menu_element(_("New tab"));
 			item.activate.connect(() => {
-				this.main_container.new_terminal_tab();
+				this.main_container.new_terminal_tab("", null);
 			});
 
 			item = this.new_menu_element(_("New window"));
@@ -120,8 +120,7 @@ namespace Terminus {
 
 			item = this.new_menu_element(_("Preferences"));
 			item.activate.connect(() => {
-				Terminus.main_root.window_properties.show_all();
-				Terminus.main_root.window_properties.present();
+				Terminus.main_root.show_properties();
 			});
 
 			this.add_separator();
@@ -155,7 +154,7 @@ namespace Terminus {
 			this.vte_terminal.paste_primary();
 		}
 
-		public Terminal(Terminus.Base main_container, Terminus.Container top_container, Terminus.Container container) {
+		public Terminal(Terminus.Base main_container, string working_directory, string[]? commands, Terminus.Container top_container, Terminus.Container container) {
 			this.container = container;
 			// when creating a new terminal, it must take the focus
 			had_focus = true;
@@ -236,14 +235,13 @@ namespace Terminus {
 
 			string[] cmd = {};
 			cmd += Terminus.settings.get_string("shell-command");
-			if (parameters.command.length != 0) {
+			if ((commands != null) && (commands.length != 0)) {
 				cmd += "-c";
-				foreach (var command in parameters.command) {
+				foreach (var command in commands) {
 					cmd += command;
 				}
-				parameters.command = {};
 			}
-			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, parameters.working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
+			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
 			this.vte_terminal.child_exited.connect(() => {
 				this.ended(this);
 			});
@@ -499,7 +497,7 @@ namespace Terminus {
 			}
 
 			if ((eventkey.keyval == this.new_tab_key.keyval) && (eventkey.state == this.new_tab_key.state)) {
-				this.main_container.new_terminal_tab();
+				this.main_container.new_terminal_tab("", null);
 				return true;
 			}
 			if ((eventkey.keyval == this.next_tab_key.keyval) && (eventkey.state == this.next_tab_key.state)) {

@@ -3,6 +3,7 @@ src/base.vala
 src/bindkeys.vala
 src/container.vala
 src/notetab.vala
+src/palete.vala
 src/params.vala
 src/settings.vala
 src/terminal.vala

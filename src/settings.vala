@@ -204,7 +204,7 @@ namespace Terminus {
 				}
 				int i = 0;
 				this.disable_palette_change = true;
-				foreach (var color in scheme.palette) {
+				foreach (var color in scheme.get_palette()) {
 				    this.palette_colors[i].set_rgba(color);
 				    i++;
 				}
@@ -284,7 +284,7 @@ namespace Terminus {
 			selcount = 0;
 			foreach (var scheme in Terminus.main_root.palettes) {
 				counter++;
-				if ((!scheme.custom) && (scheme.palette.length == 0)) {
+				if ((!scheme.custom) && (scheme.get_palette().length == 0)) {
 					continue;
 				}
 				Gtk.TreeIter iter;
@@ -443,7 +443,7 @@ namespace Terminus {
 			int counter  = 0;
 			int selected = 0;
 			foreach (var scheme in Terminus.main_root.palettes) {
-				if ((!scheme.custom) && (scheme.palette.length == 0)) {
+				if ((!scheme.custom) && (scheme.get_palette().length == 0)) {
 					continue;
 				}
 				if (scheme.compare_palette()) {

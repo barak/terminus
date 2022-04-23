@@ -28,14 +28,14 @@ namespace Terminus {
 		public signal void ended();
 		public signal void new_window();
 
-		public Base() {
+		public Base(string working_directory, string[] ? commands) {
 			this.page_added.connect(this.check_pages);
 			this.page_removed.connect(this.check_pages);
-			this.new_terminal_tab();
+			this.new_terminal_tab(working_directory, commands);
 		}
 
-		public void new_terminal_tab() {
-			var term = new Terminus.Container(this, null, null, null);
+		public void new_terminal_tab(string working_directory, string[] ? commands) {
+			var term = new Terminus.Container(this, working_directory, commands, null, null, null);
 			term.ended.connect((w) => {
 				this.delete_page(term);
 			});

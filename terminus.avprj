@@ -31,6 +31,7 @@ vala_check_package: gtk+-3.0
 *vala_source: bindkeys.vala
 *vala_source: container.vala
 *vala_source: notetab.vala
+*vala_source: palete.vala
 *vala_source: params.vala
 *vala_source: settings.vala
 *vala_source: terminal.vala
@@ -48,6 +49,7 @@ vala_check_package: gtk+-3.0
 *translate: c src/checkwayland.c
 *translate: vala src/container.vala
 *translate: vala src/notetab.vala
+*translate: vala src/palete.vala
 *translate: vala src/params.vala
 *translate: vala src/settings.vala
 *translate: vala src/terminal.vala

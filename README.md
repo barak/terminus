@@ -19,9 +19,7 @@ Of course, the Guake-like terminal can be split in tiling subwindows, wich is it
 novelty.
 
 Third, it has been written in Vala and uses Gtk3, which allows it to take advantage
-of the new characteristics available and to use less resources (both guake and terminator
-are written in python 2, which needs more memory, and uses Gtk2, which can be considered
-obsolete).
+of the new characteristics available and to use less resources.
 
 ## Compiling it ##
 

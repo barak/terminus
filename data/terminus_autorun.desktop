@@ -2,7 +2,7 @@
 Icon=terminus.svg
 Type=Application
 TryExec=terminus
-Exec=terminus --check_guake
+Exec=terminus --check-guake
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true

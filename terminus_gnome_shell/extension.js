@@ -53,15 +53,13 @@ class TerminusClass {
 	_launch_process() {
 		let argv = [];
 		argv.push("terminus");
-		if (Meta.is_wayland_compositor()) {
-			argv.push("--check_guake_wayland");
-		} else {
-			argv.push("--check_guake_x11");
-		}
+		argv.push("--no-window");
+		argv.push("--nobindkey");
+
 		this._currentProcess = new LaunchSubprocess(0, "TERMINUS", "--uuid");
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
-			this._reloadTime = 100;
+			this._reloadTime = 1000;
 			if (this._enabled === false) {
 				return;
 			}
@@ -125,11 +123,13 @@ class TerminusClass {
 			mode,
 			() => {
 				if (this.terminusInstance === null) {
-					this.terminusInstance = new MyProxy(Gio.DBus.session, 'com.rastersoft.terminus', '/com/rastersoft/terminus');
+					this.terminusInstance = Gio.DBusActionGroup.get(
+						Gio.DBus.session,
+						'com.rastersoft.terminus',
+						'/com/rastersoft/terminus'
+					);
 				}
-				this.terminusInstance.DisableKeybindRemote((result, error) => {
-					this.terminusInstance.SwapGuakeSync();
-				});
+				this.terminusInstance.activate_action('swap_guake', null);
 			}
 		);
 		this._idMap = global.window_manager.connect_after('map', (obj, windowActor) => {

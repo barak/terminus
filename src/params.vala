@@ -21,146 +21,126 @@
 
 namespace Terminus {
 	class Parameters : Object {
-		public bool bind_keys;
-		public bool launch_guake;
-		public bool check_guake;
-		public string[] command;
+		public bool bind_keys = true;
+		public bool help = false;
+		public bool version = false;
+		public bool no_window = false;
+		public bool check_guake = false;
+		public bool read_uuid = false;
+		public string[] command = {};
 		public string ? working_directory;
-		public string ? UUID;
 
-		public Parameters(string [] argv) {
+		public Parameters() {
+			this.working_directory = GLib.Environment.get_home_dir();
+		}
+
+		public bool parse_argv(string [] argv) {
 			int param_counter = 0;
-
-			this.bind_keys         = true;
-			this.launch_guake      = false;
-			this.check_guake       = false;
-			this.working_directory = null;
-			this.command           = {};
-			this.UUID              = null;
-
 			var add_commands = false;
 
 			while (param_counter < (argv.length - 1)) {
 				param_counter++;
 				bool is_last_command = (param_counter == (argv.length - 1));
+				var parameter = argv[param_counter];
 				if (add_commands) {
-					this.command += argv[param_counter];
+					this.command += parameter;
 					continue;
 				}
-				if ((argv[param_counter] == "-v") || (argv[param_counter] == "--version")) {
-					print(_("Version %s\n".printf(Constants.VERSION)));
-					Posix.exit(0);
-					break;
-				}
-				if ((argv[param_counter] == "-h") || (argv[param_counter] == "--help")) {
-					this.show_usage(0);
-					break;
-				}
-				if (argv[param_counter] == "--uuid") {
-					var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
-					this.UUID = stdinInput.read_line();
-					stdinInput.close();
-					continue;
-				}
-				if (argv[param_counter] == "--guake") {
-					this.launch_guake = true;
-					continue;
-				}
-				if (argv[param_counter] == "--check_guake") {
-					if (check_wayland() != 0) {
-						Posix.exit(0);
-					}
-					if (GLib.Environment.get_variable("XDG_CURRENT_DESKTOP").index_of("GNOME") != -1) {
-						Posix.exit(0); // under Gnome Shell and family, always rely on the extension
-					}
+				if (parameter == "--check-guake") {
 					this.check_guake = true;
 					continue;
 				}
-				if (argv[param_counter] == "--check_guake_x11") {
-					if (check_wayland() != 0) {
-						Posix.exit(0);
-					}
-					this.check_guake = true;
+				if ((parameter == "-v") || (parameter == "--version")) {
+					this.version = true;
 					continue;
 				}
-				if (argv[param_counter] == "--check_guake_wayland") {
-					if (check_wayland() == 0) {
-						Posix.exit(0);
-					}
-					this.check_guake = true;
+				if ((parameter == "-h") || (parameter == "--help")) {
+					this.help = true;
 					continue;
 				}
-				if (argv[param_counter] == "--nobindkey") {
+				if (parameter == "--no-window") {
+					this.no_window = true;
+					continue;
+				}
+				if (parameter == "--uuid") {
+					this.read_uuid = true;
+					continue;
+				}
+				if (parameter == "--nobindkey") {
 					this.bind_keys = false;
 					continue;
 				}
-				if ((argv[param_counter] == "-e") || (argv[param_counter] == "--command")) {
+				if ((parameter == "-e") || (parameter == "--command")) {
 					if (is_last_command) {
-						this.required_command(-1, argv[param_counter]);
+						this.required_command(parameter);
+						return false;
 					}
 					this.command = {};
 					param_counter++;
 					this.command += argv[param_counter];
 					continue;
 				}
-				if (argv[param_counter].has_prefix("--command=")) {
+				if (parameter.has_prefix("--command=")) {
 					this.command  = {};
-					this.command += argv[param_counter].substring(10);
+					this.command += parameter.substring(10);
 					continue;
 				}
-				if ((argv[param_counter] == "-x") || (argv[param_counter] == "--execute") || (argv[param_counter] == "--")) {
-					if (param_counter == (argv.length - 1)) {
-						this.required_command(-1, argv[param_counter]);
+				if ((parameter == "-x") || (parameter == "--execute") || (parameter == "--")) {
+					if (is_last_command) {
+						this.required_command(parameter);
+						return false;
 					}
 					this.command = {};
 					add_commands = true;
 					continue;
 				}
-				if (argv[param_counter] == "--working-directory") {
-					if (param_counter == (argv.length - 1)) {
-						this.required_path(-1, argv[param_counter]);
+				if (parameter == "--working-directory") {
+					if (is_last_command) {
+						this.required_path(parameter);
 					}
 					param_counter++;
 					this.working_directory = argv[param_counter];
 					continue;
 				}
-				if (argv[param_counter].has_prefix("--working-directory=")) {
-					this.working_directory = argv[param_counter].substring(20);
+				if (parameter.has_prefix("--working-directory=")) {
+					this.working_directory = parameter.substring(20);
 					continue;
 				}
+				print(_("Parameter '%s' unknown.\n\n").printf(parameter));
+				return false;
 			}
+			return true;
 		}
 
-		private void required_path(int retval, string parameter) {
+		private void required_path(string parameter) {
 			print(_("The '%s' parameter requires a path after it.\n\n").printf(parameter));
-			this.show_usage(-1);
+			Terminus.show_usage();
+			Posix.exit(-1);
 		}
 
-		private void required_command(int retval, string parameter) {
+		private void required_command(string parameter) {
 			print(_("The '%s' parameter requires a command after it.\n\n").printf(parameter));
-			this.show_usage(-1);
+			Terminus.show_usage();
+			Posix.exit(-1);
 		}
 
-		private void show_usage(int retval) {
-			print(_("""Usage:
-  terminus [OPTION...] [-- COMMAND ...]
+	}
+	void show_usage() {
+		print(_("""Usage:
+terminus [OPTION...] [-- COMMAND ...]
 
 Help commands:
-  -h, --help                    show this help
-  -v, --version                 show version
+-h, --help                    show this help
+-v, --version                 show version
 
 Options:
-  -x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal
-  -e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
-  --working-directory=DIRNAME   sets the terminal directory to DIRNAME
-  --guake                       launch Terminus in background
-  --check_guake                 launch Terminus in background and return if there is already another Terminus process, or in Wayland, or in GNOME Shell
-  --check_guake_wayland         launch Terminus in background and return if there is already another Terminus process, or in X11
-  --check_guake_x11             launch Terminus in background and return if there is already another Terminus process, or in Wayland
-  --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
-
+-x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal
+-e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
+--working-directory=DIRNAME   sets the terminal directory to DIRNAME
+--no-window                   launch Terminus but don't open a window
+--nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
+--check-gnome                 exit if we are running it in Gnome Shell (guake mode should be managed by the extension)
 """));
-			Posix.exit(retval);
-		}
 	}
+
 }

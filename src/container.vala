@@ -39,10 +39,12 @@ namespace Terminus {
 		private Terminus.Container upper_container;
 		private Terminus.Base main_container;
 		private bool splited_horizontal;
+		private string working_directory;
 
 		public signal void ended(Terminus.Container who);
 
-		public Container(Terminus.Base main_container, Terminus.Terminal ? terminal, Terminus.Container ? top_container, Terminus.Container ? upper_container) {
+		public Container(Terminus.Base main_container, string working_directory, string[]? commands, Terminus.Terminal ? terminal, Terminus.Container ? top_container, Terminus.Container ? upper_container) {
+			this.working_directory = working_directory;
 			this.main_container  = main_container;
 			this.upper_container = upper_container;
 			if (top_container == null) {
@@ -54,7 +56,7 @@ namespace Terminus {
 			}
 
 			if (terminal == null) {
-				this.terminal = new Terminus.Terminal(this.main_container, this.top_container, this);
+				this.terminal = new Terminus.Terminal(this.main_container, working_directory, commands, this.top_container, this);
 			} else {
 				this.terminal = terminal;
 			}
@@ -116,8 +118,8 @@ namespace Terminus {
 			this.terminal.ended.disconnect(this.ended_cb);
 
 			this.paned      = new Terminus.PanedPercentage(horizontal ? Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL, 0.5);
-			this.container1 = new Terminus.Container(this.main_container, this.terminal, this.top_container, this);
-			this.container2 = new Terminus.Container(this.main_container, null, this.top_container, this);
+			this.container1 = new Terminus.Container(this.main_container, this.working_directory, null, this.terminal, this.top_container, this);
+			this.container2 = new Terminus.Container(this.main_container, this.working_directory, null, null, this.top_container, this);
 			this.terminal.set_container(this.container1);
 			this.container1.ended.connect(this.ended_child);
 			this.container2.ended.connect(this.ended_child);
