@@ -27,11 +27,12 @@ namespace Terminus {
 
 	public class TerminusRoot : Gtk.Application {
 		private Gee.List<Terminus.Window> window_list;
-		private Terminus.Base ? guake_terminal;
-		private Terminus.Window ? guake_window;
-		private string ? guake_title;
+		private Terminus.Base ? guake_terminal = null;
+		private Terminus.Window ? guake_window = null;
+		private string ? guake_title = null;
+		private bool executed_hold = false;
 
-		private Terminus.Parameters ? parameters;
+		private Terminus.Parameters ? parameters = null;
 
 		public Gee.List<Terminuspalette> palettes;
 
@@ -40,10 +41,6 @@ namespace Terminus {
 		public TerminusRoot() {
 			Object(application_id: "com.rastersoft.terminus",
 				   flags: GLib.ApplicationFlags.HANDLES_COMMAND_LINE);
-			this.parameters = null;
-			this.guake_terminal = null;
-			this.guake_window = null;
-			this.guake_title = null;
 
 			this.window_list = new Gee.ArrayList<Terminus.Window>();
 
@@ -68,9 +65,14 @@ namespace Terminus {
 				return true;
 			}
 			if (params.read_uuid) {
-				var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
-                this.guake_title = stdinInput.read_line();
-                stdinInput.close();
+				try {
+					var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
+					this.guake_title = stdinInput.read_line();
+					stdinInput.close();
+				} catch (GLib.IOError e) {
+					print("Error while reading STDIN. Exiting.\n");
+					return true;
+				}
 			}
 			if (params.check_guake && (
 				(GLib.Environment.get_variable("XDG_CURRENT_DESKTOP").index_of("GNOME") != -1) || // under Gnome Shell and family always rely on the extension
@@ -123,7 +125,10 @@ namespace Terminus {
 			}
 
 			if (params.no_window) {
-				this.hold();
+				if (!this.executed_hold) {
+					this.hold();
+					this.executed_hold = true;
+				}
 			} else {
 				this.create_window(false, params.working_directory, params.command);
 			}
