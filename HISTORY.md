@@ -1,5 +1,9 @@
 # History of versions #
 
+* NoVersion 1.15.0 (2022-04-27)
+  * Migrated to GtkApplication
+  * Don't relaunch terminus if the extension is disabled
+
 * Version 1.14.1 (2022-03-29)
   * Support for Gnome Shell 42
 * Version 1.14.0 (2021-09-12)
