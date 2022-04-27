@@ -21,34 +21,37 @@ novelty.
 Third, it has been written in Vala and uses Gtk3, which allows it to take advantage
 of the new characteristics available and to use less resources.
 
-## Compiling it ##
-
-Just follow the classic cmake instructions:
-
-    mkdir install
-    cd install
-    cmake ..
-    make
-    sudo make install
-
-If, during cmake stage, you receive an error for missing libraries, install them,
-delete all the contents inside *install*, and run cmake again. Launching cmake
-in a folder with parts of a previously failed cmake run can result in build errors
-(don't ask why).
-
 ## Using it ##
 
 By default, using Shift+F12 will show the Quake-like terminal, but you can change
 the key binding by pressing right-click and selecting "Properties".
 
+Also by default, Ctrl+Shift combined with the keypad's Add, Subtract and Enter keys
+will increase, decrease, and return to normal, font size. You can also use
+Ctrl + Mouse Wheel to change the font size (and Ctrl + middle button to return to
+the normal size).
+
 By default, terminus is launched during startup to check if the user wants to have
 the Quake-like terminal available, so just installing it and rebooting will guarantee
 to have it. You can also launch it from a terminal.
 
-Currently the number of options modificable is small, but more will become available.
+Currently the number of options modifiable is small, but more will become available.
 
 Under Gnome Shell (and derived desktops) be sure to enable the extension, to allow
 you to launch the Guake mode terminal.
+
+## Compiling it ##
+
+Just follow the classic meson instructions:
+
+    mkdir install
+    cd install
+    meson
+    ninja
+    sudo ninja install
+
+If, during meson stage, you receive an error for missing libraries, install them
+and run meson again, until there are no more missing libraries.
 
 ## Creating new palettes ##
 
@@ -128,5 +131,5 @@ and add there the desired hotkey, associating it with "terminus_showhide" progra
 
 Sergio Costas Rodriguez  
 rastersoft@gmail.com  
-http://www.rastersoft.com  
-https://gitlab.com/rastersoft/terminus
+<http://www.rastersoft.com>  
+<https://gitlab.com/rastersoft/terminus>

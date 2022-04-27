@@ -314,6 +314,10 @@ namespace Terminus {
 			this.add_keybinding(_("Move focus to the terminal on the right"), "terminal-right");
 			this.add_keybinding(_("Move focus to the terminal above"), "terminal-up");
 			this.add_keybinding(_("Move focus to the terminal below"), "terminal-down");
+			this.add_keybinding(_("Make font bigger"), "font-size-big");
+			this.add_keybinding(_("Make font smaller"), "font-size-small");
+			this.add_keybinding(_("Reset font size"), "font-size-normal");
+			this.add_keybinding(_("Show menu"), "show-menu");
 
 			var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
 			keybindings_view.activate_on_single_click = true;
@@ -534,7 +538,7 @@ namespace Terminus {
 
 			eventkey.state &= 0x07;
 
-			if (eventkey.keyval < 128) {
+			if ((eventkey.keyval >=97) && (eventkey.keyval <= 122)) {
 				eventkey.keyval &= ~32;
 			}
 
