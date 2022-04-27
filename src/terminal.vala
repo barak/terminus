@@ -181,11 +181,7 @@ namespace Terminus {
 			var label = new Gtk.Label("<span size=\"small\">   X   </span>");
 			label.use_markup = true;
 			this.closeButton.button_release_event.connect((event) => {
-#if VALA_0_40
 				Posix.kill(this.pid, Posix.Signal.KILL);
-#else
-				Posix.kill(this.pid, Posix.SIGKILL);
-#endif
 				return false;
 			});
 			this.closeButton.add(label);
