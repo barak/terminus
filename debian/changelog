@@ -1,3 +1,18 @@
+terminus (1.15.0-Debian1) sid; urgency=low
+
+  * Migrated to GtkApplication
+  * Don't relaunch terminus if the extension is disabled
+  * Added zoom capabilities
+  * Added key for showing the menu
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 28 Apr 2022 23:55:00 +0200
+
+terminus (1.14.1-Debian1) sid; urgency=low
+
+  * Support for Gnome Shell 42
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 29 Mar 2022 23:55:00 +0200
+
 terminus (1.14.0-Debian1) sid; urgency=low
 
   * Support for Gnome Shell 40

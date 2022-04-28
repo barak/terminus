@@ -1,6 +1,6 @@
 # History of versions #
 
-* NoVersion 1.15.0 (2022-04-27)
+* Version 1.15.0 (2022-04-28)
   * Migrated to GtkApplication
   * Don't relaunch terminus if the extension is disabled
   * Added zoom capabilities
