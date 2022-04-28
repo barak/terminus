@@ -173,5 +173,25 @@
       <summary>Select the terminal at the bottom</summary>
       <description></description>
     </key>
+    <key type="s" name="font-size-big">
+      <default><![CDATA['<Shift><Ctrl>KP_Add']]></default>
+      <summary>Make font bigger</summary>
+      <description></description>
+    </key>
+    <key type="s" name="font-size-small">
+      <default><![CDATA['<Shift><Ctrl>KP_Subtract']]></default>
+      <summary>Make font smaller</summary>
+      <description></description>
+    </key>
+    <key type="s" name="font-size-normal">
+      <default><![CDATA['<Shift><Ctrl>KP_Enter']]></default>
+      <summary>Sets default font size</summary>
+      <description></description>
+    </key>
+    <key type="s" name="show-menu">
+      <default><![CDATA['Menu']]></default>
+      <summary>Show terminal menu</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>
