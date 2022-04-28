@@ -1,4 +1,4 @@
-pkgname=rastersoft-terminus
+pkgname=terminus-rastersoft
 pkgver=1.15.0
 pkgrel=2
 pkgdesc="X & Wayland terminal that mixes the capabilities of Guake and Terminator"
