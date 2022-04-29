@@ -46,8 +46,15 @@ namespace Terminus {
 					this.command += parameter;
 					continue;
 				}
-				if (parameter == "--check-guake") {
+				if ((parameter == "--check-guake") ||
+				    (parameter == "--check_guake")) {
+						this.check_guake = true;
+						continue;
+				}
+				if ((parameter == "--check_guake_wayland") || (parameter == "--check_guake_x11")) {
 					this.check_guake = true;
+					this.no_window = true;
+					this.bind_keys = false;
 					continue;
 				}
 				if ((parameter == "-v") || (parameter == "--version")) {
