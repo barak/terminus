@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.15.1 (2022-04-29)
+  * Add unofficial support for 1.14.1 parameters
 * Version 1.15.0 (2022-04-28)
   * Migrated to GtkApplication
   * Don't relaunch terminus if the extension is disabled
