@@ -137,16 +137,16 @@ namespace Terminus {
 terminus [OPTION...] [-- COMMAND ...]
 
 Help commands:
--h, --help                    show this help
--v, --version                 show version
+  -h, --help                    show this help
+  -v, --version                 show version
 
 Options:
--x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal
--e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
---working-directory=DIRNAME   sets the terminal directory to DIRNAME
---no-window                   launch Terminus but don't open a window
---nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
---check-gnome                 exit if we are running it in Gnome Shell (guake mode should be managed by the extension)
+  -x, --execute, --             launches a new Terminus window and execute the remainder of the command line inside the terminal
+  -e, --command=STRING          launches a new Terminus window and execute the argument inside the terminal
+  --working-directory=DIRNAME   sets the terminal directory to DIRNAME
+  --no-window                   launch Terminus but don't open a window
+  --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
+  --check-gnome                 exit if we are running it in Gnome Shell (guake mode should be managed by the extension)
 """));
 	}
 
