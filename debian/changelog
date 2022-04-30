@@ -1,3 +1,9 @@
+terminus (1.15.1-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 30 Apr 2022 09:38:48 +0100
+
 terminus (1.14.1-1) unstable; urgency=medium
 
   * New upstream release
