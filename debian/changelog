@@ -1,3 +1,10 @@
+terminus (1.15.1-2) unstable; urgency=medium
+
+  * Patch to indent terminus --help text options
+  * Use above to regenerate terminus(1)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 30 Apr 2022 10:14:55 +0100
+
 terminus (1.15.1-1) unstable; urgency=medium
 
   * New upstream release
