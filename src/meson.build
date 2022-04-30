@@ -4,7 +4,7 @@ cfg_terminus.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
-cfg_terminus.set('VERSION', '1.14.1')
+cfg_terminus.set('VERSION', '1.15.0')
 cfg_terminus.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_2 = configure_file(
@@ -28,6 +28,7 @@ terminus_sources += ['base.vala']
 terminus_sources += ['bindkeys.vala']
 terminus_sources += ['container.vala']
 terminus_sources += ['notetab.vala']
+terminus_sources += ['palete.vala']
 terminus_sources += ['params.vala']
 terminus_sources += ['settings.vala']
 terminus_sources += ['terminal.vala']

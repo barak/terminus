@@ -42,26 +42,27 @@ let terminusObject;
 class TerminusClass {
 
 	constructor() {
+		this._enabled = false;
 		this._settings = new Gio.Settings({ schema: 'org.rastersoft.terminus.keybindings' });
 		this._settings2 = new Gio.Settings({ schema: 'org.rastersoft.terminus' });
 		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
 		this._shown_error = false;
-		this._launch_process();
 	}
 
 	_launch_process() {
 		let argv = [];
 		argv.push("terminus");
-		if (Meta.is_wayland_compositor()) {
-			argv.push("--check_guake_wayland");
-		} else {
-			argv.push("--check_guake_x11");
-		}
+		argv.push("--no-window");
+		argv.push("--nobindkey");
+
 		this._currentProcess = new LaunchSubprocess(0, "TERMINUS", "--uuid");
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
-			this._reloadTime = 100;
+			this._reloadTime = 1000;
+			if (this._enabled === false) {
+				return;
+			}
 			if (this._currentProcess.subprocess.get_if_exited()) {
 				let retVal = this._currentProcess.subprocess.get_exit_status();
 				if (retVal == 1) {
@@ -104,6 +105,8 @@ class TerminusClass {
 	}
 
 	_innerEnable() {
+		this._enabled = true;
+		this._launch_process();
 		if (this._startupPreparedId) {
 			Main.layoutManager.disconnect(this._startupPreparedId);
 			this._startupPreparedId = null;
@@ -120,11 +123,13 @@ class TerminusClass {
 			mode,
 			() => {
 				if (this.terminusInstance === null) {
-					this.terminusInstance = new MyProxy(Gio.DBus.session, 'com.rastersoft.terminus', '/com/rastersoft/terminus');
+					this.terminusInstance = Gio.DBusActionGroup.get(
+						Gio.DBus.session,
+						'com.rastersoft.terminus',
+						'/com/rastersoft/terminus'
+					);
 				}
-				this.terminusInstance.DisableKeybindRemote((result, error) => {
-					this.terminusInstance.SwapGuakeSync();
-				});
+				this.terminusInstance.activate_action('swap_guake', null);
 			}
 		);
 		this._idMap = global.window_manager.connect_after('map', (obj, windowActor) => {
@@ -160,6 +165,7 @@ class TerminusClass {
 	}
 
 	disable() {
+		this._enabled = false;
 		if (this._settingsChangedConnect) {
 			this._settings.disconnect(this._settingsChangedConnect);
 		}

@@ -1,4 +1,5 @@
 {"uuid": "showTerminusQuakeWindow@rastersoft.com",
 "name": "Show Terminus Quake Mode",
 "shell-version": ["3.22", "3.24", "3.26", "3.28", "3.36", "3.38", "40", "41", "42"],
+"session-modes": ["user", "unlock-dialog"],
 "description": "Allows to show the Quake-like terminal from Terminus by pressing the defined hotkey. Useful when using Wayland, since there Terminus can't create hotkeys and must rely on the desktop."}

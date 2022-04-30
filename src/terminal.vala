@@ -47,12 +47,16 @@ namespace Terminus {
 		private Gdk.EventKey new_window_key;
 		private Gdk.EventKey next_tab_key;
 		private Gdk.EventKey previous_tab_key;
-		private Gdk.EventKey copy;
-		private Gdk.EventKey paste;
-		private Gdk.EventKey terminal_left;
-		private Gdk.EventKey terminal_right;
-		private Gdk.EventKey terminal_up;
-		private Gdk.EventKey terminal_down;
+		private Gdk.EventKey copy_key;
+		private Gdk.EventKey paste_key;
+		private Gdk.EventKey terminal_left_key;
+		private Gdk.EventKey terminal_right_key;
+		private Gdk.EventKey terminal_up_key;
+		private Gdk.EventKey terminal_down_key;
+		private Gdk.EventKey font_big_key;
+		private Gdk.EventKey font_small_key;
+		private Gdk.EventKey font_normal_key;
+		private Gdk.EventKey show_menu_key;
 		private bool had_focus;
 
 		public signal void ended(Terminus.Terminal terminal);
@@ -108,7 +112,7 @@ namespace Terminus {
 
 			item = this.new_menu_element(_("New tab"));
 			item.activate.connect(() => {
-				this.main_container.new_terminal_tab();
+				this.main_container.new_terminal_tab("", null);
 			});
 
 			item = this.new_menu_element(_("New window"));
@@ -120,8 +124,7 @@ namespace Terminus {
 
 			item = this.new_menu_element(_("Preferences"));
 			item.activate.connect(() => {
-				Terminus.main_root.window_properties.show_all();
-				Terminus.main_root.window_properties.present();
+				Terminus.main_root.show_properties();
 			});
 
 			this.add_separator();
@@ -155,7 +158,7 @@ namespace Terminus {
 			this.vte_terminal.paste_primary();
 		}
 
-		public Terminal(Terminus.Base main_container, Terminus.Container top_container, Terminus.Container container) {
+		public Terminal(Terminus.Base main_container, string working_directory, string[]? commands, Terminus.Container top_container, Terminus.Container container) {
 			this.container = container;
 			// when creating a new terminal, it must take the focus
 			had_focus = true;
@@ -182,11 +185,7 @@ namespace Terminus {
 			var label = new Gtk.Label("<span size=\"small\">   X   </span>");
 			label.use_markup = true;
 			this.closeButton.button_release_event.connect((event) => {
-#if VALA_0_40
 				Posix.kill(this.pid, Posix.Signal.KILL);
-#else
-				Posix.kill(this.pid, Posix.SIGKILL);
-#endif
 				return false;
 			});
 			this.closeButton.add(label);
@@ -236,14 +235,13 @@ namespace Terminus {
 
 			string[] cmd = {};
 			cmd += Terminus.settings.get_string("shell-command");
-			if (parameters.command.length != 0) {
+			if ((commands != null) && (commands.length != 0)) {
 				cmd += "-c";
-				foreach (var command in parameters.command) {
+				foreach (var command in commands) {
 					cmd += command;
 				}
-				parameters.command = {};
 			}
-			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, parameters.working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
+			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
 			this.vte_terminal.child_exited.connect(() => {
 				this.ended(this);
 			});
@@ -251,18 +249,23 @@ namespace Terminus {
 			this.create_menu();
 
 			this.vte_terminal.button_press_event.connect(this.button_event);
-			this.vte_terminal.events = Gdk.EventMask.BUTTON_PRESS_MASK;
+			this.vte_terminal.add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
+			this.vte_terminal.add_events(Gdk.EventMask.SCROLL_MASK);
 
-			this.new_tab_key      = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.new_window_key   = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.next_tab_key     = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.previous_tab_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.copy             = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.paste            = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.terminal_left    = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.terminal_right   = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.terminal_up      = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-			this.terminal_down    = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.new_tab_key        = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.new_window_key     = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.next_tab_key       = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.previous_tab_key   = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.copy_key           = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.paste_key          = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.terminal_left_key  = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.terminal_right_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.terminal_up_key    = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.terminal_down_key  = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.font_big_key       = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.font_small_key     = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.font_normal_key    = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+			this.show_menu_key      = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 
 			keybind_settings_changed("new-window");
 			keybind_settings_changed("new-tab");
@@ -274,11 +277,16 @@ namespace Terminus {
 			keybind_settings_changed("terminal-right");
 			keybind_settings_changed("terminal-up");
 			keybind_settings_changed("terminal-down");
+			keybind_settings_changed("font-size-big");
+			keybind_settings_changed("font-size-small");
+			keybind_settings_changed("font-size-normal");
+			keybind_settings_changed("show-menu");
 
 			Terminus.settings.changed.connect(this.settings_changed);
 			Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
 
 			this.vte_terminal.key_press_event.connect(this.on_key_press);
+			this.vte_terminal.scroll_event.connect(this.on_scroll);
 			this.update_title();
 
 			// Set all the properties
@@ -331,35 +339,50 @@ namespace Terminus {
 				break;
 
 			case "copy":
-				this.copy.keyval = keyval;
-				this.copy.state  = state;
+				this.copy_key.keyval = keyval;
+				this.copy_key.state  = state;
 				break;
 
 			case "paste":
-				this.paste.keyval = keyval;
-				this.paste.state  = state;
+				this.paste_key.keyval = keyval;
+				this.paste_key.state  = state;
 				break;
 
 			case "terminal-left":
-				this.terminal_left.keyval = keyval;
-				this.terminal_left.state  = state;
+				this.terminal_left_key.keyval = keyval;
+				this.terminal_left_key.state  = state;
 				break;
 
 			case "terminal-right":
-				this.terminal_right.keyval = keyval;
-				this.terminal_right.state  = state;
+				this.terminal_right_key.keyval = keyval;
+				this.terminal_right_key.state  = state;
 				break;
 
 			case "terminal-up":
-				this.terminal_up.keyval = keyval;
-				this.terminal_up.state  = state;
+				this.terminal_up_key.keyval = keyval;
+				this.terminal_up_key.state  = state;
 				break;
 
 			case "terminal-down":
-				this.terminal_down.keyval = keyval;
-				this.terminal_down.state  = state;
+				this.terminal_down_key.keyval = keyval;
+				this.terminal_down_key.state  = state;
 				break;
-
+			case "font-size-big":
+				this.font_big_key.keyval = keyval;
+				this.font_big_key.state  = state;
+				break;
+			case "font-size-small":
+				this.font_small_key.keyval = keyval;
+				this.font_small_key.state  = state;
+				break;
+			case "font-size-normal":
+				this.font_normal_key.keyval = keyval;
+				this.font_normal_key.state  = state;
+				break;
+			case "show-menu":
+				this.show_menu_key.keyval = keyval;
+				this.show_menu_key.state  = state;
+				break;
 			default:
 				break;
 			}
@@ -483,6 +506,32 @@ namespace Terminus {
 			}
 		}
 
+		private bool check_key(Gdk.EventKey event, Gdk.EventKey key) {
+			return ((event.keyval == key.keyval) && (event.state == key.state));
+		}
+
+		public bool on_scroll(Gdk.EventScroll event) {
+			if ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0) {
+				if (event.delta_y < 0) {
+					change_zoom(true);
+				} else {
+					change_zoom(false);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		private void change_zoom(bool increase) {
+			if (increase) {
+				this.vte_terminal.font_scale*=1.1;
+			} else {
+				if (this.vte_terminal.font_scale > 0.1) {
+					this.vte_terminal.font_scale/=1.1;
+				}
+			}
+		}
+
 		public bool on_key_press(Gdk.EventKey event) {
 			Gdk.EventKey eventkey = event.key;
 			// SHIFT, CTRL, LEFT ALT, ALT+GR
@@ -493,55 +542,66 @@ namespace Terminus {
 				eventkey.keyval &= ~32;
 			}
 
-			if ((eventkey.keyval == this.new_window_key.keyval) && (eventkey.state == this.new_window_key.state)) {
+			if (check_key(eventkey, this.new_window_key)) {
 				this.main_container.new_terminal_window();
 				return true;
 			}
-
-			if ((eventkey.keyval == this.new_tab_key.keyval) && (eventkey.state == this.new_tab_key.state)) {
-				this.main_container.new_terminal_tab();
+			if (check_key(eventkey, this.new_tab_key)) {
+				this.main_container.new_terminal_tab("", null);
 				return true;
 			}
-			if ((eventkey.keyval == this.next_tab_key.keyval) && (eventkey.state == this.next_tab_key.state)) {
+			if (check_key(eventkey, this.next_tab_key)) {
 				this.main_container.next_tab();
 				return true;
 			}
-
-			if ((eventkey.keyval == this.previous_tab_key.keyval) && (eventkey.state == this.previous_tab_key.state)) {
+			if (check_key(eventkey, this.previous_tab_key)) {
 				this.main_container.prev_tab();
 				return true;
 			}
 
-			if ((eventkey.keyval == this.copy.keyval) && (eventkey.state == this.copy.state)) {
+			if (check_key(eventkey, this.copy_key)) {
 				this.do_copy();
 				return true;
 			}
-
-			if ((eventkey.keyval == this.paste.keyval) && (eventkey.state == this.paste.state)) {
+			if (check_key(eventkey, this.paste_key)) {
 				this.do_paste();
 				return true;
 			}
 
-			if ((eventkey.keyval == this.terminal_up.keyval) && (eventkey.state == this.terminal_up.state)) {
+			if (check_key(eventkey, this.terminal_up_key)) {
 				this.container.move_terminal_focus(Terminus.MoveFocus.UP, null, true);
 				return true;
 			}
-
-			if ((eventkey.keyval == this.terminal_down.keyval) && (eventkey.state == this.terminal_down.state)) {
+			if (check_key(eventkey, this.terminal_down_key)) {
 				this.container.move_terminal_focus(Terminus.MoveFocus.DOWN, null, true);
 				return true;
 			}
-
-			if ((eventkey.keyval == this.terminal_left.keyval) && (eventkey.state == this.terminal_left.state)) {
+			if (check_key(eventkey, this.terminal_left_key)) {
 				this.container.move_terminal_focus(Terminus.MoveFocus.LEFT, null, true);
 				return true;
 			}
-
-			if ((eventkey.keyval == this.terminal_right.keyval) && (eventkey.state == this.terminal_right.state)) {
+			if (check_key(eventkey, this.terminal_right_key)) {
 				this.container.move_terminal_focus(Terminus.MoveFocus.RIGHT, null, true);
 				return true;
 			}
 
+			if (check_key(eventkey, this.font_big_key)) {
+				this.change_zoom(true);
+				return true;
+			}
+			if (check_key(eventkey, this.font_small_key)) {
+				this.change_zoom(false);
+				return true;
+			}
+			if (check_key(eventkey, this.font_normal_key)) {
+				this.vte_terminal.font_scale=1;
+				return true;
+			}
+			if (check_key(eventkey, this.show_menu_key)) {
+				this.item_copy.sensitive = this.vte_terminal.get_has_selection();
+				this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
+				return true;
+			}
 			return false;
 		}
 
@@ -584,7 +644,10 @@ namespace Terminus {
 				this.menu_container.popup_at_pointer(event);
 				return true;
 			}
-
+			if ((event.button == 2) && ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0)) {
+				this.vte_terminal.font_scale = 1;
+				return true;
+			}
 			return false;
 		}
 	}

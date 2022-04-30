@@ -32,11 +32,9 @@ namespace Terminus {
 		}
 	}
 
-	class Window : Gtk.Window {
+	class Window : Gtk.ApplicationWindow {
 		public signal void ended(Terminus.Window window);
 		public signal void new_window();
-
-		public int terminal_id;
 
 		private int current_size;
 		private int mouseY;
@@ -54,12 +52,11 @@ namespace Terminus {
 			return workarea;
 		}
 
-		public Window(bool guake_mode, int id, Terminus.Base ? terminal = null, string ? window_title = null) {
-			this.terminal_id = id;
-			this.is_guake    = guake_mode;
+		public Window(Gtk.Application application, bool guake_mode, string ? working_directory, string[] commands, Terminus.Base ? terminal = null, string ? window_title = null) {
+			this.is_guake = guake_mode;
 			this.initialized = 0;
 
-			this.type_hint    = Gdk.WindowTypeHint.NORMAL;
+			this.type_hint = Gdk.WindowTypeHint.NORMAL;
 			this.focus_on_map = true;
 
 			this.destroy.connect((w) => {
@@ -67,7 +64,7 @@ namespace Terminus {
 			});
 
 			if (terminal == null) {
-				this.terminal = new Terminus.Base();
+				this.terminal = new Terminus.Base(working_directory, commands);
 			} else {
 				this.terminal = terminal;
 			}
@@ -160,6 +157,7 @@ namespace Terminus {
 				this.terminal.show_all();
 				this.present();
 			}
+			this.application = application;
 		}
 
 		public void ended_cb() {
