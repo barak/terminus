@@ -234,7 +234,24 @@ namespace Terminus {
 			newbox.pack_start(right_scroll, false, true);
 
 			string[] cmd = {};
-			cmd += Terminus.settings.get_string("shell-command");
+			if (Terminus.settings.get_boolean("use-custom-shell")) {
+				cmd += Terminus.settings.get_string("shell-command");
+			} else {
+				bool found = false;
+				Posix.setpwent();
+				while (true) {
+					unowned Posix.Passwd passwd = Posix.getpwent();
+					if (passwd.pw_name == GLib.Environment.get_user_name()) {
+						found = true;
+						cmd += passwd.pw_shell;
+						break;
+					}
+				}
+				if (!found) {
+					cmd += "/bin/sh";
+				}
+				Posix.endpwent();
+			}
 			if ((commands != null) && (commands.length != 0)) {
 				cmd += "-c";
 				foreach (var command in commands) {
