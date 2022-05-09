@@ -1,0 +1,44 @@
+From: Sergio Costas <rastersoft@gmail.com>
+Date: Sat, 7 May 2022 12:15:44 +0200
+Subject: Fix TERM environment variable
+
+By default, Terminus uses the same value for TERM that is in
+the current environment. Unfortunately, in some cases that
+value is invalid.
+
+This patch forces it to be xterm-256color
+
+Fix https://gitlab.com/rastersoft/terminus/-/issues/21
+---
+ src/terminal.vala | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/src/terminal.vala b/src/terminal.vala
+index 71cc44b..fc36384 100644
+--- a/src/terminal.vala
++++ b/src/terminal.vala
+@@ -241,7 +241,8 @@ namespace Terminus {
+ 					cmd += command;
+ 				}
+ 			}
+-			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
++			var environment = GLib.Environ.set_variable(GLib.Environ.get(), "TERM", "xterm-256color", true);;
++			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, environment, 0, null, out this.pid);
+ 			this.vte_terminal.child_exited.connect(() => {
+ 				this.ended(this);
+ 			});
+@@ -429,14 +430,6 @@ namespace Terminus {
+ 				this.vte_terminal.audible_bell = Terminus.settings.get_boolean(key);
+ 				break;
+ 
+-			/*case "rewrap-on-resize":
+-				this.vte_terminal.rewrap_on_resize = Terminus.settings.get_boolean(key);
+-				break;*/
+-
+-			/*case "allow-bold":
+-				this.vte_terminal.allow_bold = Terminus.settings.get_boolean(key);
+-				break;*/
+-
+ 			case "fg-color":
+ 				this.vte_terminal.set_color_foreground(color);
+ 				break;
