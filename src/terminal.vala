@@ -238,9 +238,9 @@ namespace Terminus {
 				cmd += Terminus.settings.get_string("shell-command");
 			} else {
 				bool found = false;
+				unowned Posix.Passwd passwd;
 				Posix.setpwent();
-				while (true) {
-					unowned Posix.Passwd passwd = Posix.getpwent();
+				while (null != (passwd = Posix.getpwent())) {
 					if (passwd.pw_name == GLib.Environment.get_user_name()) {
 						found = true;
 						cmd += passwd.pw_shell;
