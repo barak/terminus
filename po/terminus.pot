@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 18:39+0200\n"
+"POT-Creation-Date: 2022-05-12 21:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,119 +58,119 @@ msgstr ""
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr ""
 
-#: src/params.vala:109
+#: src/params.vala:116
 #, c-format
 msgid ""
 "Parameter '%s' unknown.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:116
+#: src/params.vala:123
 #, c-format
 msgid ""
 "The '%s' parameter requires a path after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:122
+#: src/params.vala:129
 #, c-format
 msgid ""
 "The '%s' parameter requires a command after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:129
+#: src/params.vala:136
 msgid ""
 "Usage:\n"
 "terminus [OPTION...] [-- COMMAND ...]\n"
 "\n"
 "Help commands:\n"
-"-h, --help                    show this help\n"
-"-v, --version                 show version\n"
+"  -h, --help                    show this help\n"
+"  -v, --version                 show version\n"
 "\n"
 "Options:\n"
-"-x, --execute, --             launches a new Terminus window and execute the "
-"remainder of the command line inside the terminal\n"
-"-e, --command=STRING          launches a new Terminus window and execute the "
-"argument inside the terminal\n"
-"--working-directory=DIRNAME   sets the terminal directory to DIRNAME\n"
-"--no-window                   launch Terminus but don't open a window\n"
-"--nobindkey                   don't try to bind the Quake-mode key (useful "
+"  -x, --execute, --             launches a new Terminus window and execute "
+"the remainder of the command line inside the terminal\n"
+"  -e, --command=STRING          launches a new Terminus window and execute "
+"the argument inside the terminal\n"
+"  --working-directory=DIRNAME   sets the terminal directory to DIRNAME\n"
+"  --no-window                   launch Terminus but don't open a window\n"
+"  --nobindkey                   don't try to bind the Quake-mode key (useful "
 "for gnome shell)\n"
-"--check-gnome                 exit if we are running it in Gnome Shell "
+"  --check-gnome                 exit if we are running it in Gnome Shell "
 "(guake mode should be managed by the extension)\n"
 msgstr ""
 
-#: src/settings.vala:68
+#: src/settings.vala:70
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/settings.vala:306 src/terminal.vala:118
+#: src/settings.vala:315 src/terminal.vala:118
 msgid "New window"
 msgstr ""
 
-#: src/settings.vala:307 src/terminal.vala:113
+#: src/settings.vala:316 src/terminal.vala:113
 msgid "New tab"
 msgstr ""
 
-#: src/settings.vala:308
+#: src/settings.vala:317
 msgid "Next tab"
 msgstr ""
 
-#: src/settings.vala:309
+#: src/settings.vala:318
 msgid "Previous tab"
 msgstr ""
 
-#: src/settings.vala:310
+#: src/settings.vala:319
 msgid "Show guake terminal"
 msgstr ""
 
-#: src/settings.vala:311
+#: src/settings.vala:320
 msgid "Copy text into the clipboard"
 msgstr ""
 
-#: src/settings.vala:312
+#: src/settings.vala:321
 msgid "Paste text from the clipboard"
 msgstr ""
 
-#: src/settings.vala:313
+#: src/settings.vala:322
 msgid "Move focus to the terminal on the left"
 msgstr ""
 
-#: src/settings.vala:314
+#: src/settings.vala:323
 msgid "Move focus to the terminal on the right"
 msgstr ""
 
-#: src/settings.vala:315
+#: src/settings.vala:324
 msgid "Move focus to the terminal above"
 msgstr ""
 
-#: src/settings.vala:316
+#: src/settings.vala:325
 msgid "Move focus to the terminal below"
 msgstr ""
 
-#: src/settings.vala:317
+#: src/settings.vala:326
 msgid "Make font bigger"
 msgstr ""
 
-#: src/settings.vala:318
+#: src/settings.vala:327
 msgid "Make font smaller"
 msgstr ""
 
-#: src/settings.vala:319
+#: src/settings.vala:328
 msgid "Reset font size"
 msgstr ""
 
-#: src/settings.vala:320
+#: src/settings.vala:329
 msgid "Show menu"
 msgstr ""
 
-#: src/settings.vala:327
+#: src/settings.vala:336
 msgid "Action"
 msgstr ""
 
-#: src/settings.vala:328
+#: src/settings.vala:337
 msgid "Key"
 msgstr ""
 
@@ -236,90 +236,94 @@ msgid "Custom font:"
 msgstr ""
 
 #: data/interface/properties.ui:161
-msgid "Command shell:"
+msgid "Custom command shell:"
 msgstr ""
 
-#: data/interface/properties.ui:184
+#: data/interface/properties.ui:180
+msgid "Use custom shell"
+msgstr ""
+
+#: data/interface/properties.ui:200
 msgid "General"
 msgstr ""
 
-#: data/interface/properties.ui:205 data/interface/properties.ui:461
+#: data/interface/properties.ui:221 data/interface/properties.ui:477
 msgid "Built-in schemes:"
 msgstr ""
 
-#: data/interface/properties.ui:260
+#: data/interface/properties.ui:276
 msgid "Text"
 msgstr ""
 
-#: data/interface/properties.ui:272
+#: data/interface/properties.ui:288
 msgid "Background"
 msgstr ""
 
-#: data/interface/properties.ui:296
+#: data/interface/properties.ui:312
 msgid "Default color:"
 msgstr ""
 
-#: data/interface/properties.ui:305
+#: data/interface/properties.ui:321
 msgid "Bold color:"
 msgstr ""
 
-#: data/interface/properties.ui:319
+#: data/interface/properties.ui:335
 msgid "Cursor color:"
 msgstr ""
 
-#: data/interface/properties.ui:333
+#: data/interface/properties.ui:349
 msgid "Highlight color:"
 msgstr ""
 
-#: data/interface/properties.ui:410
+#: data/interface/properties.ui:426
 msgid "<b>Text and background colors</b>"
 msgstr ""
 
-#: data/interface/properties.ui:424
+#: data/interface/properties.ui:440
 msgid "<b>Palette</b>"
 msgstr ""
 
-#: data/interface/properties.ui:493
+#: data/interface/properties.ui:509
 msgid "Colors palete:"
 msgstr ""
 
-#: data/interface/properties.ui:766
+#: data/interface/properties.ui:782
 msgid "Colors"
 msgstr ""
 
-#: data/interface/properties.ui:792
+#: data/interface/properties.ui:808
 msgid "Scrollback lines:"
 msgstr ""
 
-#: data/interface/properties.ui:814
+#: data/interface/properties.ui:830
 msgid "0"
 msgstr ""
 
-#: data/interface/properties.ui:824
+#: data/interface/properties.ui:840
 msgid "Infinite Scrollback"
 msgstr ""
 
-#: data/interface/properties.ui:871
+#: data/interface/properties.ui:887
 msgid "Scroll on output"
 msgstr ""
 
-#: data/interface/properties.ui:885
+#: data/interface/properties.ui:901
 msgid "Scroll on keystroke"
 msgstr ""
 
-#: data/interface/properties.ui:906
+#: data/interface/properties.ui:922
 msgid "Scrolling"
 msgstr ""
 
-#: data/interface/properties.ui:934
+#: data/interface/properties.ui:950
 msgid "Keybindings"
 msgstr ""
 
-#: data/interface/properties.ui:954
+#: data/interface/properties.ui:970
 msgid "Terminus"
 msgstr ""
 
-#: data/interface/properties.ui:977
+#: data/interface/properties.ui:993
 msgid ""
 "A tiled terminal emulator.\n"
 "\n"
@@ -329,6 +333,6 @@ msgid ""
 "rastersoft@gmail.com"
 msgstr ""
 
-#: data/interface/properties.ui:1000
+#: data/interface/properties.ui:1016
 msgid "About"
 msgstr ""

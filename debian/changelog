@@ -1,3 +1,10 @@
+terminus (1.16.0-Debian1) sid; urgency=low
+
+  * Set a right value for the TERM environment variable
+  * Use the user-defined terminal instead of /bin/bash by default
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 12 May 2022 23:55:00 +0200
+
 terminus (1.15.1-Debian1) sid; urgency=low
 
   * Add unofficial support for 1.14.1 parameters
