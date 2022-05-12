@@ -26,6 +26,7 @@ namespace Terminus {
 		private Gtk.CheckButton use_bold_color;
 		private Gtk.CheckButton use_cursor_color;
 		private Gtk.CheckButton use_highlight_color;
+		private Gtk.CheckButton use_custom_shell;
 		private Gtk.SpinButton scroll_value;
 		private Gtk.Button custom_font;
 		private Gtk.ColorButton fg_color;
@@ -42,6 +43,7 @@ namespace Terminus {
 		private Gtk.ListStore palette_schemes;
 		private Gtk.ComboBox cursor_shape;
 		private Gtk.ListStore keybindings;
+		private Gtk.Entry custom_shell;
 
 
 		private bool editing_keybind;
@@ -68,6 +70,10 @@ namespace Terminus {
 			label_version.label = _("Version %s").printf(Constants.VERSION);
 
 			this.use_system_font = main_window.get_object("use_system_font") as Gtk.CheckButton;
+			this.use_custom_shell = main_window.get_object("use_custom_shell") as Gtk.CheckButton;
+			use_custom_shell.toggled.connect(() => {
+				this.custom_shell.sensitive = this.use_custom_shell.active;
+			});
 			this.custom_font     = main_window.get_object("custom_font") as Gtk.Button;
 			use_system_font.toggled.connect(() => {
 				this.custom_font.sensitive = this.use_system_font.active;
@@ -240,6 +246,8 @@ namespace Terminus {
 
 			this.enable_guake_mode = main_window.get_object("enable_guake_mode") as Gtk.CheckButton;
 
+			this.custom_shell = main_window.get_object("command_shell") as Gtk.Entry;
+
 			Terminus.settings.bind("cursor-shape", this.cursor_shape, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("use-system-font", this.use_system_font, "active", GLib.SettingsBindFlags.DEFAULT | GLib.SettingsBindFlags.INVERT_BOOLEAN);
 			Terminus.settings.bind("terminal-font", this.custom_font, "font_name", GLib.SettingsBindFlags.DEFAULT);
@@ -249,8 +257,8 @@ namespace Terminus {
 			Terminus.settings.bind("scroll-on-keystroke", main_window.get_object("scroll_on_keystroke") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("enable-guake-mode", this.enable_guake_mode, "active", GLib.SettingsBindFlags.DEFAULT);
 			Terminus.settings.bind("terminal-bell", main_window.get_object("terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
-			//Terminus.settings.bind("allow-bold", main_window.get_object("allow_bold") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
-			Terminus.settings.bind("shell-command", main_window.get_object("command_shell") as Gtk.Entry, "text", GLib.SettingsBindFlags.DEFAULT);
+			Terminus.settings.bind("shell-command", this.custom_shell, "text", GLib.SettingsBindFlags.DEFAULT);
+			Terminus.settings.bind("use-custom-shell", this.use_custom_shell, "active", GLib.SettingsBindFlags.DEFAULT);
 
 			int counter  = -1;
 			int selected = 0;
@@ -274,6 +282,7 @@ namespace Terminus {
 				selcount++;
 			}
 
+			this.custom_shell.sensitive = this.use_custom_shell.active;
 			this.custom_font.sensitive  = this.use_system_font.active;
 			this.scroll_value.sensitive = !this.infinite_scroll.active;
 

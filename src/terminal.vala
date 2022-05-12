@@ -234,14 +234,32 @@ namespace Terminus {
 			newbox.pack_start(right_scroll, false, true);
 
 			string[] cmd = {};
-			cmd += Terminus.settings.get_string("shell-command");
+			if (Terminus.settings.get_boolean("use-custom-shell")) {
+				cmd += Terminus.settings.get_string("shell-command");
+			} else {
+				bool found = false;
+				unowned Posix.Passwd passwd;
+				Posix.setpwent();
+				while (null != (passwd = Posix.getpwent())) {
+					if (passwd.pw_name == GLib.Environment.get_user_name()) {
+						found = true;
+						cmd += passwd.pw_shell;
+						break;
+					}
+				}
+				if (!found) {
+					cmd += "/bin/sh";
+				}
+				Posix.endpwent();
+			}
 			if ((commands != null) && (commands.length != 0)) {
 				cmd += "-c";
 				foreach (var command in commands) {
 					cmd += command;
 				}
 			}
-			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, GLib.Environ.get(), 0, null, out this.pid);
+			var environment = GLib.Environ.set_variable(GLib.Environ.get(), "TERM", "xterm-256color", true);;
+			this.vte_terminal.spawn_sync(Vte.PtyFlags.DEFAULT, working_directory, cmd, environment, 0, null, out this.pid);
 			this.vte_terminal.child_exited.connect(() => {
 				this.ended(this);
 			});
@@ -428,14 +446,6 @@ namespace Terminus {
 			case "terminal-bell":
 				this.vte_terminal.audible_bell = Terminus.settings.get_boolean(key);
 				break;
-
-			/*case "rewrap-on-resize":
-				this.vte_terminal.rewrap_on_resize = Terminus.settings.get_boolean(key);
-				break;*/
-
-			/*case "allow-bold":
-				this.vte_terminal.allow_bold = Terminus.settings.get_boolean(key);
-				break;*/
 
 			case "fg-color":
 				this.vte_terminal.set_color_foreground(color);
