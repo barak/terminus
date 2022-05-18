@@ -25,7 +25,7 @@ override_dh_dwz:
 	@echo "dh_dwz: dwz -q -- debian/terminus/usr/bin/terminus returned exit code 1"
 
 # Automatically-generated man page.
-# Do this manually, because it doesn't work without a window system.
+# Do this manually: might have to specify obj*/src/terminus for the executable.
 debian/terminus.1:
 	help2man --no-info \
 	 --version-string="$(DEB_VERSION)" \
