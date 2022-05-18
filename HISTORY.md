@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 1.16.0 (2022-05-12)
+  * Set a right value for the TERM environment variable
+  * Use the user-defined terminal instead of /bin/bash by default
 * Version 1.15.1 (2022-04-29)
   * Add unofficial support for 1.14.1 parameters
 * Version 1.15.0 (2022-04-28)
