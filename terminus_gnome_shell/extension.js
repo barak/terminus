@@ -48,9 +48,13 @@ class TerminusClass {
 		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
 		this._shown_error = false;
+		this._currentProcess = null;
 	}
 
 	_launch_process() {
+		if (this._currentProcess !== null) {
+			return;
+		}
 		let argv = [];
 		argv.push("terminus");
 		argv.push("--no-window");
@@ -60,9 +64,6 @@ class TerminusClass {
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
 			this._reloadTime = 1000;
-			if (this._enabled === false) {
-				return;
-			}
 			if (this._currentProcess.subprocess.get_if_exited()) {
 				let retVal = this._currentProcess.subprocess.get_exit_status();
 				if (retVal == 1) {
@@ -82,6 +83,9 @@ class TerminusClass {
 			this._currentProcess = null;
 			if (this._launchDesktopId) {
 				GLib.source_remove(this._launchDesktopId);
+			}
+			if (this._enabled === false) {
+				return;
 			}
 			this._launchProcessId = Mainloop.timeout_add(this._reloadTime, () => {
 				this._launchProcessId = 0;
