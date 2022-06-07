@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.17.0 (2022-06-05)
+  * Now the extension doesn't loose the connection with Terminus when the computer locks
 * Version 1.16.0 (2022-05-12)
   * Set a right value for the TERM environment variable
   * Use the user-defined terminal instead of /bin/bash by default
