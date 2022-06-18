@@ -146,7 +146,6 @@ Options:
   --working-directory=DIRNAME   sets the terminal directory to DIRNAME
   --no-window                   launch Terminus but don't open a window
   --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
-  --check-gnome                 exit if we are running it in Gnome Shell (guake mode should be managed by the extension)
 """));
 	}
 
