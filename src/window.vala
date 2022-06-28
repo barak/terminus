@@ -123,10 +123,12 @@ namespace Terminus {
 					this.mouseY        = y;
 					if (check_wayland() == 0) {
 					    this.resize(this.get_monitor_workarea().width, this.current_size);
+						this.set_size_request(this.get_monitor_workarea().width, this.current_size);
 					} else {
 					    int width, height;
 					    this.get_size(out width, out height);
 					    this.resize(width, this.current_size);
+						this.set_size_request(width, this.current_size);
 					}
 					this.paned.set_position(this.current_size);
 					Terminus.settings.set_int("guake-height", this.current_size);
@@ -186,10 +188,13 @@ namespace Terminus {
 				this.move(workarea.x, workarea.y);
 				this.paned.set_position(this.current_size);
 				this.resize(workarea.width, this.current_size);
+				this.set_size_request(workarea.width, this.current_size);
 			} else {
 				int width, height;
 				this.get_size(out width, out height);
 				this.resize(width, this.current_size);
+				this.set_size_request(width, this.current_size);
+				this.unmaximize();
 				this.paned.set_position(this.current_size);
 			}
 		}

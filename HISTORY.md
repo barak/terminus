@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.18.0 (2022-06-28)
+  * Now the window doesn't get stuck in maximized mode when resized too much
 * Version 1.17.0 (2022-06-05)
   * Now the extension doesn't loose the connection with Terminus when the computer locks
 * Version 1.16.0 (2022-05-12)

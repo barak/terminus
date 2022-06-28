@@ -1,3 +1,10 @@
+terminus (1.18.0-Debian1) sid; urgency=low
+
+  * Now the window doesn't get stuck in maximized mode when resized too
+much
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 28 Jun 2022 23:55:00 +0200
+
 terminus (1.17.0-Debian1) sid; urgency=low
 
   * Now the extension doesn't loose the connection with Terminus when the
