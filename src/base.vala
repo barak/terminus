@@ -32,6 +32,7 @@ namespace Terminus {
 			this.page_added.connect(this.check_pages);
 			this.page_removed.connect(this.check_pages);
 			this.new_terminal_tab(working_directory, commands);
+			this.scrollable = true;
 		}
 
 		public void new_terminal_tab(string working_directory, string[] ? commands) {
