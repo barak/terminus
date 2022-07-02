@@ -17,29 +17,40 @@
 
 using Vte;
 using Gtk;
+using Gdk;
 
 namespace Terminus {
 	/**
 	 * This is the widget put in each tab
 	 */
 
-	class Notetab : Gtk.Box {
+	class Notetab : Gtk.EventBox {
 		private Terminus.Container top_container;
 		private Gtk.Label title;
 		private Terminus.Base main_container;
+		private Gtk.Box inner_box;
 
 		public Notetab(Terminus.Base main_container, Terminus.Container top_container) {
 			this.main_container   = main_container;
 			this.top_container    = top_container;
-			this.orientation      = Gtk.Orientation.HORIZONTAL;
+			this.inner_box        = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 			this.title            = new Gtk.Label("");
 			this.title.margin_end = 3;
 			var close_button = new Gtk.Button.from_icon_name("window-close");
-			this.pack_start(this.title, true, true);
-			this.pack_start(close_button, false, true);
+			this.inner_box.pack_start(this.title, true, true);
+			this.inner_box.pack_start(close_button, false, true);
+			this.add(this.inner_box);
 			this.show_all();
 			close_button.clicked.connect(() => {
 				this.main_container.delete_page(this.top_container);
+			});
+			this.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK);
+			this.button_release_event.connect((event) => {
+				if (event.button == 2) {
+					this.main_container.delete_page(this.top_container);
+					return true;
+				}
+				return false;
 			});
 		}
 
