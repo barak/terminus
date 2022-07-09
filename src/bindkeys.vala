@@ -18,59 +18,68 @@
 using Gtk, Gdk, Keybinder;
 
 namespace Terminus {
-	// This class is the one that manages the global keybind
+    // This class is the one that manages the global keybind
 
-	public void keybind_cb(string key, void *udata) {
-		Bindkey obj = (Bindkey) udata;
-		obj.show_guake();
-	}
+    public void
+    keybind_cb(string key,
+               void  *udata)
+    {
+        Bindkey obj = (Bindkey) udata;
+        obj.show_guake();
+    }
 
-	class Bindkey : Object {
-		private string ? key;
-		private bool use_bindkey;
+    class Bindkey : Object {
+        private string ?key;
+        private bool use_bindkey;
 
-		public signal void show_guake();
+        public signal void
+        show_guake();
 
-		public Bindkey(bool use_bindkey) {
-			if (check_wayland() != 0) {
-				this.use_bindkey = false;
-			} else {
-				this.use_bindkey = use_bindkey;
-			}
-			if (this.use_bindkey) {
-				Keybinder.init();
-			}
-			this.key = null;
-		}
+        public Bindkey(bool use_bindkey)
+        {
+            if (check_wayland() != 0) {
+                this.use_bindkey = false;
+            } else {
+                this.use_bindkey = use_bindkey;
+            }
+            if (this.use_bindkey) {
+                Keybinder.init();
+            }
+            this.key = null;
+        }
 
-		public bool set_bindkey(string key) {
-			bool retval;
+        public bool
+        set_bindkey(string key)
+        {
+            bool retval;
 
-			if (this.use_bindkey) {
-				if (this.key != null) {
-					this.unset_bindkey();
-				}
-			}
-			this.key = key;
-			if (this.use_bindkey) {
-				retval = Keybinder.bind(key, Terminus.keybind_cb, this);
-				if (retval == false) {
-					print("Failed to set the guake_mode bind key\n");
-				}
-				return retval;
-			} else {
-				return true;
-			}
-		}
+            if (this.use_bindkey) {
+                if (this.key != null) {
+                    this.unset_bindkey();
+                }
+            }
+            this.key = key;
+            if (this.use_bindkey) {
+                retval = Keybinder.bind(key, Terminus.keybind_cb, this);
+                if (retval == false) {
+                    print("Failed to set the guake_mode bind key\n");
+                }
+                return retval;
+            } else {
+                return true;
+            }
+        }
 
-		public void unset_bindkey() {
-			if (this.use_bindkey) {
-				if (this.key == null) {
-					return;
-				}
-				Keybinder.unbind(this.key, Terminus.keybind_cb);
-				this.key = null;
-			}
-		}
-	}
+        public void
+        unset_bindkey()
+        {
+            if (this.use_bindkey) {
+                if (this.key == null) {
+                    return;
+                }
+                Keybinder.unbind(this.key, Terminus.keybind_cb);
+                this.key = null;
+            }
+        }
+    }
 }

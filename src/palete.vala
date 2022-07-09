@@ -21,26 +21,32 @@ using Gee;
 namespace Terminus {
     public class Terminuspalette : Object {
         public bool custom;
-        public string ? name;
+        public string ?name;
         public HashMap<string, string> name_locale;
         private Gdk.RGBA[] palette;
-        public Gdk.RGBA ? text_fg;
-        public Gdk.RGBA ? text_bg;
+        public Gdk.RGBA ?text_fg;
+        public Gdk.RGBA ?text_bg;
 
 
-        public Terminuspalette() {
-            this.name        = null;
-            this.palette     = {};
-            this.text_fg     = null;
-            this.text_bg     = null;
-            this.name_locale = new HashMap<string, string> ();
-            this.custom      = false;
+        public Terminuspalette()
+        {
+            this.name = null;
+            this.palette = {};
+            this.text_fg = null;
+            this.text_bg = null;
+            this.name_locale = new HashMap<string, string>();
+            this.custom = false;
         }
 
-        public Gdk.RGBA[] get_palette() {
+        public Gdk.RGBA[]
+        get_palette()
+        {
             return this.palette;
         }
-        public bool compare_scheme() {
+
+        public bool
+        compare_scheme()
+        {
             if (this.custom) {
                 return false;
             }
@@ -63,13 +69,18 @@ namespace Terminus {
             return true;
         }
 
-        public bool compare_palette() {
+        public bool
+        compare_palette()
+        {
             string[] current = Terminus.settings.get_strv("color-palete");
             if (current.length != this.palette.length) {
                 return false;
             }
             for (int i = 0; i < 16; i++) {
-                string color = "#%02X%02X%02X".printf((int) (this.palette[i].red * 255), (int) (this.palette[i].green * 255), (int) (this.palette[i].blue * 255));
+                string color =
+                    "#%02X%02X%02X".printf((int) (this.palette[i].red * 255),
+                                           (int) (this.palette[i].green * 255),
+                                           (int) (this.palette[i].blue * 255));
                 if (current[i].ascii_up() != color) {
                     return false;
                 }
@@ -77,7 +88,9 @@ namespace Terminus {
             return true;
         }
 
-        public bool readpalette(string filename) {
+        public bool
+        readpalette(string filename)
+        {
             if (!filename.has_suffix(".color_scheme")) {
                 return true;
             }
@@ -87,8 +100,8 @@ namespace Terminus {
             if (!file.query_exists()) {
                 return true;
             }
-            bool has_more  = false;
-            int  line_n    = 0;
+            bool has_more = false;
+            int  line_n = 0;
             bool has_error = false;
             try {
                 var    dis = new DataInputStream(file.read());
@@ -104,12 +117,14 @@ namespace Terminus {
                     }
                     var pos = line.index_of_char(':');
                     if (pos == -1) {
-                        GLib.stderr.printf(_("Error: palette file %s has unrecognized content at line %d\n"), filename, line_n);
+                        GLib.stderr.printf(_("Error: palette file %s has unrecognized content at line %d\n"),
+                                           filename,
+                                           line_n);
                         has_error = true;
                         continue;
                     }
                     var command = line.substring(0, pos).strip();
-                    var sdata   = line.substring(pos + 1).strip();
+                    var sdata = line.substring(pos + 1).strip();
                     if (command == "name") {
                         this.name = sdata;
                         continue;
@@ -117,7 +132,10 @@ namespace Terminus {
                     if (command.has_prefix("name[")) {
                         var p = command.index_of_char(']');
                         if (p == -1) {
-                            GLib.stderr.printf(_("Error: palette file %s has opens a bracket at line %d without closing it\n"), filename, line_n);
+                            GLib.stderr.printf(_(
+                                                   "Error: palette file %s has opens a bracket at line %d without closing it\n"),
+                                               filename,
+                                               line_n);
                             has_error = true;
                             continue;
                         }
@@ -130,7 +148,9 @@ namespace Terminus {
                     }
                     var data = Gdk.RGBA();
                     if (!data.parse(sdata)) {
-                        GLib.stderr.printf(_("Error: palette file %s has an unrecognized color at line %d\n"), filename, line_n);
+                        GLib.stderr.printf(_("Error: palette file %s has an unrecognized color at line %d\n"),
+                                           filename,
+                                           line_n);
                         has_error = true;
                         continue;
                     }
@@ -155,12 +175,14 @@ namespace Terminus {
                         break;
 
                     default:
-                        GLib.stderr.printf(_("Error: palette file %s has unrecognized content at line %d\n"), filename, line_n);
+                        GLib.stderr.printf(_("Error: palette file %s has unrecognized content at line %d\n"),
+                                           filename,
+                                           line_n);
                         has_error = true;
                         break;
                     }
                 }
-            } catch (Error e) {
+            } catch(Error e) {
                 return true;
             }
 
