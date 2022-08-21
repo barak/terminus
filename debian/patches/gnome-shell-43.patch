@@ -1,0 +1,19 @@
+From: Jeremy Bicha <jeremy.bicha@canonical.com>
+Date: Sun, 21 Aug 2022 16:09:16 -0400
+Subject: Add support for GNOME Shell 43
+
+---
+ terminus_gnome_shell/metadata.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/terminus_gnome_shell/metadata.json b/terminus_gnome_shell/metadata.json
+index faf9cbc..1487984 100644
+--- a/terminus_gnome_shell/metadata.json
++++ b/terminus_gnome_shell/metadata.json
+@@ -1,5 +1,5 @@
+ {"uuid": "showTerminusQuakeWindow@rastersoft.com",
+ "name": "Show Terminus Quake Mode",
+-"shell-version": ["3.22", "3.24", "3.26", "3.28", "3.36", "3.38", "40", "41", "42"],
++"shell-version": ["3.22", "3.24", "3.26", "3.28", "3.36", "3.38", "40", "41", "42", "43"],
+ "session-modes": ["user", "unlock-dialog"],
+ "description": "Allows to show the Quake-like terminal from Terminus by pressing the defined hotkey. Useful when using Wayland, since there Terminus can't create hotkeys and must rely on the desktop."}
