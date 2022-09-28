@@ -1,3 +1,9 @@
+terminus (1.19.0-Debian1) sid; urgency=low
+
+  * Added shortcuts for horizontal and vertical split
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 28 Sep 2022 23:55:00 +0200
+
 terminus (1.18.0-Debian1) sid; urgency=low
 
   * Now the window doesn't get stuck in maximized mode when resized too

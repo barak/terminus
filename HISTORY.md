@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.19.0 (2022-09-28)
+  * Added shortcuts for horizontal and vertical split
 * Version 1.18.0 (2022-07-02)
   * Now the window doesn't get stuck in maximized mode when resized too much
   * Close the tabs with the central button

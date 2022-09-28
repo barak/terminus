@@ -57,6 +57,8 @@ namespace Terminus {
         private Gdk.EventKey font_small_key;
         private Gdk.EventKey font_normal_key;
         private Gdk.EventKey show_menu_key;
+        private Gdk.EventKey split_horizontally_key;
+        private Gdk.EventKey split_vertically_key;
         private bool had_focus;
 
         public signal void
@@ -319,6 +321,8 @@ namespace Terminus {
             this.font_small_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
             this.font_normal_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
             this.show_menu_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+            this.split_horizontally_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+            this.split_vertically_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 
             keybind_settings_changed("new-window");
             keybind_settings_changed("new-tab");
@@ -334,6 +338,8 @@ namespace Terminus {
             keybind_settings_changed("font-size-small");
             keybind_settings_changed("font-size-normal");
             keybind_settings_changed("show-menu");
+            keybind_settings_changed("split-horizontally");
+            keybind_settings_changed("split-vertically");
 
             Terminus.settings.changed.connect(this.settings_changed);
             Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
@@ -443,6 +449,16 @@ namespace Terminus {
             case "show-menu":
                 this.show_menu_key.keyval = keyval;
                 this.show_menu_key.state = state;
+                break;
+
+            case "split-horizontally":
+                this.split_horizontally_key.keyval = keyval;
+                this.split_horizontally_key.state = state;
+                break;
+
+            case "split-vertically":
+                this.split_vertically_key.keyval = keyval;
+                this.split_vertically_key.state = state;
                 break;
 
             default:
@@ -666,6 +682,14 @@ namespace Terminus {
             if (check_key(eventkey, this.show_menu_key)) {
                 this.item_copy.sensitive = this.vte_terminal.get_has_selection();
                 this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
+                return true;
+            }
+            if (check_key(eventkey, this.split_horizontally_key)) {
+                this.split_horizontal(this);
+                return true;
+            }
+            if (check_key(eventkey, this.split_vertically_key)) {
+                this.split_vertical(this);
                 return true;
             }
             return false;
