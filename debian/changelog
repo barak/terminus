@@ -1,3 +1,10 @@
+terminus (1.19.0-1) unstable; urgency=medium
+
+  * New upstream version
+  * Include man page in provision of alternative x-terminal-emulator
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 29 Sep 2022 09:46:12 +0100
+
 terminus (1.17.0-2) unstable; urgency=medium
 
   * Gnome43 patch, thanks to Geremy Bicha
