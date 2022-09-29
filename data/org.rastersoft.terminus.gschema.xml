@@ -198,5 +198,15 @@
       <summary>Show terminal menu</summary>
       <description></description>
     </key>
+    <key type="s" name="split-horizontally">
+      <default><![CDATA['<Shift><Ctrl>h']]></default>
+      <summary>Split the current terminal horizontally</summary>
+      <description></description>
+    </key>
+    <key type="s" name="split-vertically">
+      <default><![CDATA['<Shift><Ctrl>b']]></default>
+      <summary>Split the current terminal vertically</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>

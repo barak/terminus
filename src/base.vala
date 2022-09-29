@@ -19,70 +19,89 @@ using Vte;
 using Gtk;
 
 namespace Terminus {
-	/**
-	 * This is the main class, that contains everything. This class must be
-	 * enclosed in a window.
-	 */
+    /**
+     * This is the main class, that contains everything. This class must be
+     * enclosed in a window.
+     */
 
-	class Base : Gtk.Notebook {
-		public signal void ended();
-		public signal void new_window();
+    class Base : Gtk.Notebook {
+        public signal void
+        ended();
+        public signal void
+        new_window();
 
-		public Base(string working_directory, string[] ? commands) {
-			this.page_added.connect(this.check_pages);
-			this.page_removed.connect(this.check_pages);
-			this.new_terminal_tab(working_directory, commands);
-		}
+        public Base(string    working_directory,
+                    string[] ?commands)
+        {
+            this.page_added.connect(this.check_pages);
+            this.page_removed.connect(this.check_pages);
+            this.new_terminal_tab(working_directory, commands);
+            this.scrollable = true;
+        }
 
-		public void new_terminal_tab(string working_directory, string[] ? commands) {
-			var term = new Terminus.Container(this, working_directory, commands, null, null, null);
-			term.ended.connect((w) => {
-				this.delete_page(term);
-			});
-			term.show_all();
-			var page = this.append_page(term, term.notetab);
-			this.set_current_page(page);
-		}
+        public void
+        new_terminal_tab(string    working_directory,
+                         string[] ?commands)
+        {
+            var term = new Terminus.Container(this, working_directory, commands, null, null, null);
+            term.ended.connect((w) => {
+                this.delete_page(term);
+            });
+            term.show_all();
+            var page = this.append_page(term, term.notetab);
+            this.set_current_page(page);
+        }
 
-		public void new_terminal_window() {
-			this.new_window();
-		}
+        public void
+        new_terminal_window()
+        {
+            this.new_window();
+        }
 
-		public void delete_page(Terminus.Container top_container) {
-			var page = this.page_num(top_container);
-			if (page != -1) {
-				this.remove_page(page);
-			}
-		}
+        public void
+        delete_page(Terminus.Container top_container)
+        {
+            var page = this.page_num(top_container);
+            if (page != -1) {
+                this.remove_page(page);
+            }
+        }
 
-		public void check_pages(Gtk.Widget child, uint page_num) {
-			var npages = this.get_n_pages();
-			if (npages == 0) {
-				this.ended();
-			}
-			if (npages <= 1) {
-				this.show_tabs = false;
-			} else {
-				this.show_tabs = true;
-			}
-		}
+        public void
+        check_pages(Gtk.Widget child,
+                    uint       page_num)
+        {
+            var npages = this.get_n_pages();
+            if (npages == 0) {
+                this.ended();
+            }
+            if (npages <= 1) {
+                this.show_tabs = false;
+            } else {
+                this.show_tabs = true;
+            }
+        }
 
-		public void next_tab() {
-			var p = this.get_n_pages();
-			if (this.page + 1 == p) {
-				this.set_current_page(0);
-			} else {
-				this.next_page();
-			}
-		}
+        public void
+        next_tab()
+        {
+            var p = this.get_n_pages();
+            if (this.page + 1 == p) {
+                this.set_current_page(0);
+            } else {
+                this.next_page();
+            }
+        }
 
-		public void prev_tab() {
-			if (this.page == 0) {
-				var p = this.get_n_pages();
-				this.set_current_page(p - 1);
-			} else {
-				this.prev_page();
-			}
-		}
-	}
+        public void
+        prev_tab()
+        {
+            if (this.page == 0) {
+                var p = this.get_n_pages();
+                this.set_current_page(p - 1);
+            } else {
+                this.prev_page();
+            }
+        }
+    }
 }

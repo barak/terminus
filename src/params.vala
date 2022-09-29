@@ -16,124 +16,133 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//using GIO
-//using GIO-unix
+// using GIO
+// using GIO-unix
 
 namespace Terminus {
-	class Parameters : Object {
-		public bool bind_keys = true;
-		public bool help = false;
-		public bool version = false;
-		public bool no_window = false;
-		public bool check_guake = false;
-		public bool read_uuid = false;
-		public string[] command = {};
-		public string ? working_directory;
+    class Parameters : Object {
+        public bool bind_keys = true;
+        public bool help = false;
+        public bool version = false;
+        public bool no_window = false;
+        public bool check_guake = false;
+        public bool read_uuid = false;
+        public string[] command = {};
+        public string ?working_directory;
 
-		public Parameters() {
-			this.working_directory = GLib.Environment.get_home_dir();
-		}
+        public Parameters()
+        {
+            this.working_directory = GLib.Environment.get_home_dir();
+        }
 
-		public bool parse_argv(string [] argv) {
-			int param_counter = 0;
-			var add_commands = false;
+        public bool
+        parse_argv(string[] argv)
+        {
+            int param_counter = 0;
+            var add_commands = false;
 
-			while (param_counter < (argv.length - 1)) {
-				param_counter++;
-				bool is_last_command = (param_counter == (argv.length - 1));
-				var parameter = argv[param_counter];
-				if (add_commands) {
-					this.command += parameter;
-					continue;
-				}
-				if ((parameter == "--check-guake") ||
-				    (parameter == "--check_guake")) {
-						this.check_guake = true;
-						continue;
-				}
-				if ((parameter == "--check_guake_wayland") || (parameter == "--check_guake_x11")) {
-					this.check_guake = true;
-					this.no_window = true;
-					this.bind_keys = false;
-					continue;
-				}
-				if ((parameter == "-v") || (parameter == "--version")) {
-					this.version = true;
-					continue;
-				}
-				if ((parameter == "-h") || (parameter == "--help")) {
-					this.help = true;
-					continue;
-				}
-				if (parameter == "--no-window") {
-					this.no_window = true;
-					continue;
-				}
-				if (parameter == "--uuid") {
-					this.read_uuid = true;
-					continue;
-				}
-				if (parameter == "--nobindkey") {
-					this.bind_keys = false;
-					continue;
-				}
-				if ((parameter == "-e") || (parameter == "--command")) {
-					if (is_last_command) {
-						this.required_command(parameter);
-						return false;
-					}
-					this.command = {};
-					param_counter++;
-					this.command += argv[param_counter];
-					continue;
-				}
-				if (parameter.has_prefix("--command=")) {
-					this.command  = {};
-					this.command += parameter.substring(10);
-					continue;
-				}
-				if ((parameter == "-x") || (parameter == "--execute") || (parameter == "--")) {
-					if (is_last_command) {
-						this.required_command(parameter);
-						return false;
-					}
-					this.command = {};
-					add_commands = true;
-					continue;
-				}
-				if (parameter == "--working-directory") {
-					if (is_last_command) {
-						this.required_path(parameter);
-					}
-					param_counter++;
-					this.working_directory = argv[param_counter];
-					continue;
-				}
-				if (parameter.has_prefix("--working-directory=")) {
-					this.working_directory = parameter.substring(20);
-					continue;
-				}
-				print(_("Parameter '%s' unknown.\n\n").printf(parameter));
-				return false;
-			}
-			return true;
-		}
+            while (param_counter < (argv.length - 1)) {
+                param_counter++;
+                bool is_last_command = (param_counter == (argv.length - 1));
+                var  parameter = argv[param_counter];
+                if (add_commands) {
+                    this.command += parameter;
+                    continue;
+                }
+                if ((parameter == "--check-guake") ||
+                    (parameter == "--check_guake")) {
+                    this.check_guake = true;
+                    continue;
+                }
+                if ((parameter == "--check_guake_wayland") || (parameter == "--check_guake_x11")) {
+                    this.check_guake = true;
+                    this.no_window = true;
+                    this.bind_keys = false;
+                    continue;
+                }
+                if ((parameter == "-v") || (parameter == "--version")) {
+                    this.version = true;
+                    continue;
+                }
+                if ((parameter == "-h") || (parameter == "--help")) {
+                    this.help = true;
+                    continue;
+                }
+                if (parameter == "--no-window") {
+                    this.no_window = true;
+                    continue;
+                }
+                if (parameter == "--uuid") {
+                    this.read_uuid = true;
+                    continue;
+                }
+                if (parameter == "--nobindkey") {
+                    this.bind_keys = false;
+                    continue;
+                }
+                if ((parameter == "-e") || (parameter == "--command")) {
+                    if (is_last_command) {
+                        this.required_command(parameter);
+                        return false;
+                    }
+                    this.command = {};
+                    param_counter++;
+                    this.command += argv[param_counter];
+                    continue;
+                }
+                if (parameter.has_prefix("--command=")) {
+                    this.command = {};
+                    this.command += parameter.substring(10);
+                    continue;
+                }
+                if ((parameter == "-x") || (parameter == "--execute") || (parameter == "--")) {
+                    if (is_last_command) {
+                        this.required_command(parameter);
+                        return false;
+                    }
+                    this.command = {};
+                    add_commands = true;
+                    continue;
+                }
+                if (parameter == "--working-directory") {
+                    if (is_last_command) {
+                        this.required_path(parameter);
+                    }
+                    param_counter++;
+                    this.working_directory = argv[param_counter];
+                    continue;
+                }
+                if (parameter.has_prefix("--working-directory=")) {
+                    this.working_directory = parameter.substring(20);
+                    continue;
+                }
+                print(_("Parameter '%s' unknown.\n\n").printf(parameter));
+                return false;
+            }
+            return true;
+        }
 
-		private void required_path(string parameter) {
-			print(_("The '%s' parameter requires a path after it.\n\n").printf(parameter));
-			Terminus.show_usage();
-			Posix.exit(-1);
-		}
+        private void
+        required_path(string parameter)
+        {
+            print(_("The '%s' parameter requires a path after it.\n\n").printf(parameter));
+            Terminus.show_usage();
+            Posix.exit(-1);
+        }
 
-		private void required_command(string parameter) {
-			print(_("The '%s' parameter requires a command after it.\n\n").printf(parameter));
-			Terminus.show_usage();
-			Posix.exit(-1);
-		}
-
-	}
-	void show_usage() {
-		print(_("""Usage:
+        private void
+        required_command(string parameter)
+        {
+            print(_("The '%s' parameter requires a command after it.\n\n").printf(parameter));
+            Terminus.show_usage();
+            Posix.exit(-1);
+        }
+    }
+    void
+    show_usage()
+    {
+        print(_(
+                  """Usage:
 terminus [OPTION...] [-- COMMAND ...]
 
 Help commands:
@@ -146,8 +155,6 @@ Options:
   --working-directory=DIRNAME   sets the terminal directory to DIRNAME
   --no-window                   launch Terminus but don't open a window
   --nobindkey                   don't try to bind the Quake-mode key (useful for gnome shell)
-  --check-gnome                 exit if we are running it in Gnome Shell (guake mode should be managed by the extension)
-"""));
-	}
-
+"""                ));
+    }
 }
