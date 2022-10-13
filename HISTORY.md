@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 1.19.1 (2022-10-13)
+  * Added support for Gnome Shell 43
 * Version 1.19.0 (2022-09-28)
   * Added shortcuts for horizontal and vertical split
 * Version 1.18.0 (2022-07-02)
