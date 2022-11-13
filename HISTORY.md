@@ -1,5 +1,8 @@
 # History of versions #
 
+* NoVersion 1.20.0
+  * Fixed Guake window zero height on first run
+  * Fixed Guake keybinding failing until re-set
 * Version 1.19.1 (2022-10-13)
   * Added support for Gnome Shell 43
 * Version 1.19.0 (2022-09-28)

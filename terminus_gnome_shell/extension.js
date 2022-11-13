@@ -45,7 +45,7 @@ class TerminusClass {
 		this._enabled = false;
 		this._settings = new Gio.Settings({ schema: 'org.rastersoft.terminus.keybindings' });
 		this._settings2 = new Gio.Settings({ schema: 'org.rastersoft.terminus' });
-		this._settingsChanged(null, "guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
+		this._settingsChanged("guake-mode"); // copy the guake-mode key to guake-mode-gnome-shell key
 		this.terminusInstance = null;
 		this._shown_error = false;
 		this._currentProcess = null;
