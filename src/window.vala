@@ -105,8 +105,8 @@ namespace Terminus {
                 this.set_properties();
 
                 this.current_size = Terminus.settings.get_int("guake-height");
-                if ((this.current_size <= 0) && (check_wayland() == 0)) {
-                    this.current_size = this.get_monitor_workarea().height * 3 / 7;
+                if (this.current_size <= 0) {
+                    this.current_size = 300;
                     Terminus.settings.set_int("guake-height", this.current_size);
                 }
                 this.map.connect_after(this.mapped);
