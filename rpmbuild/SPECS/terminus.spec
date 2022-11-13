@@ -1,5 +1,5 @@
 Name: terminus
-Version: 1.19.0
+Version: 1.19.1
 Release: 1
 License: Unknown/not set
 Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator
