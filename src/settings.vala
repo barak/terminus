@@ -339,6 +339,7 @@ namespace Terminus {
             this.add_keybinding(_("Show menu"), "show-menu");
             this.add_keybinding(_("Split horizontally"), "split-horizontally");
             this.add_keybinding(_("Split vertically"), "split-vertically");
+            this.add_keybinding(_("Close the active tile"), "close-tile");
 
             var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
             keybindings_view.activate_on_single_click = true;

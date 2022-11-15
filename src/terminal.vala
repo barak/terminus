@@ -59,7 +59,10 @@ namespace Terminus {
         private Gdk.EventKey show_menu_key;
         private Gdk.EventKey split_horizontally_key;
         private Gdk.EventKey split_vertically_key;
+        private Gdk.EventKey close_tile_key;
         private bool had_focus;
+
+        private Gtk.Popover notification_window;
 
         public signal void
         ended(Terminus.Terminal terminal);
@@ -142,7 +145,7 @@ namespace Terminus {
 
             item = this.new_menu_element(_("Close"));
             item.activate.connect(() => {
-                Posix.kill(this.pid, 9);
+                this.kill_child();
             });
             this.menu_container.show_all();
         }
@@ -209,7 +212,7 @@ namespace Terminus {
             var label = new Gtk.Label("<span size=\"small\">   X   </span>");
             label.use_markup = true;
             this.closeButton.button_release_event.connect((event) => {
-                Posix.kill(this.pid, Posix.Signal.KILL);
+                this.kill_child();
                 return false;
             });
             this.closeButton.add(label);
@@ -323,6 +326,7 @@ namespace Terminus {
             this.show_menu_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
             this.split_horizontally_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
             this.split_vertically_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
+            this.close_tile_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
 
             keybind_settings_changed("new-window");
             keybind_settings_changed("new-tab");
@@ -340,6 +344,7 @@ namespace Terminus {
             keybind_settings_changed("show-menu");
             keybind_settings_changed("split-horizontally");
             keybind_settings_changed("split-vertically");
+            keybind_settings_changed("close-tile");
 
             Terminus.settings.changed.connect(this.settings_changed);
             Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
@@ -360,6 +365,80 @@ namespace Terminus {
             settings_changed("rewrap-on-resize");
 
             this.show_all();
+        }
+
+        private void
+        kill_child()
+        {
+            var procdir = GLib.File.new_for_path("/proc");
+            var enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+            FileInfo info = null;
+            bool pid_found = false;
+            while ((info = enumerator.next_file (null)) != null) {
+                if (info.get_file_type () != FileType.DIRECTORY) {
+                    continue;
+                }
+                var statusFile = GLib.File.new_build_filename("/proc", info.get_name(), "status");
+                if (!statusFile.query_exists(null)) {
+                    continue;
+                }
+                var is = statusFile.read(null);
+                Bytes data;
+                ByteArray buffer = new ByteArray();
+                while (true) {
+                    data = is.read_bytes(1024, null);
+                    if (data.get_size() == 0) {
+                        break;
+                    }
+                    buffer.append(data.get_data());
+                }
+                buffer.append({0});
+                var lines = ((string)buffer.data).split("\n");
+                foreach (var line in lines) {
+                    if (line.has_prefix("PPid:")) {
+                        var ppid = int.parse(line.substring(5));
+                        if (ppid == this.pid) {
+                            pid_found = true;
+                            break;
+                        }
+                    }
+                }
+                if (pid_found) {
+                    break;
+                }
+            }
+            if (!pid_found) {
+                Posix.kill(this.pid, Posix.Signal.KILL);
+            } else {
+                this.show_notification();
+            }
+        }
+
+        void show_notification() {
+            this.notification_window = new Gtk.Popover(this);
+            var container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+            var title_label = new Gtk.Label("<b>"+_("There is a proccess running")+"</b>");
+            title_label.use_markup = true;
+            var subtext_label = new Gtk.Label(_("Closing this tile will kill it."));
+            var hcontainer = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            var button_cancel = new Gtk.Button.with_label(_("Cancel"));
+            var button_close = new Gtk.Button.with_label(_("Close the terminal"));
+            container.pack_start(title_label, true, true, 10);
+            container.pack_start(subtext_label, true, true, 10);
+            container.pack_start(hcontainer, true, true, 0);
+            hcontainer.pack_start(button_cancel, true, true, 0);
+            hcontainer.pack_start(button_close, true, true, 0);
+            hcontainer.homogeneous = true;
+            button_close.get_style_context().add_class("destructive-action");
+            this.notification_window.modal = true;
+            this.notification_window.child = container;
+            button_cancel.clicked.connect( () => {this.notification_window.popdown();});
+            button_close.clicked.connect( () => {
+                Posix.kill(this.pid, Posix.Signal.KILL);
+                this.notification_window.popdown();
+            });
+            container.show_all();
+            this.notification_window.popup();
         }
 
         public bool
@@ -460,7 +539,10 @@ namespace Terminus {
                 this.split_vertically_key.keyval = keyval;
                 this.split_vertically_key.state = state;
                 break;
-
+            case "close-tile":
+                this.close_tile_key.keyval = keyval;
+                this.close_tile_key.state = state;
+                break;
             default:
                 break;
             }
@@ -690,6 +772,10 @@ namespace Terminus {
             }
             if (check_key(eventkey, this.split_vertically_key)) {
                 this.split_vertical(this);
+                return true;
+            }
+            if (check_key(eventkey, this.close_tile_key)) {
+                this.kill_child();
                 return true;
             }
             return false;

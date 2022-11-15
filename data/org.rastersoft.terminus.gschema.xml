@@ -208,5 +208,10 @@
       <summary>Split the current terminal vertically</summary>
       <description></description>
     </key>
+    <key type="s" name="close-tile">
+      <default><![CDATA['<Shift><Ctrl>BackSpace']]></default>
+      <summary>Close the active tile</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>
