@@ -28,7 +28,7 @@ namespace Terminus {
         public signal void ended();
         public signal void new_window();
         public Gtk.Window ?top_window;
-        private Gtk.Dialog notification_window;
+        private Gtk.MessageDialog notification_window;
 
         public Base(string      working_directory,
                     string[]   ?commands,
@@ -42,22 +42,19 @@ namespace Terminus {
         }
 
         public void
-        ask_kill_childs(string title, Killable obj)
+        ask_kill_childs(string title, string subtitle, string button_text, Killable obj)
         {
-            this.notification_window = new Gtk.Dialog.with_buttons("", this.top_window, Gtk.DialogFlags.MODAL,
-                                                                   _("Cancel"), Gtk.ResponseType.REJECT,
-                                                                   _("Close the terminal"), Gtk.ResponseType.ACCEPT,
-                                                                   null);
-            this.notification_window.transient_for = this.top_window;
-            var container = this.notification_window.get_content_area();
-            var title_label = new Gtk.Label("<b>"+title+"</b>");
-            title_label.use_markup = true;
-            var subtext_label = new Gtk.Label(_("Closing this tile will kill it."));
-            container.pack_start(title_label, true, true, 10);
-            container.pack_start(subtext_label, true, true, 10);
-            this.notification_window.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("destructive-action");
-            this.notification_window.decorated = false;
-            this.notification_window.child = container;
+            this.notification_window = new Gtk.MessageDialog(this.top_window,
+                                                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.USE_HEADER_BAR,
+                                                             Gtk.MessageType.QUESTION,
+                                                             Gtk.ButtonsType.NONE,
+                                                             "<b>"+title+"</b>");
+            this.notification_window.format_secondary_markup(subtitle);
+            this.notification_window.use_markup = true;
+            var cancel_button = this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
+            var close_button = this.notification_window.add_button(button_text, Gtk.ResponseType.ACCEPT);
+            close_button.get_style_context().add_class("destructive-action");
+            this.notification_window.set_default_response(Gtk.ResponseType.REJECT);
             this.notification_window.response.connect((response_id) => {
                 this.notification_window.hide();
                 if (response_id == Gtk.ResponseType.ACCEPT) {

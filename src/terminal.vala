@@ -409,7 +409,10 @@ namespace Terminus {
             if (!this.has_child_running()) {
                 Posix.kill(this.pid, Posix.Signal.KILL);
             } else {
-                this.top_container.ask_kill_childs("This terminal has a process running inside.", this);
+                this.top_container.ask_kill_childs(_("This terminal has a process running inside."),
+                                                   _("Closing it will kill the process."),
+                                                   _("Close terminal"),
+                                                   this);
             }
         }
 

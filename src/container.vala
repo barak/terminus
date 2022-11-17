@@ -81,9 +81,18 @@ namespace Terminus {
         }
 
         public void
-        ask_kill_childs(string title, Killable obj)
+        ask_kill_childs(string title, string subtitle, string button_text, Killable obj)
         {
-            this.main_container.ask_kill_childs(title, obj);
+            this.main_container.ask_kill_childs(title, subtitle, button_text, obj);
+        }
+
+        public bool
+        check_if_running_processes() {
+            if (this.terminal != null) {
+                return this.terminal.has_child_running();
+            } else {
+                return this.container1.check_if_running_processes() | this.container2.check_if_running_processes();
+            }
         }
 
         public void
