@@ -27,7 +27,7 @@ namespace Terminus {
      * This is the terminal itself, available in each container.
      */
 
-    class Terminal : Gtk.Box {
+    class Terminal : Gtk.Box, Killable {
         private int pid;
         private Vte.Terminal vte_terminal;
         private Gtk.Label title;
@@ -61,8 +61,6 @@ namespace Terminus {
         private Gdk.EventKey split_vertically_key;
         private Gdk.EventKey close_tile_key;
         private bool had_focus;
-
-        private Gtk.Popover notification_window;
 
         public signal void
         ended(Terminus.Terminal terminal);
@@ -367,13 +365,12 @@ namespace Terminus {
             this.show_all();
         }
 
-        private void
-        kill_child()
+        public bool
+        has_child_running()
         {
             var procdir = GLib.File.new_for_path("/proc");
             var enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
             FileInfo info = null;
-            bool pid_found = false;
             while ((info = enumerator.next_file (null)) != null) {
                 if (info.get_file_type () != FileType.DIRECTORY) {
                     continue;
@@ -398,47 +395,28 @@ namespace Terminus {
                     if (line.has_prefix("PPid:")) {
                         var ppid = int.parse(line.substring(5));
                         if (ppid == this.pid) {
-                            pid_found = true;
-                            break;
+                            return true;
                         }
                     }
                 }
-                if (pid_found) {
-                    break;
-                }
             }
-            if (!pid_found) {
+            return false;
+        }
+
+        private void
+        kill_child()
+        {
+            if (!this.has_child_running()) {
                 Posix.kill(this.pid, Posix.Signal.KILL);
             } else {
-                this.show_notification();
+                this.top_container.ask_kill_childs("This terminal has a process running inside.", this);
             }
         }
 
-        void show_notification() {
-            this.notification_window = new Gtk.Popover(this);
-            var container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-            var title_label = new Gtk.Label("<b>"+_("There is a proccess running")+"</b>");
-            title_label.use_markup = true;
-            var subtext_label = new Gtk.Label(_("Closing this tile will kill it."));
-            var hcontainer = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-            var button_cancel = new Gtk.Button.with_label(_("Cancel"));
-            var button_close = new Gtk.Button.with_label(_("Close the terminal"));
-            container.pack_start(title_label, true, true, 10);
-            container.pack_start(subtext_label, true, true, 10);
-            container.pack_start(hcontainer, true, true, 0);
-            hcontainer.pack_start(button_cancel, true, true, 0);
-            hcontainer.pack_start(button_close, true, true, 0);
-            hcontainer.homogeneous = true;
-            button_close.get_style_context().add_class("destructive-action");
-            this.notification_window.modal = true;
-            this.notification_window.child = container;
-            button_cancel.clicked.connect( () => {this.notification_window.popdown();});
-            button_close.clicked.connect( () => {
-                Posix.kill(this.pid, Posix.Signal.KILL);
-                this.notification_window.popdown();
-            });
-            container.show_all();
-            this.notification_window.popup();
+        public void
+        kill_all_children()
+        {
+            Posix.kill(this.pid, Posix.Signal.KILL);
         }
 
         public bool

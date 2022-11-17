@@ -80,9 +80,10 @@ namespace Terminus {
             });
 
             if (terminal == null) {
-                this.terminal = new Terminus.Base(working_directory, commands);
+                this.terminal = new Terminus.Base(working_directory, commands, this);
             } else {
                 this.terminal = terminal;
+                terminal.top_window = this;
             }
             this.terminal.ended.connect(this.ended_cb);
 

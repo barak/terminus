@@ -25,18 +25,46 @@ namespace Terminus {
      */
 
     class Base : Gtk.Notebook {
-        public signal void
-        ended();
-        public signal void
-        new_window();
+        public signal void ended();
+        public signal void new_window();
+        public Gtk.Window ?top_window;
+        private Gtk.Dialog notification_window;
 
-        public Base(string    working_directory,
-                    string[] ?commands)
+        public Base(string      working_directory,
+                    string[]   ?commands,
+                    Gtk.Window ?top_window)
         {
             this.page_added.connect(this.check_pages);
             this.page_removed.connect(this.check_pages);
             this.new_terminal_tab(working_directory, commands);
             this.scrollable = true;
+            this.top_window = top_window;
+        }
+
+        public void
+        ask_kill_childs(string title, Killable obj)
+        {
+            this.notification_window = new Gtk.Dialog.with_buttons("", this.top_window, Gtk.DialogFlags.MODAL,
+                                                                   _("Cancel"), Gtk.ResponseType.REJECT,
+                                                                   _("Close the terminal"), Gtk.ResponseType.ACCEPT,
+                                                                   null);
+            this.notification_window.transient_for = this.top_window;
+            var container = this.notification_window.get_content_area();
+            var title_label = new Gtk.Label("<b>"+title+"</b>");
+            title_label.use_markup = true;
+            var subtext_label = new Gtk.Label(_("Closing this tile will kill it."));
+            container.pack_start(title_label, true, true, 10);
+            container.pack_start(subtext_label, true, true, 10);
+            this.notification_window.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("destructive-action");
+            this.notification_window.decorated = false;
+            this.notification_window.child = container;
+            this.notification_window.response.connect((response_id) => {
+                this.notification_window.hide();
+                if (response_id == Gtk.ResponseType.ACCEPT) {
+                    obj.kill_all_children();
+                }
+            });
+            this.notification_window.show_all();
         }
 
         public void

@@ -28,6 +28,10 @@ namespace Terminus {
 
     public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
 
+    interface Killable : Object {
+        public abstract void kill_all_children();
+    }
+
     class Container : Gtk.Bin {
         public Terminus.Container ?container1;
         public Terminus.Container ?container2;
@@ -74,6 +78,12 @@ namespace Terminus {
             this.set_terminal_child();
             this.container1 = null;
             this.container2 = null;
+        }
+
+        public void
+        ask_kill_childs(string title, Killable obj)
+        {
+            this.main_container.ask_kill_childs(title, obj);
         }
 
         public void

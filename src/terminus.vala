@@ -213,7 +213,7 @@ namespace Terminus {
             }
             if (guake_mode) {
                 if (this.guake_terminal == null) {
-                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null);
+                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null, null);
                 }
                 window = new Terminus.Window(this,
                                              true,
