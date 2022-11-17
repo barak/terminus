@@ -38,7 +38,7 @@ namespace Terminus {
         }
     }
 
-    class Window : Gtk.ApplicationWindow {
+    class Window : Gtk.ApplicationWindow, Killable {
         public signal void
         ended(Terminus.Window window);
         public signal void
@@ -62,6 +62,12 @@ namespace Terminus {
             return workarea;
         }
 
+        public void
+        kill_all_children()
+        {
+            this.destroy();
+        }
+
         public Window(Gtk.Application  application,
                       bool             guake_mode,
                       string          ?working_directory,
@@ -74,6 +80,18 @@ namespace Terminus {
 
             this.type_hint = Gdk.WindowTypeHint.NORMAL;
             this.focus_on_map = true;
+
+            this.delete_event.connect(() => {
+                if (this.terminal.check_if_running_processes()) {
+                    this.terminal.ask_kill_childs(_("This window has running processes inside."),
+                                                  _("Closing it will kill them."),
+                                                  _("Close window"),
+                                                  this);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
 
             this.destroy.connect((w) => {
                 this.ended(this);

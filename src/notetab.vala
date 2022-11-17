@@ -60,7 +60,7 @@ namespace Terminus {
         close_tab()
         {
             if (this.top_container.check_if_running_processes()) {
-                this.main_container.ask_kill_childs(_("This tab has running processes."),
+                this.main_container.ask_kill_childs(_("This tab has running processes inside."),
                                                     _("Closing it will kill them."),
                                                     _("Close tab"), this);
             } else {

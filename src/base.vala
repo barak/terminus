@@ -51,7 +51,7 @@ namespace Terminus {
                                                              "<b>"+title+"</b>");
             this.notification_window.format_secondary_markup(subtitle);
             this.notification_window.use_markup = true;
-            var cancel_button = this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
+            this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
             var close_button = this.notification_window.add_button(button_text, Gtk.ResponseType.ACCEPT);
             close_button.get_style_context().add_class("destructive-action");
             this.notification_window.set_default_response(Gtk.ResponseType.REJECT);
@@ -62,6 +62,17 @@ namespace Terminus {
                 }
             });
             this.notification_window.show_all();
+        }
+
+        public bool
+        check_if_running_processes() {
+            for(var i=0; i<this.get_n_pages(); i++) {
+                var page = (Terminus.Container) this.get_nth_page(i);
+                if (page.check_if_running_processes()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void
