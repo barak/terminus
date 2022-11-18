@@ -102,8 +102,8 @@ namespace Terminus {
             var palette = new Terminus.Terminuspalette();
             palette.custom = true;
             palette.name = _("Custom colors");
-            this.palettes.sort(this.ComparePalettes);
             this.palettes.add(palette);
+            this.palettes.sort(this.ComparePalettes);
 
             var show_guake = new GLib.SimpleAction("show_guake", null);
             show_guake.activate.connect(() => {
@@ -153,6 +153,12 @@ namespace Terminus {
         ComparePalettes(Terminuspalette a,
                         Terminuspalette b)
         {
+            if (a.custom) {
+                return -1;
+            }
+            if (b.custom) {
+                return 1;
+            }
             if (a.name < b.name) {
                 return -1;
             } else {

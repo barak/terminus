@@ -45,7 +45,6 @@ namespace Terminus {
         private Gtk.ListStore keybindings;
         private Gtk.Entry custom_shell;
 
-
         private bool editing_keybind;
         private bool changing_guake;
         private string old_keybind;
@@ -99,7 +98,7 @@ namespace Terminus {
             this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
             this.palette_colors = {};
             string[] palette_string = Terminus.settings.get_strv("color-palete");
-            var      tmpcolor = Gdk.RGBA();
+            var tmpcolor = Gdk.RGBA();
             for (int i = 0; i < 16; i++) {
                 Gtk.ColorButton palette_button = main_window.get_object("palette%d".printf(i)) as Gtk.ColorButton;
                 tmpcolor.parse(palette_string[i]);
@@ -220,6 +219,7 @@ namespace Terminus {
                 this.disable_palette_change = false;
                 this.updated_palette();
             });
+
             this.color_scheme.changed.connect(() => {
                 var selected = this.color_scheme.get_active();
                 if (selected < 0) {
@@ -234,10 +234,12 @@ namespace Terminus {
                 if (scheme.custom) {
                     return;
                 }
+                this.disable_palette_change = true;
                 this.fg_color.rgba = scheme.text_fg;
                 this.bg_color.rgba = scheme.text_bg;
                 this.set_all_properties("fg-color");
                 this.set_all_properties("bg-color");
+                this.disable_palette_change = false;
             });
 
             var scroll_lines = main_window.get_object("scroll_lines") as Gtk.Adjustment;
@@ -437,7 +439,7 @@ namespace Terminus {
                     Terminus.settings.set_string("highlight-bg-color", htmlcolor);
                 }
             }
-            if (changed) {
+            if (changed && !this.disable_palette_change) {
                 this.color_scheme.set_active(this.get_current_scheme());
             }
         }
