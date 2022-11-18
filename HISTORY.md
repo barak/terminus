@@ -5,6 +5,7 @@
   * Fixed Guake keybinding failing until re-set
   * Added hotkeys to close a tile and a tab
   * Now asks for confirmation when trying to close a terminal with a running program
+  * Fixed color scheme selection
 * Version 1.19.1 (2022-10-13)
   * Added support for Gnome Shell 43
 * Version 1.19.0 (2022-09-28)
