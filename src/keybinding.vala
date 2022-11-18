@@ -28,6 +28,7 @@ namespace Terminus {
 
         public KeyBinding(string name, string description) {
             this.name = name;
+            this.description = description;
             Terminus.keybind_settings.changed.connect(this.settings_changed);
             this.settings_changed(name);
         }
