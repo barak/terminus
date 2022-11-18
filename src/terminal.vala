@@ -43,23 +43,6 @@ namespace Terminus {
         private double title_g;
         private double title_b;
 
-        private Gdk.EventKey new_tab_key;
-        private Gdk.EventKey new_window_key;
-        private Gdk.EventKey next_tab_key;
-        private Gdk.EventKey previous_tab_key;
-        private Gdk.EventKey copy_key;
-        private Gdk.EventKey paste_key;
-        private Gdk.EventKey terminal_left_key;
-        private Gdk.EventKey terminal_right_key;
-        private Gdk.EventKey terminal_up_key;
-        private Gdk.EventKey terminal_down_key;
-        private Gdk.EventKey font_big_key;
-        private Gdk.EventKey font_small_key;
-        private Gdk.EventKey font_normal_key;
-        private Gdk.EventKey show_menu_key;
-        private Gdk.EventKey split_horizontally_key;
-        private Gdk.EventKey split_vertically_key;
-        private Gdk.EventKey close_tile_key;
         private bool had_focus;
 
         public signal void
@@ -308,44 +291,7 @@ namespace Terminus {
             this.vte_terminal.add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
             this.vte_terminal.add_events(Gdk.EventMask.SCROLL_MASK);
 
-            this.new_tab_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.new_window_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.next_tab_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.previous_tab_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.copy_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.paste_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.terminal_left_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.terminal_right_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.terminal_up_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.terminal_down_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.font_big_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.font_small_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.font_normal_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.show_menu_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.split_horizontally_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.split_vertically_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-            this.close_tile_key = new Gdk.Event(Gdk.EventType.KEY_RELEASE).key;
-
-            keybind_settings_changed("new-window");
-            keybind_settings_changed("new-tab");
-            keybind_settings_changed("next-tab");
-            keybind_settings_changed("previous-tab");
-            keybind_settings_changed("copy");
-            keybind_settings_changed("paste");
-            keybind_settings_changed("terminal-left");
-            keybind_settings_changed("terminal-right");
-            keybind_settings_changed("terminal-up");
-            keybind_settings_changed("terminal-down");
-            keybind_settings_changed("font-size-big");
-            keybind_settings_changed("font-size-small");
-            keybind_settings_changed("font-size-normal");
-            keybind_settings_changed("show-menu");
-            keybind_settings_changed("split-horizontally");
-            keybind_settings_changed("split-vertically");
-            keybind_settings_changed("close-tile");
-
             Terminus.settings.changed.connect(this.settings_changed);
-            Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
 
             this.vte_terminal.key_press_event.connect(this.on_key_press);
             this.vte_terminal.scroll_event.connect(this.on_scroll);
@@ -429,105 +375,6 @@ namespace Terminus {
             return false;
         }
 
-        public void
-        keybind_settings_changed(string key)
-        {
-            uint             keyval;
-            Gdk.ModifierType state;
-
-            Gtk.accelerator_parse(Terminus.keybind_settings.get_string(key), out keyval, out state);
-            if (keyval < 128) {
-                keyval &= ~32;
-            }
-
-            switch (key) {
-            case "new-window":
-                this.new_window_key.keyval = keyval;
-                this.new_window_key.state = state;
-                break;
-
-            case "new-tab":
-                this.new_tab_key.keyval = keyval;
-                this.new_tab_key.state = state;
-                break;
-
-            case "next-tab":
-                this.next_tab_key.keyval = keyval;
-                this.next_tab_key.state = state;
-                break;
-
-            case "previous-tab":
-                this.previous_tab_key.keyval = keyval;
-                this.previous_tab_key.state = state;
-                break;
-
-            case "copy":
-                this.copy_key.keyval = keyval;
-                this.copy_key.state = state;
-                break;
-
-            case "paste":
-                this.paste_key.keyval = keyval;
-                this.paste_key.state = state;
-                break;
-
-            case "terminal-left":
-                this.terminal_left_key.keyval = keyval;
-                this.terminal_left_key.state = state;
-                break;
-
-            case "terminal-right":
-                this.terminal_right_key.keyval = keyval;
-                this.terminal_right_key.state = state;
-                break;
-
-            case "terminal-up":
-                this.terminal_up_key.keyval = keyval;
-                this.terminal_up_key.state = state;
-                break;
-
-            case "terminal-down":
-                this.terminal_down_key.keyval = keyval;
-                this.terminal_down_key.state = state;
-                break;
-
-            case "font-size-big":
-                this.font_big_key.keyval = keyval;
-                this.font_big_key.state = state;
-                break;
-
-            case "font-size-small":
-                this.font_small_key.keyval = keyval;
-                this.font_small_key.state = state;
-                break;
-
-            case "font-size-normal":
-                this.font_normal_key.keyval = keyval;
-                this.font_normal_key.state = state;
-                break;
-
-            case "show-menu":
-                this.show_menu_key.keyval = keyval;
-                this.show_menu_key.state = state;
-                break;
-
-            case "split-horizontally":
-                this.split_horizontally_key.keyval = keyval;
-                this.split_horizontally_key.state = state;
-                break;
-
-            case "split-vertically":
-                this.split_vertically_key.keyval = keyval;
-                this.split_vertically_key.state = state;
-                break;
-            case "close-tile":
-                this.close_tile_key.keyval = keyval;
-                this.close_tile_key.state = state;
-                break;
-            default:
-                break;
-            }
-        }
 
         public void
         settings_changed(string key)
@@ -641,13 +488,6 @@ namespace Terminus {
             }
         }
 
-        private bool
-        check_key(Gdk.EventKey event,
-                  Gdk.EventKey key)
-        {
-            return ((event.keyval == key.keyval) && (event.state == key.state));
-        }
-
         public bool
         on_scroll(Gdk.EventScroll event)
         {
@@ -687,79 +527,62 @@ namespace Terminus {
                 eventkey.keyval &= ~32;
             }
 
-            if (check_key(eventkey, this.new_window_key)) {
+            switch(key_bindings.find_key(eventkey)) {
+            case "new-window":
                 this.main_container.new_terminal_window();
                 return true;
-            }
-            if (check_key(eventkey, this.new_tab_key)) {
+            case "new-tab":
                 this.main_container.new_terminal_tab("", null);
                 return true;
-            }
-            if (check_key(eventkey, this.next_tab_key)) {
+            case "next-tab":
                 this.main_container.next_tab();
                 return true;
-            }
-            if (check_key(eventkey, this.previous_tab_key)) {
+            case "previous-tab":
                 this.main_container.prev_tab();
                 return true;
-            }
-
-            if (check_key(eventkey, this.copy_key)) {
+            case "copy":
                 this.do_copy();
                 return true;
-            }
-            if (check_key(eventkey, this.paste_key)) {
+            case "paste":
                 this.do_paste();
                 return true;
-            }
-
-            if (check_key(eventkey, this.terminal_up_key)) {
+            case "terminal-up":
                 this.container.move_terminal_focus(Terminus.MoveFocus.UP, null, true);
                 return true;
-            }
-            if (check_key(eventkey, this.terminal_down_key)) {
+            case "terminal-down":
                 this.container.move_terminal_focus(Terminus.MoveFocus.DOWN, null, true);
                 return true;
-            }
-            if (check_key(eventkey, this.terminal_left_key)) {
+            case "terminal-left":
                 this.container.move_terminal_focus(Terminus.MoveFocus.LEFT, null, true);
                 return true;
-            }
-            if (check_key(eventkey, this.terminal_right_key)) {
+            case "terminal-right":
                 this.container.move_terminal_focus(Terminus.MoveFocus.RIGHT, null, true);
                 return true;
-            }
-
-            if (check_key(eventkey, this.font_big_key)) {
+            case "font-size-big":
                 this.change_zoom(true);
                 return true;
-            }
-            if (check_key(eventkey, this.font_small_key)) {
+            case "font-size-small":
                 this.change_zoom(false);
                 return true;
-            }
-            if (check_key(eventkey, this.font_normal_key)) {
+            case "font-size-normal":
                 this.vte_terminal.font_scale = 1;
                 return true;
-            }
-            if (check_key(eventkey, this.show_menu_key)) {
+            case "show-menu":
                 this.item_copy.sensitive = this.vte_terminal.get_has_selection();
                 this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
                 return true;
-            }
-            if (check_key(eventkey, this.split_horizontally_key)) {
+            case "split-horizontally":
                 this.split_horizontal(this);
                 return true;
-            }
-            if (check_key(eventkey, this.split_vertically_key)) {
+            case "split-vertically":
                 this.split_vertical(this);
                 return true;
-            }
-            if (check_key(eventkey, this.close_tile_key)) {
+            case "close-tile":
                 this.kill_child();
                 return true;
+            default:
+                return false;
             }
-            return false;
         }
 
         private void

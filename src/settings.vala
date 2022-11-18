@@ -322,24 +322,9 @@ namespace Terminus {
             this.palette_scheme.set_active(selected);
 
             this.keybindings = new Gtk.ListStore(3, typeof(string), typeof(string), typeof(string));
-            this.add_keybinding(_("New window"), "new-window");
-            this.add_keybinding(_("New tab"), "new-tab");
-            this.add_keybinding(_("Next tab"), "next-tab");
-            this.add_keybinding(_("Previous tab"), "previous-tab");
-            this.add_keybinding(_("Show guake terminal"), "guake-mode");
-            this.add_keybinding(_("Copy text into the clipboard"), "copy");
-            this.add_keybinding(_("Paste text from the clipboard"), "paste");
-            this.add_keybinding(_("Move focus to the terminal on the left"), "terminal-left");
-            this.add_keybinding(_("Move focus to the terminal on the right"), "terminal-right");
-            this.add_keybinding(_("Move focus to the terminal above"), "terminal-up");
-            this.add_keybinding(_("Move focus to the terminal below"), "terminal-down");
-            this.add_keybinding(_("Make font bigger"), "font-size-big");
-            this.add_keybinding(_("Make font smaller"), "font-size-small");
-            this.add_keybinding(_("Reset font size"), "font-size-normal");
-            this.add_keybinding(_("Show menu"), "show-menu");
-            this.add_keybinding(_("Split horizontally"), "split-horizontally");
-            this.add_keybinding(_("Split vertically"), "split-vertically");
-            this.add_keybinding(_("Close the active tile"), "close-tile");
+            foreach (var kb in Terminus.key_bindings.key_binding_list) {
+                this.add_keybinding(kb.description, kb.name);
+            }
 
             var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
             keybindings_view.activate_on_single_click = true;
