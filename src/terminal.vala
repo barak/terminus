@@ -45,13 +45,9 @@ namespace Terminus {
 
         private bool had_focus;
 
-        public signal void
-        ended(Terminus.Terminal terminal);
-        public signal void
-        split_horizontal(Terminus.Terminal terminal);
-        public signal void
-        split_vertical(Terminus.Terminal terminal);
-
+        public signal void ended(Terminus.Terminal terminal);
+        public signal void split_horizontal(Terminus.Terminal terminal);
+        public signal void split_vertical(Terminus.Terminal terminal);
 
         private void
         add_separator()
@@ -579,6 +575,9 @@ namespace Terminus {
                 return true;
             case "close-tile":
                 this.kill_child();
+                return true;
+            case "close-tab":
+                this.top_container.ask_close_tab();
                 return true;
             default:
                 return false;

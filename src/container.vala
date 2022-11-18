@@ -45,8 +45,8 @@ namespace Terminus {
         private bool splited_horizontal;
         private string working_directory;
 
-        public signal void
-        ended(Terminus.Container who);
+        public signal void ended(Terminus.Container who);
+        public signal void close_tab(Terminus.Container who);
 
         public Container(Terminus.Base       main_container,
                          string              working_directory,
@@ -93,6 +93,11 @@ namespace Terminus {
             } else {
                 return this.container1.check_if_running_processes() | this.container2.check_if_running_processes();
             }
+        }
+
+        public void
+        ask_close_tab() {
+            this.close_tab(this);
         }
 
         public void

@@ -213,5 +213,10 @@
       <summary>Close the active tile</summary>
       <description></description>
     </key>
+    <key type="s" name="close-tab">
+      <default><![CDATA['<Shift><Ctrl>F4']]></default>
+      <summary>Close the active tile</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>

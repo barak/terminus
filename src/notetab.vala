@@ -35,6 +35,9 @@ namespace Terminus {
         {
             this.main_container = main_container;
             this.top_container = top_container;
+            this.top_container.close_tab.connect(() => {
+                this.close_tab();
+            });
             this.inner_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             this.title = new Gtk.Label("");
             this.title.margin_end = 3;
