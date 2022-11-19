@@ -423,6 +423,12 @@ namespace Terminus {
                 this.vte_terminal.set_color_background(color);
                 break;
 
+            case "focused-fg-color":
+            case "focused-bg-color":
+            case "inactive-fg-color":
+            case "inactive-bg-color":
+                this.update_title();
+                break;
             case "bold-color":
                 this.vte_terminal.set_color_bold(color);
                 break;
@@ -601,19 +607,18 @@ namespace Terminus {
 
             string fg;
             string bg;
+            var tmp_color = Gdk.RGBA();
             if (this.vte_terminal.has_focus) {
-                this.title_r = 1.0;
-                this.title_g = 0.0;
-                this.title_b = 0.0;
-                fg = "#FFFFFF";
-                bg = "#FF0000";
+                fg = Terminus.settings.get_string("focused-fg-color");
+                bg = Terminus.settings.get_string("focused-bg-color");
             } else {
-                this.title_r = 0.6666666;
-                this.title_g = 0.6666666;
-                this.title_b = 0.6666666;
-                fg = "#000000";
-                bg = "#AAAAAA";
+                fg = Terminus.settings.get_string("inactive-fg-color");
+                bg = Terminus.settings.get_string("inactive-bg-color");
             }
+            tmp_color.parse(bg);
+            this.title_r = tmp_color.red;
+            this.title_g = tmp_color.green;
+            this.title_b = tmp_color.blue;
             this.title.use_markup = true;
             this.title.label = "<span foreground=\"%s\" background=\"%s\" size=\"small\">%s %ldx%ld</span>".printf(fg,
                                                                                                                    bg,

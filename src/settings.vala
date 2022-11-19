@@ -37,6 +37,10 @@ namespace Terminus {
         private Gtk.ColorButton highlight_color_fg;
         private Gtk.ColorButton highlight_color_bg;
         private Gtk.ColorButton[] palette_colors;
+        private Gtk.ColorButton focused_fg_color;
+        private Gtk.ColorButton focused_bg_color;
+        private Gtk.ColorButton inactive_fg_color;
+        private Gtk.ColorButton inactive_bg_color;
         private Gtk.ComboBox color_scheme;
         private Gtk.ListStore color_schemes;
         private Gtk.ComboBox palette_scheme;
@@ -96,6 +100,10 @@ namespace Terminus {
             this.palette_scheme = main_window.get_object("palette_scheme") as Gtk.ComboBox;
             this.palette_schemes = main_window.get_object("palette_schemes") as Gtk.ListStore;
             this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
+            this.focused_fg_color = main_window.get_object("focused_fg_color") as Gtk.ColorButton;
+            this.focused_bg_color = main_window.get_object("focused_bg_color") as Gtk.ColorButton;
+            this.inactive_fg_color = main_window.get_object("inactive_fg_color") as Gtk.ColorButton;
+            this.inactive_bg_color = main_window.get_object("inactive_bg_color") as Gtk.ColorButton;
             this.palette_colors = {};
             string[] palette_string = Terminus.settings.get_strv("color-palete");
             var tmpcolor = Gdk.RGBA();
@@ -106,12 +114,20 @@ namespace Terminus {
                 this.palette_colors += palette_button;
             }
 
-            var    tmp_color = Gdk.RGBA();
+            var tmp_color = Gdk.RGBA();
             string key;
             tmp_color.parse(Terminus.settings.get_string("fg-color"));
             this.fg_color.set_rgba(tmp_color);
             tmp_color.parse(Terminus.settings.get_string("bg-color"));
             this.bg_color.set_rgba(tmp_color);
+            tmp_color.parse(Terminus.settings.get_string("focused-fg-color"));
+            this.focused_fg_color.set_rgba(tmp_color);
+            tmp_color.parse(Terminus.settings.get_string("focused-bg-color"));
+            this.focused_bg_color.set_rgba(tmp_color);
+            tmp_color.parse(Terminus.settings.get_string("inactive-fg-color"));
+            this.inactive_fg_color.set_rgba(tmp_color);
+            tmp_color.parse(Terminus.settings.get_string("inactive-bg-color"));
+            this.inactive_bg_color.set_rgba(tmp_color);
             key = Terminus.settings.get_string("bold-color");
             if (key != "") {
                 tmp_color.parse(key);
@@ -157,6 +173,18 @@ namespace Terminus {
             });
             this.bg_color.color_set.connect(() => {
                 this.set_all_properties("bg-color");
+            });
+            this.focused_fg_color.color_set.connect(() => {
+                this.set_all_properties("focused-fg-color");
+            });
+            this.focused_bg_color.color_set.connect(() => {
+                this.set_all_properties("focused-bg-color");
+            });
+            this.inactive_fg_color.color_set.connect(() => {
+                this.set_all_properties("inactive-fg-color");
+            });
+            this.inactive_bg_color.color_set.connect(() => {
+                this.set_all_properties("inactive-bg-color");
             });
             this.bold_color.color_set.connect(() => {
                 this.set_all_properties("bold-color");
@@ -367,6 +395,42 @@ namespace Terminus {
                 if (Terminus.settings.get_string("bg-color") != htmlcolor) {
                     Terminus.settings.set_string("bg-color", htmlcolor);
                     changed = true;
+                }
+            }
+            if (key == "focused-fg-color") {
+                var color = this.focused_fg_color.rgba;
+                var htmlcolor =
+                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
+                                           (uint) (255 * color.blue));
+                if (Terminus.settings.get_string("focused-fg-color") != htmlcolor) {
+                    Terminus.settings.set_string("focused-fg-color", htmlcolor);
+                }
+            }
+            if (key == "focused-bg-color") {
+                var color = this.focused_bg_color.rgba;
+                var htmlcolor =
+                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
+                                           (uint) (255 * color.blue));
+                if (Terminus.settings.get_string("focused-bg-color") != htmlcolor) {
+                    Terminus.settings.set_string("focused-bg-color", htmlcolor);
+                }
+            }
+            if (key == "inactive-fg-color") {
+                var color = this.inactive_fg_color.rgba;
+                var htmlcolor =
+                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
+                                           (uint) (255 * color.blue));
+                if (Terminus.settings.get_string("inactive-fg-color") != htmlcolor) {
+                    Terminus.settings.set_string("inactive-fg-color", htmlcolor);
+                }
+            }
+            if (key == "inactive-bg-color") {
+                var color = this.inactive_bg_color.rgba;
+                var htmlcolor =
+                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
+                                           (uint) (255 * color.blue));
+                if (Terminus.settings.get_string("inactive-bg-color") != htmlcolor) {
+                    Terminus.settings.set_string("inactive-bg-color", htmlcolor);
                 }
             }
             if (key == "bold-color") {

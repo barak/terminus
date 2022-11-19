@@ -53,7 +53,7 @@ namespace Terminus {
             this.notification_window.use_markup = true;
             this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
             var close_button = this.notification_window.add_button(button_text, Gtk.ResponseType.ACCEPT);
-            close_button.get_style_context().add_class("destructive-action");
+            close_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
             this.notification_window.set_default_response(Gtk.ResponseType.REJECT);
             this.notification_window.response.connect((response_id) => {
                 this.notification_window.hide();
