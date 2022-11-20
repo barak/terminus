@@ -249,7 +249,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(0,0,0)</property>
               </object>
               <packing>
                 <property name="left-attach">3</property>
@@ -257,11 +256,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton" id="text_color">
+              <object class="GtkColorButton" id="fg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(238,238,236)</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -363,7 +361,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(255,255,255)</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -371,11 +368,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton" id="cursor_color_fg">
+              <object class="GtkColorButton" id="cursor_fg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(136,138,133)</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -383,11 +379,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton" id="cursor_color_bg">
+              <object class="GtkColorButton" id="cursor_bg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(255,255,255)</property>
               </object>
               <packing>
                 <property name="left-attach">3</property>
@@ -395,11 +390,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton" id="highlight_color_fg">
+              <object class="GtkColorButton" id="highlight_fg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(255,255,255)</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -407,11 +401,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton" id="highlight_color_bg">
+              <object class="GtkColorButton" id="highlight_bg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="rgba">rgb(0,0,0)</property>
               </object>
               <packing>
                 <property name="left-attach">3</property>
