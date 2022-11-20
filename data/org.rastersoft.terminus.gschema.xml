@@ -22,12 +22,12 @@
       <description>The default color used for the terminal background</description>
     </key>
     <key type="s" name="focused-fg-color">
-      <default>"#FFFFFF"</default>
+      <default>"#000000"</default>
       <summary>Focused text color</summary>
       <description>The default color used for the top bar text when a terminal has the keyboard focus</description>
     </key>
     <key type="s" name="focused-bg-color">
-      <default>"#7F0000"</default>
+      <default>"#99C1F1"</default>
       <summary>Focused background color</summary>
       <description>The default color used for the top bar text when a terminal has the keyboard focus</description>
     </key>
@@ -37,7 +37,7 @@
       <description>The default color used for the top bar text when a terminal doesn't have the keyboard focus</description>
     </key>
     <key type="s" name="inactive-bg-color">
-      <default>"#AAAAAA"</default>
+      <default>"#C0C0C0"</default>
       <summary>Inactive background color</summary>
       <description>The default color used for the top bar text when a terminal doesn't have the keyboard focus</description>
     </key>
