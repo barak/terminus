@@ -1,6 +1,6 @@
 # History of versions #
 
-* NoVersion 1.20.0
+* Version 1.20.0
   * Fixed Guake window zero height on first run
   * Fixed Guake keybinding failing until re-set
   * Added hotkeys to close a tile and a tab
