@@ -1,3 +1,11 @@
+terminus (1.20.0-1) unstable; urgency=medium
+
+  * New upstream version
+  * Update man page
+  * Update debian/copyright debian/* year
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 28 Nov 2022 11:45:41 +0000
+
 terminus (1.19.1-1) unstable; urgency=medium
 
   * New upstream version
