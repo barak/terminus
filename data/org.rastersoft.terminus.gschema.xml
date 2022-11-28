@@ -21,7 +21,27 @@
       <summary>Background color</summary>
       <description>The default color used for the terminal background</description>
     </key>
-	 <key type="s" name="bold-color">
+    <key type="s" name="focused-fg-color">
+      <default>"#000000"</default>
+      <summary>Focused text color</summary>
+      <description>The default color used for the top bar text when a terminal has the keyboard focus</description>
+    </key>
+    <key type="s" name="focused-bg-color">
+      <default>"#99C1F1"</default>
+      <summary>Focused background color</summary>
+      <description>The default color used for the top bar text when a terminal has the keyboard focus</description>
+    </key>
+    <key type="s" name="inactive-fg-color">
+      <default>"#000000"</default>
+      <summary>Inactive text color</summary>
+      <description>The default color used for the top bar text when a terminal doesn't have the keyboard focus</description>
+    </key>
+    <key type="s" name="inactive-bg-color">
+      <default>"#C0C0C0"</default>
+      <summary>Inactive background color</summary>
+      <description>The default color used for the top bar text when a terminal doesn't have the keyboard focus</description>
+    </key>
+	  <key type="s" name="bold-color">
       <default>""</default>
       <summary>Bold color</summary>
       <description>The default color used for the terminal bold letters. An empty string means "use the default color".</description>
@@ -206,6 +226,16 @@
     <key type="s" name="split-vertically">
       <default><![CDATA['<Shift><Ctrl>b']]></default>
       <summary>Split the current terminal vertically</summary>
+      <description></description>
+    </key>
+    <key type="s" name="close-tile">
+      <default><![CDATA['<Shift><Ctrl>BackSpace']]></default>
+      <summary>Close the active tile</summary>
+      <description></description>
+    </key>
+    <key type="s" name="close-tab">
+      <default><![CDATA['<Shift><Ctrl>F4']]></default>
+      <summary>Close the active tile</summary>
       <description></description>
     </key>
   </schema>

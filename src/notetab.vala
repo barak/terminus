@@ -24,7 +24,7 @@ namespace Terminus {
      * This is the widget put in each tab
      */
 
-    class Notetab : Gtk.EventBox {
+    class Notetab : Gtk.EventBox, Killable {
         private Terminus.Container top_container;
         private Gtk.Label title;
         private Terminus.Base main_container;
@@ -35,6 +35,9 @@ namespace Terminus {
         {
             this.main_container = main_container;
             this.top_container = top_container;
+            this.top_container.close_tab.connect(() => {
+                this.close_tab();
+            });
             this.inner_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             this.title = new Gtk.Label("");
             this.title.margin_end = 3;
@@ -44,16 +47,34 @@ namespace Terminus {
             this.add(this.inner_box);
             this.show_all();
             close_button.clicked.connect(() => {
-                this.main_container.delete_page(this.top_container);
+                this.close_tab();
             });
             this.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK);
             this.button_release_event.connect((event) => {
                 if (event.button == 2) {
-                    this.main_container.delete_page(this.top_container);
+                    this.close_tab();
                     return true;
                 }
                 return false;
             });
+        }
+
+        private void
+        close_tab()
+        {
+            if (this.top_container.check_if_running_processes()) {
+                this.main_container.ask_kill_childs(_("This tab has running processes inside."),
+                                                    _("Closing it will kill them."),
+                                                    _("Close tab"), this);
+            } else {
+                this.kill_all_children();
+            }
+        }
+
+        public void
+        kill_all_children()
+        {
+            this.main_container.delete_page(this.top_container);
         }
 
         public void

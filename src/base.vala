@@ -25,18 +25,54 @@ namespace Terminus {
      */
 
     class Base : Gtk.Notebook {
-        public signal void
-        ended();
-        public signal void
-        new_window();
+        public signal void ended();
+        public signal void new_window();
+        public Gtk.Window ?top_window;
+        private Gtk.MessageDialog notification_window;
 
-        public Base(string    working_directory,
-                    string[] ?commands)
+        public Base(string      working_directory,
+                    string[]   ?commands,
+                    Gtk.Window ?top_window)
         {
             this.page_added.connect(this.check_pages);
             this.page_removed.connect(this.check_pages);
             this.new_terminal_tab(working_directory, commands);
             this.scrollable = true;
+            this.top_window = top_window;
+        }
+
+        public void
+        ask_kill_childs(string title, string subtitle, string button_text, Killable obj)
+        {
+            this.notification_window = new Gtk.MessageDialog(this.top_window,
+                                                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.USE_HEADER_BAR,
+                                                             Gtk.MessageType.QUESTION,
+                                                             Gtk.ButtonsType.NONE,
+                                                             "<b>"+title+"</b>");
+            this.notification_window.format_secondary_markup(subtitle);
+            this.notification_window.use_markup = true;
+            this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
+            var close_button = this.notification_window.add_button(button_text, Gtk.ResponseType.ACCEPT);
+            close_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
+            this.notification_window.set_default_response(Gtk.ResponseType.REJECT);
+            this.notification_window.response.connect((response_id) => {
+                this.notification_window.hide();
+                if (response_id == Gtk.ResponseType.ACCEPT) {
+                    obj.kill_all_children();
+                }
+            });
+            this.notification_window.show_all();
+        }
+
+        public bool
+        check_if_running_processes() {
+            for(var i=0; i<this.get_n_pages(); i++) {
+                var page = (Terminus.Container) this.get_nth_page(i);
+                if (page.check_if_running_processes()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void

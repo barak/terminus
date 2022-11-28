@@ -19,6 +19,69 @@ using Gtk;
 using Gdk;
 
 namespace Terminus {
+
+    class HTMLColorButton: Object {
+        private Gtk.ColorButton color_button;
+        private Gtk.ToggleButton ?toggle_button;
+        private string property_name;
+        private ulong connect_id;
+        private ulong enable_id;
+
+        public signal void color_set();
+
+        public HTMLColorButton(Gtk.Builder builder, string color_button, string ?enable_button) {
+            property_name = color_button.replace("_", "-");
+            this.color_button = builder.get_object(color_button) as Gtk.ColorButton;
+            if (enable_button != null) {
+                this.toggle_button = builder.get_object(enable_button) as Gtk.ToggleButton;
+                this.enable_id = this.toggle_button.toggled.connect(() => {
+                    this.set_status();
+                });
+            } else {
+                this.toggle_button = null;
+            }
+            this.connect_id = this.color_button.color_set.connect(() => {
+                this.set_status();
+                this.color_set();
+            });
+            var current_color = Gdk.RGBA();
+            var parsed = current_color.parse(Terminus.settings.get_string(this.property_name));
+            if (this.toggle_button != null) {
+                this.toggle_button.active = parsed;
+                this.color_button.sensitive = parsed;
+            }
+            if (parsed) {
+                this.color_button.rgba = current_color;
+            }
+        }
+
+        ~HTMLColorButton() {
+            this.color_button.disconnect(this.connect_id);
+            this.toggle_button.disconnect(this.enable_id);
+        }
+
+        public void set_status() {
+            if (this.toggle_button != null) {
+                if (!this.toggle_button.active) {
+                    Terminus.settings.set_string(this.property_name, "");
+                }
+                this.color_button.sensitive = this.toggle_button.active;
+             } else {
+                var rgba = this.color_button.rgba;
+                Terminus.settings.set_string(this.property_name, "#%02X%02X%02X".printf(
+                    (uint)(255 * rgba.red),
+                    (uint)(255 * rgba.green),
+                    (uint)(255 * rgba.blue)
+                ));
+            }
+        }
+
+        public void set_rgba(Gdk.RGBA new_color) {
+            this.color_button.rgba = new_color;
+            this.set_status();
+        }
+    }
+
     class Properties : Gtk.Window {
         private Gtk.CheckButton use_system_font;
         private Gtk.CheckButton infinite_scroll;
@@ -29,14 +92,21 @@ namespace Terminus {
         private Gtk.CheckButton use_custom_shell;
         private Gtk.SpinButton scroll_value;
         private Gtk.Button custom_font;
-        private Gtk.ColorButton fg_color;
-        private Gtk.ColorButton bg_color;
-        private Gtk.ColorButton bold_color;
-        private Gtk.ColorButton cursor_color_fg;
-        private Gtk.ColorButton cursor_color_bg;
-        private Gtk.ColorButton highlight_color_fg;
-        private Gtk.ColorButton highlight_color_bg;
+
+        private HTMLColorButton fg_color;
+        private HTMLColorButton bg_color;
+        private HTMLColorButton bold_color;
+        private HTMLColorButton cursor_color_fg;
+        private HTMLColorButton cursor_color_bg;
+        private HTMLColorButton highlight_color_fg;
+        private HTMLColorButton highlight_color_bg;
+        private HTMLColorButton focused_fg_color;
+        private HTMLColorButton focused_bg_color;
+        private HTMLColorButton inactive_fg_color;
+        private HTMLColorButton inactive_bg_color;
+
         private Gtk.ColorButton[] palette_colors;
+
         private Gtk.ComboBox color_scheme;
         private Gtk.ListStore color_schemes;
         private Gtk.ComboBox palette_scheme;
@@ -44,7 +114,6 @@ namespace Terminus {
         private Gtk.ComboBox cursor_shape;
         private Gtk.ListStore keybindings;
         private Gtk.Entry custom_shell;
-
 
         private bool editing_keybind;
         private bool changing_guake;
@@ -82,16 +151,22 @@ namespace Terminus {
                 this.custom_font.sensitive = this.use_system_font.active;
             });
 
-            this.fg_color = main_window.get_object("text_color") as Gtk.ColorButton;
-            this.bg_color = main_window.get_object("bg_color") as Gtk.ColorButton;
-            this.bold_color = main_window.get_object("bold_color") as Gtk.ColorButton;
+            this.fg_color = new HTMLColorButton(main_window, "fg_color", null);
+            this.bg_color = new HTMLColorButton(main_window, "bg_color", null);
+            this.bold_color = new HTMLColorButton(main_window, "bold_color", "use_bold_color");
+            this.cursor_color_fg = new HTMLColorButton(main_window, "cursor_fg_color", "use_cursor_color");
+            this.cursor_color_bg = new HTMLColorButton(main_window, "cursor_bg_color", "use_cursor_color");
+            this.highlight_color_fg = new HTMLColorButton(main_window, "highlight_fg_color", "use_highlight_color");
+            this.highlight_color_bg = new HTMLColorButton(main_window, "highlight_bg_color", "use_highlight_color");
+            this.focused_fg_color = new HTMLColorButton(main_window, "focused_fg_color", null);
+            this.focused_bg_color = new HTMLColorButton(main_window, "focused_bg_color", null);
+            this.inactive_fg_color = new HTMLColorButton(main_window, "inactive_fg_color", null);
+            this.inactive_bg_color = new HTMLColorButton(main_window, "inactive_bg_color", null);
+
             this.use_bold_color = main_window.get_object("use_bold_color") as Gtk.CheckButton;
-            this.cursor_color_fg = main_window.get_object("cursor_color_fg") as Gtk.ColorButton;
-            this.cursor_color_bg = main_window.get_object("cursor_color_bg") as Gtk.ColorButton;
             this.use_cursor_color = main_window.get_object("use_cursor_color") as Gtk.CheckButton;
-            this.highlight_color_fg = main_window.get_object("highlight_color_fg") as Gtk.ColorButton;
-            this.highlight_color_bg = main_window.get_object("highlight_color_bg") as Gtk.ColorButton;
             this.use_highlight_color = main_window.get_object("use_highlight_color") as Gtk.CheckButton;
+
             this.color_scheme = main_window.get_object("color_scheme") as Gtk.ComboBox;
             this.color_schemes = main_window.get_object("color_schemes") as Gtk.ListStore;
             this.palette_scheme = main_window.get_object("palette_scheme") as Gtk.ComboBox;
@@ -99,97 +174,13 @@ namespace Terminus {
             this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
             this.palette_colors = {};
             string[] palette_string = Terminus.settings.get_strv("color-palete");
-            var      tmpcolor = Gdk.RGBA();
+            var tmpcolor = Gdk.RGBA();
             for (int i = 0; i < 16; i++) {
                 Gtk.ColorButton palette_button = main_window.get_object("palette%d".printf(i)) as Gtk.ColorButton;
                 tmpcolor.parse(palette_string[i]);
                 palette_button.set_rgba(tmpcolor);
                 this.palette_colors += palette_button;
             }
-
-            var    tmp_color = Gdk.RGBA();
-            string key;
-            tmp_color.parse(Terminus.settings.get_string("fg-color"));
-            this.fg_color.set_rgba(tmp_color);
-            tmp_color.parse(Terminus.settings.get_string("bg-color"));
-            this.bg_color.set_rgba(tmp_color);
-            key = Terminus.settings.get_string("bold-color");
-            if (key != "") {
-                tmp_color.parse(key);
-                this.bold_color.set_rgba(tmp_color);
-                this.use_bold_color.active = true;
-                this.bold_color.sensitive = true;
-            } else {
-                this.use_bold_color.active = false;
-                this.bold_color.sensitive = false;
-            }
-            key = Terminus.settings.get_string("highlight-fg-color");
-            if (key != "") {
-                tmp_color.parse(key);
-                this.highlight_color_fg.set_rgba(tmp_color);
-                tmp_color.parse(Terminus.settings.get_string("highlight-bg-color"));
-                this.highlight_color_bg.set_rgba(tmp_color);
-                this.use_highlight_color.active = true;
-                this.highlight_color_fg.sensitive = true;
-                this.highlight_color_bg.sensitive = true;
-            } else {
-                this.use_highlight_color.active = false;
-                this.highlight_color_fg.sensitive = false;
-                this.highlight_color_bg.sensitive = false;
-            }
-
-            key = Terminus.settings.get_string("cursor-fg-color");
-            if (key != "") {
-                tmp_color.parse(key);
-                this.cursor_color_fg.set_rgba(tmp_color);
-                tmp_color.parse(Terminus.settings.get_string("cursor-bg-color"));
-                this.cursor_color_bg.set_rgba(tmp_color);
-                this.use_cursor_color.active = true;
-                this.cursor_color_fg.sensitive = true;
-                this.cursor_color_bg.sensitive = true;
-            } else {
-                this.use_cursor_color.active = false;
-                this.cursor_color_fg.sensitive = false;
-                this.cursor_color_bg.sensitive = false;
-            }
-
-            this.fg_color.color_set.connect(() => {
-                this.set_all_properties("fg-color");
-            });
-            this.bg_color.color_set.connect(() => {
-                this.set_all_properties("bg-color");
-            });
-            this.bold_color.color_set.connect(() => {
-                this.set_all_properties("bold-color");
-            });
-            this.use_bold_color.toggled.connect_after(() => {
-                this.bold_color.sensitive = this.use_bold_color.get_active();
-                this.set_all_properties("bold-color");
-            });
-            this.cursor_color_fg.color_set.connect(() => {
-                this.set_all_properties("cursor-fg-color");
-            });
-            this.cursor_color_bg.color_set.connect(() => {
-                this.set_all_properties("cursor-bg-color");
-            });
-            this.use_cursor_color.toggled.connect_after(() => {
-                this.cursor_color_fg.sensitive = this.use_cursor_color.get_active();
-                this.cursor_color_bg.sensitive = this.use_cursor_color.get_active();
-                this.set_all_properties("cursor-fg-color");
-                this.set_all_properties("cursor-bg-color");
-            });
-            this.highlight_color_fg.color_set.connect(() => {
-                this.set_all_properties("highlight-fg-color");
-            });
-            this.highlight_color_bg.color_set.connect(() => {
-                this.set_all_properties("highlight-bg-color");
-            });
-            this.use_highlight_color.toggled.connect_after(() => {
-                this.highlight_color_fg.sensitive = this.use_highlight_color.get_active();
-                this.highlight_color_bg.sensitive = this.use_highlight_color.get_active();
-                this.set_all_properties("highlight-fg-color");
-                this.set_all_properties("highlight-bg-color");
-            });
 
             foreach (var button in this.palette_colors) {
                 button.color_set.connect(() => {
@@ -220,6 +211,7 @@ namespace Terminus {
                 this.disable_palette_change = false;
                 this.updated_palette();
             });
+
             this.color_scheme.changed.connect(() => {
                 var selected = this.color_scheme.get_active();
                 if (selected < 0) {
@@ -234,10 +226,15 @@ namespace Terminus {
                 if (scheme.custom) {
                     return;
                 }
-                this.fg_color.rgba = scheme.text_fg;
-                this.bg_color.rgba = scheme.text_bg;
-                this.set_all_properties("fg-color");
-                this.set_all_properties("bg-color");
+                this.fg_color.set_rgba(scheme.text_fg);
+                this.bg_color.set_rgba(scheme.text_bg);
+            });
+
+            this.fg_color.color_set.connect(() => {
+                this.color_scheme.set_active(this.get_current_scheme());
+            });
+            this.bg_color.color_set.connect(() => {
+                this.color_scheme.set_active(this.get_current_scheme());
             });
 
             var scroll_lines = main_window.get_object("scroll_lines") as Gtk.Adjustment;
@@ -271,8 +268,6 @@ namespace Terminus {
             Terminus.settings.bind("use-custom-shell", this.use_custom_shell, "active", GLib.SettingsBindFlags.DEFAULT);
 
             int counter = -1;
-            int selected = 0;
-            int selcount = 0;
             foreach (var scheme in Terminus.main_root.palettes) {
                 counter++;
                 if ((!scheme.custom) && (scheme.text_fg == null)) {
@@ -286,21 +281,14 @@ namespace Terminus {
                 var id = GLib.Value(typeof(int));
                 id.set_int(counter);
                 this.color_schemes.set_value(iter, 1, id);
-                if (scheme.compare_scheme()) {
-                    selected = selcount;
-                }
-                selcount++;
             }
+            this.color_scheme.set_active(this.get_current_scheme());
 
             this.custom_shell.sensitive = this.use_custom_shell.active;
             this.custom_font.sensitive = this.use_system_font.active;
             this.scroll_value.sensitive = !this.infinite_scroll.active;
 
-            this.color_scheme.set_active(selected);
-
             counter = -1;
-            selected = 0;
-            selcount = 0;
             foreach (var scheme in Terminus.main_root.palettes) {
                 counter++;
                 if ((!scheme.custom) && (scheme.get_palette().length == 0)) {
@@ -314,31 +302,13 @@ namespace Terminus {
                 var id = GLib.Value(typeof(int));
                 id.set_int(counter);
                 this.palette_schemes.set_value(iter, 1, id);
-                if (scheme.compare_palette()) {
-                    selected = selcount;
-                }
-                selcount++;
             }
-            this.palette_scheme.set_active(selected);
+            this.palette_scheme.set_active(this.get_current_palette());
 
             this.keybindings = new Gtk.ListStore(3, typeof(string), typeof(string), typeof(string));
-            this.add_keybinding(_("New window"), "new-window");
-            this.add_keybinding(_("New tab"), "new-tab");
-            this.add_keybinding(_("Next tab"), "next-tab");
-            this.add_keybinding(_("Previous tab"), "previous-tab");
-            this.add_keybinding(_("Show guake terminal"), "guake-mode");
-            this.add_keybinding(_("Copy text into the clipboard"), "copy");
-            this.add_keybinding(_("Paste text from the clipboard"), "paste");
-            this.add_keybinding(_("Move focus to the terminal on the left"), "terminal-left");
-            this.add_keybinding(_("Move focus to the terminal on the right"), "terminal-right");
-            this.add_keybinding(_("Move focus to the terminal above"), "terminal-up");
-            this.add_keybinding(_("Move focus to the terminal below"), "terminal-down");
-            this.add_keybinding(_("Make font bigger"), "font-size-big");
-            this.add_keybinding(_("Make font smaller"), "font-size-small");
-            this.add_keybinding(_("Reset font size"), "font-size-normal");
-            this.add_keybinding(_("Show menu"), "show-menu");
-            this.add_keybinding(_("Split horizontally"), "split-horizontally");
-            this.add_keybinding(_("Split vertically"), "split-vertically");
+            foreach (var kb in Terminus.key_bindings.key_binding_list) {
+                this.add_keybinding(kb.description, kb.name);
+            }
 
             var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
             keybindings_view.activate_on_single_click = true;
@@ -350,110 +320,6 @@ namespace Terminus {
 
             this.events = Gdk.EventMask.KEY_PRESS_MASK;
             this.key_press_event.connect(this.on_key_press);
-        }
-
-        public void
-        set_all_properties(string ?key)
-        {
-            bool changed_text_colors = false;
-            bool changed = false;
-
-            if (key == "fg-color") {
-                changed_text_colors = true;
-                var color = this.fg_color.rgba;
-                var htmlcolor =
-                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                           (uint) (255 * color.blue));
-                if (Terminus.settings.get_string("fg-color") != htmlcolor) {
-                    Terminus.settings.set_string("fg-color", htmlcolor);
-                    changed = true;
-                }
-            }
-
-            if (key == "bg-color") {
-                changed_text_colors = true;
-                var color = this.bg_color.rgba;
-                var htmlcolor =
-                    "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                           (uint) (255 * color.blue));
-                if (Terminus.settings.get_string("bg-color") != htmlcolor) {
-                    Terminus.settings.set_string("bg-color", htmlcolor);
-                    changed = true;
-                }
-            }
-            if (key == "bold-color") {
-                string htmlcolor;
-                if (this.use_bold_color.active) {
-                    var color = this.bold_color.rgba;
-                    htmlcolor =
-                        "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                               (uint) (255 * color.blue));
-                } else {
-                    htmlcolor = "";
-                }
-                if (Terminus.settings.get_string("bold-color") != htmlcolor) {
-                    Terminus.settings.set_string("bold-color", htmlcolor);
-                }
-            }
-            if ((key == "cursor-fg-color") || changed_text_colors) {
-                string htmlcolor;
-                if (this.use_cursor_color.active) {
-                    var color = this.cursor_color_fg.rgba;
-                    htmlcolor =
-                        "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                               (uint) (255 * color.blue));
-                } else {
-                    htmlcolor = "";
-                }
-                if ((Terminus.settings.get_string("cursor-fg-color") != htmlcolor) || changed_text_colors) {
-                    Terminus.settings.set_string("cursor-fg-color", htmlcolor);
-                }
-            }
-            if ((key == "cursor-bg-color") || changed_text_colors) {
-                string htmlcolor;
-                if (this.use_cursor_color.active) {
-                    var color = this.cursor_color_bg.rgba;
-                    htmlcolor =
-                        "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                               (uint) (255 * color.blue));
-                } else {
-                    htmlcolor = "";
-                }
-                if ((Terminus.settings.get_string("cursor-bg-color") != htmlcolor) || changed_text_colors) {
-                    Terminus.settings.set_string("cursor-bg-color", htmlcolor);
-                }
-            }
-            if (key == "highlight-fg-color") {
-                string htmlcolor;
-                if (this.use_highlight_color.active) {
-                    var color = this.highlight_color_fg.rgba;
-                    htmlcolor =
-                        "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                               (uint) (255 * color.blue));
-                } else {
-                    htmlcolor = "";
-                }
-                if (Terminus.settings.get_string("highlight-fg-color") != htmlcolor) {
-                    Terminus.settings.set_string("highlight-fg-color", htmlcolor);
-                }
-            }
-            if (key == "highlight-bg-color") {
-                string htmlcolor;
-                if (this.use_highlight_color.active) {
-                    var color = this.highlight_color_bg.rgba;
-                    htmlcolor =
-                        "#%02X%02X%02X".printf((uint) (255 * color.red), (uint) (255 * color.green),
-                                               (uint) (255 * color.blue));
-                } else {
-                    htmlcolor = "";
-                }
-                if (Terminus.settings.get_string("highlight-bg-color") != htmlcolor) {
-                    Terminus.settings.set_string("highlight-bg-color", htmlcolor);
-                }
-            }
-            if (changed) {
-                this.color_scheme.set_active(this.get_current_scheme());
-            }
         }
 
         private void

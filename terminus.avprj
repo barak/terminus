@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 1.19.1
+project_version: 1.20.0
 vala_version: 0.30
 
 custom: terminus_gnome_shell/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
@@ -12,7 +12,7 @@ custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerm
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 1.19.1
+*version: 1.20.0
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
@@ -30,6 +30,7 @@ vala_check_package: gtk+-3.0
 *vala_source: base.vala
 *vala_source: bindkeys.vala
 *vala_source: container.vala
+*vala_source: keybinding.vala
 *vala_source: notetab.vala
 *vala_source: palete.vala
 *vala_source: params.vala
@@ -48,6 +49,7 @@ vala_check_package: gtk+-3.0
 *translate: vala src/bindkeys.vala
 *translate: c src/checkwayland.c
 *translate: vala src/container.vala
+*translate: vala src/keybinding.vala
 *translate: vala src/notetab.vala
 *translate: vala src/palete.vala
 *translate: vala src/params.vala

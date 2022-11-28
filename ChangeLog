@@ -1,3 +1,9 @@
+terminus (1.19.1-Debian1) sid; urgency=low
+
+  * Added support for Gnome Shell 43
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 13 Oct 2022 23:55:00 +0200
+
 terminus (1.19.0-Debian1) sid; urgency=low
 
   * Added shortcuts for horizontal and vertical split

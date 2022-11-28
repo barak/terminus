@@ -38,7 +38,7 @@ namespace Terminus {
         }
     }
 
-    class Window : Gtk.ApplicationWindow {
+    class Window : Gtk.ApplicationWindow, Killable {
         public signal void
         ended(Terminus.Window window);
         public signal void
@@ -62,6 +62,12 @@ namespace Terminus {
             return workarea;
         }
 
+        public void
+        kill_all_children()
+        {
+            this.destroy();
+        }
+
         public Window(Gtk.Application  application,
                       bool             guake_mode,
                       string          ?working_directory,
@@ -75,14 +81,27 @@ namespace Terminus {
             this.type_hint = Gdk.WindowTypeHint.NORMAL;
             this.focus_on_map = true;
 
+            this.delete_event.connect(() => {
+                if (this.terminal.check_if_running_processes()) {
+                    this.terminal.ask_kill_childs(_("This window has running processes inside."),
+                                                  _("Closing it will kill them."),
+                                                  _("Close window"),
+                                                  this);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
             this.destroy.connect((w) => {
                 this.ended(this);
             });
 
             if (terminal == null) {
-                this.terminal = new Terminus.Base(working_directory, commands);
+                this.terminal = new Terminus.Base(working_directory, commands, this);
             } else {
                 this.terminal = terminal;
+                terminal.top_window = this;
             }
             this.terminal.ended.connect(this.ended_cb);
 
@@ -105,8 +124,8 @@ namespace Terminus {
                 this.set_properties();
 
                 this.current_size = Terminus.settings.get_int("guake-height");
-                if ((this.current_size <= 0) && (check_wayland() == 0)) {
-                    this.current_size = this.get_monitor_workarea().height * 3 / 7;
+                if (this.current_size <= 0) {
+                    this.current_size = 300;
                     Terminus.settings.set_int("guake-height", this.current_size);
                 }
                 this.map.connect_after(this.mapped);

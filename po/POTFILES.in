@@ -2,6 +2,7 @@ src/PanedPercentage.vala
 src/base.vala
 src/bindkeys.vala
 src/container.vala
+src/keybinding.vala
 src/notetab.vala
 src/palete.vala
 src/params.vala

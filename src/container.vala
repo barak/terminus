@@ -28,6 +28,10 @@ namespace Terminus {
 
     public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
 
+    interface Killable : Object {
+        public abstract void kill_all_children();
+    }
+
     class Container : Gtk.Bin {
         public Terminus.Container ?container1;
         public Terminus.Container ?container2;
@@ -41,8 +45,8 @@ namespace Terminus {
         private bool splited_horizontal;
         private string working_directory;
 
-        public signal void
-        ended(Terminus.Container who);
+        public signal void ended(Terminus.Container who);
+        public signal void close_tab(Terminus.Container who);
 
         public Container(Terminus.Base       main_container,
                          string              working_directory,
@@ -74,6 +78,26 @@ namespace Terminus {
             this.set_terminal_child();
             this.container1 = null;
             this.container2 = null;
+        }
+
+        public void
+        ask_kill_childs(string title, string subtitle, string button_text, Killable obj)
+        {
+            this.main_container.ask_kill_childs(title, subtitle, button_text, obj);
+        }
+
+        public bool
+        check_if_running_processes() {
+            if (this.terminal != null) {
+                return this.terminal.has_child_running();
+            } else {
+                return this.container1.check_if_running_processes() | this.container2.check_if_running_processes();
+            }
+        }
+
+        public void
+        ask_close_tab() {
+            this.close_tab(this);
         }
 
         public void

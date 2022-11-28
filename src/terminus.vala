@@ -21,6 +21,7 @@ using Gee;
 
 namespace Terminus {
     TerminusRoot     main_root;
+    KeyBindings      key_bindings;
     GLib.Settings    settings = null;
     GLib.Settings    keybind_settings = null;
     Terminus.Bindkey bindkey;
@@ -91,6 +92,7 @@ namespace Terminus {
         protected void
         do_startup()
         {
+            Terminus.key_bindings = new Terminus.KeyBindings();
             this.read_color_schemes(GLib.Path.build_filename(Constants.DATADIR, "terminus"));
             this.read_color_schemes(GLib.Path.build_filename(Environment.get_home_dir(),
                                                              ".local",
@@ -100,8 +102,8 @@ namespace Terminus {
             var palette = new Terminus.Terminuspalette();
             palette.custom = true;
             palette.name = _("Custom colors");
-            this.palettes.sort(this.ComparePalettes);
             this.palettes.add(palette);
+            this.palettes.sort(this.ComparePalettes);
 
             var show_guake = new GLib.SimpleAction("show_guake", null);
             show_guake.activate.connect(() => {
@@ -151,6 +153,12 @@ namespace Terminus {
         ComparePalettes(Terminuspalette a,
                         Terminuspalette b)
         {
+            if (a.custom) {
+                return -1;
+            }
+            if (b.custom) {
+                return 1;
+            }
             if (a.name < b.name) {
                 return -1;
             } else {
@@ -213,7 +221,7 @@ namespace Terminus {
             }
             if (guake_mode) {
                 if (this.guake_terminal == null) {
-                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null);
+                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null, null);
                 }
                 window = new Terminus.Window(this,
                                              true,
