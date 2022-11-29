@@ -24,7 +24,7 @@ namespace Terminus {
      * This is the widget put in each tab
      */
 
-    class Notetab : Gtk.EventBox, Killable {
+    public class Notetab : Gtk.EventBox, Killable {
         private Terminus.Container top_container;
         private Gtk.Label title;
         private Terminus.Base main_container;

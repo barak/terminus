@@ -24,7 +24,7 @@ namespace Terminus {
      * enclosed in a window.
      */
 
-    class Base : Gtk.Notebook {
+    public class Base : Gtk.Notebook {
         public signal void ended();
         public signal void new_window();
         public Gtk.Window ?top_window;
@@ -32,11 +32,12 @@ namespace Terminus {
 
         public Base(string      working_directory,
                     string[]   ?commands,
-                    Gtk.Window ?top_window)
+                    Gtk.Window ?top_window,
+                    Terminus.Terminal ?terminal = null)
         {
             this.page_added.connect(this.check_pages);
             this.page_removed.connect(this.check_pages);
-            this.new_terminal_tab(working_directory, commands);
+            this.new_terminal_tab(working_directory, commands, terminal);
             this.scrollable = true;
             this.top_window = top_window;
         }
@@ -77,9 +78,10 @@ namespace Terminus {
 
         public void
         new_terminal_tab(string    working_directory,
-                         string[] ?commands)
+                         string[] ?commands,
+                         Terminal ?terminal = null)
         {
-            var term = new Terminus.Container(this, working_directory, commands, null, null, null);
+            var term = new Terminus.Container(this, working_directory, commands, terminal, null, null);
             term.ended.connect((w) => {
                 this.delete_page(term);
             });

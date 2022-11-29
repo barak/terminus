@@ -73,7 +73,8 @@ namespace Terminus {
                       string          ?working_directory,
                       string[]         commands,
                       Terminus.Base   ?terminal = null,
-                      string          ?window_title = null)
+                      string          ?window_title = null,
+                      Terminus.Terminal ?inner_terminal = null)
         {
             this.is_guake = guake_mode;
             this.initialized = 0;
@@ -98,7 +99,7 @@ namespace Terminus {
             });
 
             if (terminal == null) {
-                this.terminal = new Terminus.Base(working_directory, commands, this);
+                this.terminal = new Terminus.Base(working_directory, commands, this, inner_terminal);
             } else {
                 this.terminal = terminal;
                 terminal.top_window = this;

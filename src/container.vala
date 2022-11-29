@@ -26,13 +26,11 @@ namespace Terminus {
      * one.
      */
 
-    public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
-
-    interface Killable : Object {
+    public interface Killable : Object {
         public abstract void kill_all_children();
     }
 
-    class Container : Gtk.Bin {
+    public class Container : Gtk.Bin {
         public Terminus.Container ?container1;
         public Terminus.Container ?container2;
         public Terminus.Notetab ?notetab;
@@ -74,10 +72,26 @@ namespace Terminus {
                                                       this);
             } else {
                 this.terminal = terminal;
+                this.terminal.set_containers(this, this.top_container);
             }
             this.set_terminal_child();
             this.container1 = null;
             this.container2 = null;
+        }
+
+        public Terminal?
+        extract_current_terminal()
+        {
+            if (this.terminal == null) {
+                return null;
+            }
+            Terminal retval = this.terminal;
+            this.remove(this.terminal);
+            this.terminal.split_horizontal.disconnect(this.split_horizontal_cb);
+            this.terminal.split_vertical.disconnect(this.split_vertical_cb);
+            this.terminal.ended.disconnect(this.ended_cb);
+            this.ended_cb();
+            return retval;
         }
 
         public void

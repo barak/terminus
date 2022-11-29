@@ -27,7 +27,7 @@ namespace Terminus {
      * This is the terminal itself, available in each container.
      */
 
-    class Terminal : Gtk.Box, Killable {
+    public class Terminal : Gtk.Box, Killable {
         private int pid;
         private Vte.Terminal vte_terminal;
         private Gtk.Label title;
@@ -45,9 +45,18 @@ namespace Terminus {
 
         private bool had_focus;
 
-        public signal void ended(Terminus.Terminal terminal);
-        public signal void split_horizontal(Terminus.Terminal terminal);
-        public signal void split_vertical(Terminus.Terminal terminal);
+        public signal void
+        ended(Terminus.Terminal terminal);
+        public signal void
+        split_horizontal(Terminus.Terminal terminal);
+        public signal void
+        split_vertical(Terminus.Terminal terminal);
+
+        public bool
+        compare_terminal(Vte.Terminal ?terminal)
+        {
+            return this.vte_terminal == terminal;
+        }
 
         private void
         add_separator()
@@ -131,6 +140,13 @@ namespace Terminus {
         do_grab_focus()
         {
             this.vte_terminal.grab_focus();
+        }
+
+        public void
+        set_containers(Terminus.Container container, Terminus.Container top_container)
+        {
+            this.container = container;
+            this.top_container = top_container;
         }
 
         public void
@@ -304,17 +320,55 @@ namespace Terminus {
             settings_changed("allow-bold");
             settings_changed("rewrap-on-resize");
 
+            // set DnD
+            var targets = new Gtk.TargetList(null);
+            targets.add(Gdk.atom_intern("terminusterminal", false), Gtk.TargetFlags.SAME_APP, 0);
+            Gtk.drag_source_set(this.titlebox,
+                                Gdk.ModifierType.BUTTON1_MASK,
+                                null,
+                                Gdk.DragAction.MOVE | Gdk.DragAction.COPY);
+            Gtk.drag_source_set_target_list(this.titlebox, targets);
+            this.titlebox.drag_end.connect((widget, context) => {
+                Terminus.dnd_manager.do_drop();
+            });
+            this.titlebox.drag_begin.connect((widget, context) => {
+                Terminus.dnd_manager.set_origin(this, this.container);
+            });
+            this.titlebox.drag_data_get.connect((widget, context, data, type, time) => {
+                print("Data get\n");
+            });
+            Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this.vte_terminal, targets);
+            this.vte_terminal.drag_motion.connect((widget, context, x, y, time) => {
+                if (Terminus.dnd_manager.is_origin(widget as Vte.Terminal)) {
+                    return false;
+                }
+                var nx = 2.0 * x / widget.get_allocated_width() - 1.0;
+                var ny = 2.0 * y / widget.get_allocated_height() - 1.0;
+
+                return true;
+            });
+            this.vte_terminal.drag_data_received.connect((widget, context, x, y, selection, info, time) => {
+                print("Drop data received\n");
+                Terminus.dnd_manager.set_destination(this);
+            });
+            this.vte_terminal.drag_drop.connect((widget, context, x, y, time) => {
+                print("Drop\n");
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
             this.show_all();
         }
 
         public bool
         has_child_running()
         {
-            var procdir = GLib.File.new_for_path("/proc");
-            var enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+            var      procdir = GLib.File.new_for_path("/proc");
+            var      enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
             FileInfo info = null;
-            while ((info = enumerator.next_file (null)) != null) {
-                if (info.get_file_type () != FileType.DIRECTORY) {
+            while ((info = enumerator.next_file(null)) != null) {
+                if (info.get_file_type() != FileType.DIRECTORY) {
                     continue;
                 }
                 var statusFile = GLib.File.new_build_filename("/proc", info.get_name(), "status");
@@ -322,7 +376,7 @@ namespace Terminus {
                     continue;
                 }
                 var is = statusFile.read(null);
-                Bytes data;
+                Bytes     data;
                 ByteArray buffer = new ByteArray();
                 while (true) {
                     data = is.read_bytes(1024, null);
@@ -331,8 +385,8 @@ namespace Terminus {
                     }
                     buffer.append(data.get_data());
                 }
-                buffer.append({0});
-                var lines = ((string)buffer.data).split("\n");
+                buffer.append({ 0 });
+                var lines = ((string) buffer.data).split("\n");
                 foreach (var line in lines) {
                     if (line.has_prefix("PPid:")) {
                         var ppid = int.parse(line.substring(5));
@@ -370,7 +424,6 @@ namespace Terminus {
             this.update_title();
             return false;
         }
-
 
         public void
         settings_changed(string key)
@@ -429,6 +482,7 @@ namespace Terminus {
             case "inactive-bg-color":
                 this.update_title();
                 break;
+
             case "bold-color":
                 this.vte_terminal.set_color_bold(color);
                 break;
@@ -529,62 +583,80 @@ namespace Terminus {
                 eventkey.keyval &= ~32;
             }
 
-            switch(key_bindings.find_key(eventkey)) {
+            switch (key_bindings.find_key(eventkey)) {
             case "new-window":
                 this.main_container.new_terminal_window();
                 return true;
+
             case "new-tab":
                 this.main_container.new_terminal_tab("", null);
                 return true;
+
             case "next-tab":
                 this.main_container.next_tab();
                 return true;
+
             case "previous-tab":
                 this.main_container.prev_tab();
                 return true;
+
             case "copy":
                 this.do_copy();
                 return true;
+
             case "paste":
                 this.do_paste();
                 return true;
+
             case "terminal-up":
                 this.container.move_terminal_focus(Terminus.MoveFocus.UP, null, true);
                 return true;
+
             case "terminal-down":
                 this.container.move_terminal_focus(Terminus.MoveFocus.DOWN, null, true);
                 return true;
+
             case "terminal-left":
                 this.container.move_terminal_focus(Terminus.MoveFocus.LEFT, null, true);
                 return true;
+
             case "terminal-right":
                 this.container.move_terminal_focus(Terminus.MoveFocus.RIGHT, null, true);
                 return true;
+
             case "font-size-big":
                 this.change_zoom(true);
                 return true;
+
             case "font-size-small":
                 this.change_zoom(false);
                 return true;
+
             case "font-size-normal":
                 this.vte_terminal.font_scale = 1;
                 return true;
+
             case "show-menu":
                 this.item_copy.sensitive = this.vte_terminal.get_has_selection();
                 this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
                 return true;
+
             case "split-horizontally":
                 this.split_horizontal(this);
                 return true;
+
             case "split-vertically":
                 this.split_vertical(this);
                 return true;
+
             case "close-tile":
                 this.kill_child();
                 return true;
+
             case "close-tab":
                 this.top_container.ask_close_tab();
                 return true;
+
             default:
                 return false;
             }
@@ -607,7 +679,7 @@ namespace Terminus {
 
             string fg;
             string bg;
-            var tmp_color = Gdk.RGBA();
+            var    tmp_color = Gdk.RGBA();
             if (this.vte_terminal.has_focus) {
                 fg = Terminus.settings.get_string("focused-fg-color");
                 bg = Terminus.settings.get_string("focused-bg-color");
