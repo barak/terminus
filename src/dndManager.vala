@@ -33,12 +33,10 @@ namespace Terminus {
         public void set_origin(Terminal origin, Container container) {
             this.origin = origin;
             this.originContainer = container;
-            print("Set origin\n");
         }
 
         public void set_destination(Terminal destination) {
             this.destination = destination;
-            print("Set destination\n");
         }
 
         public bool is_origin(Vte.Terminal ?terminal) {
@@ -48,6 +46,8 @@ namespace Terminus {
         public void do_drop() {
             if (this.destination != null) {
                 // drop inside another terminal
+                this.originContainer.extract_current_terminal();
+                this.destination.drop_terminal(this.origin);
             } else {
                 // drop outside, in a new window
                 this.originContainer.extract_current_terminal();

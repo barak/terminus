@@ -42,15 +42,15 @@ namespace Terminus {
         private double title_r;
         private double title_g;
         private double title_b;
-
+        private SplitAt split_mode;
+        private bool doing_dnd;
         private bool had_focus;
 
         public signal void
         ended(Terminus.Terminal terminal);
         public signal void
-        split_horizontal(Terminus.Terminal terminal);
-        public signal void
-        split_vertical(Terminus.Terminal terminal);
+        split_terminal(SplitAt            where,
+                       Terminus.Terminal ?new_terminal);
 
         public bool
         compare_terminal(Vte.Terminal ?terminal)
@@ -63,6 +63,13 @@ namespace Terminus {
         {
             var separator = new Gtk.SeparatorMenuItem();
             this.menu_container.append(separator);
+        }
+
+        public void
+        drop_terminal(Terminal terminal)
+        {
+            this.split_terminal(this.split_mode, terminal);
+            this.split_mode = SplitAt.NONE;
         }
 
         private Gtk.MenuItem
@@ -103,11 +110,11 @@ namespace Terminus {
 
             item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
             item.activate.connect(() => {
-                this.split_horizontal(this);
+                this.split_terminal(SplitAt.BOTTOM, null);
             });
             item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
             item.activate.connect(() => {
-                this.split_vertical(this);
+                this.split_terminal(SplitAt.RIGHT, null);
             });
 
             item = this.new_menu_element(_("New tab"));
@@ -143,7 +150,8 @@ namespace Terminus {
         }
 
         public void
-        set_containers(Terminus.Container container, Terminus.Container top_container)
+        set_containers(Terminus.Container container,
+                       Terminus.Container top_container)
         {
             this.container = container;
             this.top_container = top_container;
@@ -182,6 +190,8 @@ namespace Terminus {
             this.container = container;
             // when creating a new terminal, it must take the focus
             had_focus = true;
+            this.split_mode = SplitAt.NONE;
+            this.doing_dnd = false;
             this.map.connect_after(() => {
                 // this ensures that the title is updated when the window is shown
                 GLib.Timeout.add(500, update_title_cb);
@@ -322,7 +332,7 @@ namespace Terminus {
 
             // set DnD
             var targets = new Gtk.TargetList(null);
-            targets.add(Gdk.atom_intern("terminusterminal", false), Gtk.TargetFlags.SAME_APP, 0);
+            targets.add(Gdk.Atom.intern("terminusterminal", false), Gtk.TargetFlags.SAME_APP, 0);
             Gtk.drag_source_set(this.titlebox,
                                 Gdk.ModifierType.BUTTON1_MASK,
                                 null,
@@ -334,29 +344,70 @@ namespace Terminus {
             this.titlebox.drag_begin.connect((widget, context) => {
                 Terminus.dnd_manager.set_origin(this, this.container);
             });
-            this.titlebox.drag_data_get.connect((widget, context, data, type, time) => {
-                print("Data get\n");
-            });
             Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
             Gtk.drag_dest_set_target_list(this.vte_terminal, targets);
             this.vte_terminal.drag_motion.connect((widget, context, x, y, time) => {
                 if (Terminus.dnd_manager.is_origin(widget as Vte.Terminal)) {
+                    this.doing_dnd = false;
                     return false;
                 }
+                this.doing_dnd = true;
                 var nx = 2.0 * x / widget.get_allocated_width() - 1.0;
                 var ny = 2.0 * y / widget.get_allocated_height() - 1.0;
 
+                if (ny <= nx) {
+                    if (ny <= (-nx)) {
+                        this.split_mode = SplitAt.TOP;
+                    } else {
+                        this.split_mode = SplitAt.RIGHT;
+                    }
+                } else {
+                    if (ny <= (-nx)) {
+                        this.split_mode = SplitAt.LEFT;
+                    } else {
+                        this.split_mode = SplitAt.BOTTOM;
+                    }
+                }
+                this.vte_terminal.queue_draw();
                 return true;
             });
-            this.vte_terminal.drag_data_received.connect((widget, context, x, y, selection, info, time) => {
-                print("Drop data received\n");
-                Terminus.dnd_manager.set_destination(this);
+            this.vte_terminal.drag_leave.connect(() => {
+                this.doing_dnd = false;
             });
             this.vte_terminal.drag_drop.connect((widget, context, x, y, time) => {
-                print("Drop\n");
                 Terminus.dnd_manager.set_destination(this);
                 return true;
+            });
+            this.vte_terminal.draw.connect_after((cr) => {
+                if (!this.doing_dnd) {
+                    return false;
+                }
+                cr.save();
+                cr.scale(this.vte_terminal.get_allocated_width(), this.vte_terminal.get_allocated_height());
+                switch (this.split_mode) {
+                case SplitAt.TOP:
+                    cr.rectangle(0, 0, 1, 0.5);
+                    break;
+
+                case SplitAt.BOTTOM:
+                    cr.rectangle(0, 0.5, 1, 0.5);
+                    break;
+
+                case SplitAt.LEFT:
+                    cr.rectangle(0, 0, 0.5, 1);
+                    break;
+
+                case SplitAt.RIGHT:
+                    cr.rectangle(0.5, 0, 0.5, 1);
+                    break;
+                default:
+                    break;
+                }
+                cr.set_source_rgba(1, 1, 1, 0.5);
+                cr.fill();
+                cr.restore();
+                return false;
             });
             this.show_all();
         }
@@ -642,11 +693,11 @@ namespace Terminus {
                 return true;
 
             case "split-horizontally":
-                this.split_horizontal(this);
+                this.split_terminal(SplitAt.BOTTOM, null);
                 return true;
 
             case "split-vertically":
-                this.split_vertical(this);
+                this.split_terminal(SplitAt.RIGHT, null);
                 return true;
 
             case "close-tile":
