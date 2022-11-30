@@ -27,7 +27,7 @@ namespace Terminus {
      * This is the terminal itself, available in each container.
      */
 
-    public class Terminal : Gtk.Box, Killable {
+    public class Terminal : Gtk.Box, Killable, DnDDestination {
         private int pid;
         private Vte.Terminal vte_terminal;
         private Gtk.Label title;
@@ -66,8 +66,15 @@ namespace Terminus {
         }
 
         public void
+        extract_from_container()
+        {
+            this.container.extract_current_terminal();
+        }
+
+        public void
         drop_terminal(Terminal terminal)
         {
+            terminal.extract_from_container();
             this.split_terminal(this.split_mode, terminal);
             this.split_mode = SplitAt.NONE;
         }
@@ -342,7 +349,7 @@ namespace Terminus {
                 Terminus.dnd_manager.do_drop();
             });
             this.titlebox.drag_begin.connect((widget, context) => {
-                Terminus.dnd_manager.set_origin(this, this.container);
+                Terminus.dnd_manager.set_origin(this);
             });
             Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
@@ -377,6 +384,14 @@ namespace Terminus {
             });
             this.vte_terminal.drag_drop.connect((widget, context, x, y, time) => {
                 Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
+            // To avoid creating a new window if dropping accidentally over a terminal title
+            Gtk.drag_dest_set(titleContainer, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(titleContainer, targets);
+            titleContainer.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(new VoidDnDDestination());
                 return true;
             });
             this.vte_terminal.draw.connect_after((cr) => {

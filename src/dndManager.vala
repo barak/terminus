@@ -20,22 +20,33 @@ using GLib;
 using Vte;
 
 namespace Terminus {
+
+    public interface DnDDestination : Object {
+        public abstract void drop_terminal(Terminal terminal);
+    }
+
+    public class VoidDnDDestination : Object, DnDDestination {
+        public void drop_terminal(Terminal terminal) {}
+    }
+
     class DnDManager: Object {
         private Terminus.Terminal? origin;
-        private Terminus.Container? originContainer;
-        private Terminus.Terminal? destination;
+        private DnDDestination? destination;
 
         public DnDManager() {
+            this.reset();
+        }
+
+        private void reset() {
             this.destination = null;
             this.origin = null;
         }
 
-        public void set_origin(Terminal origin, Container container) {
+        public void set_origin(Terminal origin) {
             this.origin = origin;
-            this.originContainer = container;
         }
 
-        public void set_destination(Terminal destination) {
+        public void set_destination(DnDDestination destination) {
             this.destination = destination;
         }
 
@@ -46,15 +57,13 @@ namespace Terminus {
         public void do_drop() {
             if (this.destination != null) {
                 // drop inside another terminal
-                this.originContainer.extract_current_terminal();
                 this.destination.drop_terminal(this.origin);
             } else {
                 // drop outside, in a new window
-                this.originContainer.extract_current_terminal();
+                this.origin.extract_from_container();
                 main_root.create_window(false, null, null, this.origin);
             }
-            this.origin = null;
-            this.destination = null;
+            this.reset();
         }
     }
 }
