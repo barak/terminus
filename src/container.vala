@@ -309,13 +309,16 @@ namespace Terminus {
             if (this.container1 != null) {
                 this.paned.remove(this.container1);
                 this.container1.ended.disconnect(this.ended_child);
+                this.container1 = null;
             }
             if (this.container2 != null) {
                 this.paned.remove(this.container2);
                 this.container2.ended.disconnect(this.ended_child);
+                this.container2 = null;
             }
             if (this.paned != null) {
                 this.remove(this.paned);
+                this.paned = null;
             }
             if (new_child is Terminus.Terminal) {
                 this.terminal = new_child as Terminus.Terminal;
