@@ -219,7 +219,7 @@ namespace Terminus {
             this.titlebox.add(this.title);
 
             this.closeButton = new Gtk.EventBox();
-            var label = new Gtk.Image.from_icon_name("window-close", Gtk.IconSize.BUTTON);
+            var label = new Gtk.Image.from_icon_name("window-close-symbolic", Gtk.IconSize.BUTTON);
             this.closeButton.button_release_event.connect((event) => {
                 this.kill_child();
                 return false;

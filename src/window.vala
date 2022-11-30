@@ -50,8 +50,10 @@ namespace Terminus {
         private Gtk.Paned paned;
         private Terminus.Fixed fixed;
         private bool is_guake;
+        private Gtk.Button new_tab_button;
+        private Gtk.Button new_window_button;
 
-        private Terminus.Base terminal;
+        private Terminus.Base terminal_base;
         private int initialized;
 
         private Gdk.Rectangle
@@ -73,7 +75,7 @@ namespace Terminus {
                       bool             guake_mode,
                       string          ?working_directory,
                       string[]         commands,
-                      Terminus.Base   ?terminal = null,
+                      Terminus.Base   ?terminal_base = null,
                       string          ?window_title = null,
                       Terminus.Terminal ?inner_terminal = null)
         {
@@ -83,6 +85,7 @@ namespace Terminus {
             this.headerBar.show_close_button = true;
             this.headerBar.title = "Terminus";
             this.headerBar.show();
+
             this.is_guake = guake_mode;
             this.initialized = 0;
 
@@ -90,8 +93,8 @@ namespace Terminus {
             this.focus_on_map = true;
 
             this.delete_event.connect(() => {
-                if (this.terminal.check_if_running_processes()) {
-                    this.terminal.ask_kill_childs(_("This window has running processes inside."),
+                if (this.terminal_base.check_if_running_processes()) {
+                    this.terminal_base.ask_kill_childs(_("This window has running processes inside."),
                                                   _("Closing it will kill them."),
                                                   _("Close window"),
                                                   this);
@@ -105,15 +108,15 @@ namespace Terminus {
                 this.ended(this);
             });
 
-            if (terminal == null) {
-                this.terminal = new Terminus.Base(working_directory, commands, this, inner_terminal);
+            if (terminal_base == null) {
+                this.terminal_base = new Terminus.Base(working_directory, commands, this, inner_terminal);
             } else {
-                this.terminal = terminal;
-                terminal.top_window = this;
+                this.terminal_base = terminal_base;
+                terminal_base.top_window = this;
             }
-            this.terminal.ended.connect(this.ended_cb);
+            this.terminal_base.ended.connect(this.ended_cb);
 
-            this.terminal.new_window.connect(() => {
+            this.terminal_base.new_window.connect(() => {
                 this.new_window();
             });
 
@@ -145,7 +148,7 @@ namespace Terminus {
                 this.paned.events = Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
                                     Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK;
                 this.add(this.paned);
-                this.paned.add1(this.terminal);
+                this.paned.add1(this.terminal_base);
                 this.fixed = new Terminus.Fixed();
                 this.paned.add2(fixed);
                 this.mouseY = -1;
@@ -200,17 +203,32 @@ namespace Terminus {
 
                 this.paned.show_all();
             } else {
-                this.add(this.terminal);
-                this.terminal.show_all();
+                this.add(this.terminal_base);
+                this.terminal_base.show_all();
                 this.present();
             }
             this.application = application;
+
+            this.new_tab_button = new Gtk.Button();
+            this.new_tab_button.add(new Gtk.Image.from_resource("/com/rastersoft/terminus/pixmaps/new_tab.svg"));
+            this.headerBar.pack_start(this.new_tab_button);
+            this.new_tab_button.show_all();
+            this.new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
+            this.headerBar.pack_start(this.new_window_button);
+            this.new_window_button.show_all();
+            this.new_tab_button.clicked.connect(() => {
+                this.terminal_base.new_terminal_tab("", null);
+            });
+            this.new_window_button.clicked.connect(() => {
+                this.terminal_base.new_terminal_window();
+            });
+
         }
 
         public void
         ended_cb()
         {
-            this.terminal.ended.disconnect(this.ended_cb);
+            this.terminal_base.ended.disconnect(this.ended_cb);
             this.destroy();
         }
 
