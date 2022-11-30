@@ -209,8 +209,7 @@ namespace Terminus {
             }
             this.application = application;
 
-            this.new_tab_button = new Gtk.Button();
-            this.new_tab_button.add(new Gtk.Image.from_resource("/com/rastersoft/terminus/pixmaps/new_tab.svg"));
+            this.new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic", Gtk.IconSize.BUTTON);
             this.headerBar.pack_start(this.new_tab_button);
             this.new_tab_button.show_all();
             this.new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
