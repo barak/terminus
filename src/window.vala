@@ -44,6 +44,7 @@ namespace Terminus {
         public signal void
         new_window();
 
+        private Gtk.HeaderBar headerBar;
         private int current_size;
         private int mouseY;
         private Gtk.Paned paned;
@@ -76,6 +77,12 @@ namespace Terminus {
                       string          ?window_title = null,
                       Terminus.Terminal ?inner_terminal = null)
         {
+            this.headerBar = new Gtk.HeaderBar();
+            this.set_titlebar(this.headerBar);
+            this.headerBar.has_subtitle = false;
+            this.headerBar.show_close_button = true;
+            this.headerBar.title = "Terminus";
+            this.headerBar.show();
             this.is_guake = guake_mode;
             this.initialized = 0;
 
