@@ -92,7 +92,6 @@ namespace Terminus {
             this.remove(this.terminal);
             this.terminal.split_terminal.disconnect(this.split_terminal_cb);
             this.terminal.ended.disconnect(this.ended_cb);
-            this.ended_cb();
             return retval;
         }
 

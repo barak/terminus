@@ -69,12 +69,30 @@ namespace Terminus {
         extract_from_container()
         {
             this.container.extract_current_terminal();
+            this.container.ended(this.container);
+        }
+
+        public override bool accepts_drop(Terminal terminal) {
+            return true;
+        }
+
+        public void
+        drop_into(DnDDestination destination) {
+            if (!destination.accepts_drop(this)) {
+                return;
+            }
+            if (destination == this) {
+                return;
+            }
+            var old_container = this.container;
+            this.container.extract_current_terminal();
+            destination.drop_terminal(this);
+            old_container.ended(old_container);
         }
 
         public void
         drop_terminal(Terminal terminal)
         {
-            terminal.extract_from_container();
             this.split_terminal(this.split_mode, terminal);
             this.split_mode = SplitAt.NONE;
         }
@@ -337,22 +355,21 @@ namespace Terminus {
             settings_changed("rewrap-on-resize");
 
             // set DnD
-            var targets = new Gtk.TargetList(null);
-            targets.add(Gdk.Atom.intern("terminusterminal", false), Gtk.TargetFlags.SAME_APP, 0);
             Gtk.drag_source_set(this.titlebox,
                                 Gdk.ModifierType.BUTTON1_MASK,
                                 null,
                                 Gdk.DragAction.MOVE | Gdk.DragAction.COPY);
-            Gtk.drag_source_set_target_list(this.titlebox, targets);
+            Gtk.drag_source_set_target_list(this.titlebox, dnd_manager.targets);
             this.titlebox.drag_end.connect((widget, context) => {
                 Terminus.dnd_manager.do_drop();
             });
             this.titlebox.drag_begin.connect((widget, context) => {
+                Terminus.dnd_manager.begin_dnd();
                 Terminus.dnd_manager.set_origin(this);
             });
             Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
-            Gtk.drag_dest_set_target_list(this.vte_terminal, targets);
+            Gtk.drag_dest_set_target_list(this.vte_terminal, dnd_manager.targets);
             this.vte_terminal.drag_motion.connect((widget, context, x, y, time) => {
                 if (Terminus.dnd_manager.is_origin(widget as Vte.Terminal)) {
                     this.doing_dnd = false;
@@ -388,7 +405,7 @@ namespace Terminus {
             // To avoid creating a new window if dropping accidentally over a terminal title
             Gtk.drag_dest_set(titleContainer, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
-            Gtk.drag_dest_set_target_list(titleContainer, targets);
+            Gtk.drag_dest_set_target_list(titleContainer, dnd_manager.targets);
             titleContainer.drag_drop.connect((widget, context, x, y, time) => {
                 Terminus.dnd_manager.set_destination(new VoidDnDDestination());
                 return true;
