@@ -1,5 +1,7 @@
 # History of versions #
 
+* Noversion 2.0.0 ()
+  * Added Drag'n'Drop support to move tiles between windows and tabs
 * Version 1.20.0 (2022-11-20)
   * Fixed Guake window zero height on first run
   * Fixed Guake keybinding failing until re-set
