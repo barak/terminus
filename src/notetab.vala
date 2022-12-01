@@ -70,11 +70,15 @@ namespace Terminus {
             });
         }
 
-        public void drop_terminal(Terminal terminal) {
+        public void
+        drop_terminal(Terminal terminal)
+        {
             this.main_container.new_terminal_tab("", null, terminal);
         }
 
-        public bool accepts_drop(Terminal terminal) {
+        public bool
+        accepts_drop(Terminal terminal)
+        {
             return true;
         }
 
@@ -105,7 +109,11 @@ namespace Terminus {
         }
 
         public bool
-        motion(Gtk.Widget widget, Gdk.DragContext context, int x, int y, uint t)
+        motion(Gtk.Widget      widget,
+               Gdk.DragContext context,
+               int             x,
+               int             y,
+               uint            t)
         {
             if (this.timeout_id != 0) {
                 GLib.Source.remove(this.timeout_id);
@@ -119,7 +127,9 @@ namespace Terminus {
         }
 
         public void
-        leave(Gtk.Widget widget, Gdk.DragContext context, uint t)
+        leave(Gtk.Widget      widget,
+              Gdk.DragContext context,
+              uint            t)
         {
             if (this.timeout_id != 0) {
                 GLib.Source.remove(this.timeout_id);

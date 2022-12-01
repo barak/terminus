@@ -1,6 +1,6 @@
 project('terminus',
   ['c','vala'],
-  version: '1.20.0')
+  version: '2.0.0')
 
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 

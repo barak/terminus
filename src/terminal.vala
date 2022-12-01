@@ -75,12 +75,15 @@ namespace Terminus {
             this.container.ended(this.container);
         }
 
-        public override bool accepts_drop(Terminal terminal) {
+        public override bool
+        accepts_drop(Terminal terminal)
+        {
             return true;
         }
 
         public void
-        drop_into(DnDDestination destination) {
+        drop_into(DnDDestination destination)
+        {
             if (!destination.accepts_drop(this)) {
                 return;
             }
@@ -435,6 +438,7 @@ namespace Terminus {
                 case SplitAt.RIGHT:
                     cr.rectangle(0.5, 0, 0.5, 1);
                     break;
+
                 default:
                     break;
                 }

@@ -15,9 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
- namespace Terminus {
-
+namespace Terminus {
     public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
     public enum SplitAt { TOP, LEFT, BOTTOM, RIGHT, NONE }
-
 }

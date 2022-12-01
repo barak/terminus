@@ -211,10 +211,10 @@ namespace Terminus {
         }
 
         public void
-        create_window(bool      guake_mode,
-                      string   ?working_directory,
-                      string[] ?commands,
-                      Terminus.Terminal? terminal = null)
+        create_window(bool              guake_mode,
+                      string   ?        working_directory,
+                      string[] ?        commands,
+                      Terminus.Terminal?terminal = null)
         {
             Terminus.Window window;
 

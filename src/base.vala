@@ -56,11 +56,15 @@ namespace Terminus {
             });
         }
 
-        public void drop_terminal(Terminal terminal) {
+        public void
+        drop_terminal(Terminal terminal)
+        {
             this.new_terminal_tab("", null, terminal);
         }
 
-        public bool accepts_drop(Terminal terminal) {
+        public bool
+        accepts_drop(Terminal terminal)
+        {
             return true;
         }
 

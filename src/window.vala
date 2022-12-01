@@ -71,12 +71,12 @@ namespace Terminus {
             this.destroy();
         }
 
-        public Window(Gtk.Application  application,
-                      bool             guake_mode,
-                      string          ?working_directory,
-                      string[]         commands,
-                      Terminus.Base   ?terminal_base = null,
-                      string          ?window_title = null,
+        public Window(Gtk.Application    application,
+                      bool               guake_mode,
+                      string          ?  working_directory,
+                      string[]           commands,
+                      Terminus.Base   ?  terminal_base = null,
+                      string          ?  window_title = null,
                       Terminus.Terminal ?inner_terminal = null)
         {
             this.headerBar = new Gtk.HeaderBar();
@@ -95,9 +95,9 @@ namespace Terminus {
             this.delete_event.connect(() => {
                 if (this.terminal_base.check_if_running_processes()) {
                     this.terminal_base.ask_kill_childs(_("This window has running processes inside."),
-                                                  _("Closing it will kill them."),
-                                                  _("Close window"),
-                                                  this);
+                                                       _("Closing it will kill them."),
+                                                       _("Close window"),
+                                                       this);
                     return true;
                 } else {
                     return false;
@@ -230,11 +230,15 @@ namespace Terminus {
             });
         }
 
-        public void drop_terminal(Terminal terminal) {
+        public void
+        drop_terminal(Terminal terminal)
+        {
             this.terminal_base.new_terminal_tab("", null, terminal);
         }
 
-        public bool accepts_drop(Terminal terminal) {
+        public bool
+        accepts_drop(Terminal terminal)
+        {
             return true;
         }
 

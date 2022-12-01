@@ -1,3 +1,16 @@
+terminus (1.20.0-Debian1) sid; urgency=low
+
+  * Fixed Guake window zero height on first run
+  * Fixed Guake keybinding failing until re-set
+  * Added hotkeys to close a tile and a tab
+  * Now asks for confirmation when trying to close a terminal with a
+running program
+  * Fixed color scheme selection
+  * Allows to change the top bar colors
+  * Cleaned the color management code
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 20 Nov 2022 23:55:00 +0200
+
 terminus (1.19.1-Debian1) sid; urgency=low
 
   * Added support for Gnome Shell 43
