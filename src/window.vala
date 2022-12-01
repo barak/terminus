@@ -38,7 +38,7 @@ namespace Terminus {
         }
     }
 
-    class Window : Gtk.ApplicationWindow, Killable {
+    class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
         public signal void
         ended(Terminus.Window window);
         public signal void
@@ -221,7 +221,21 @@ namespace Terminus {
             this.new_window_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_window();
             });
+            Gtk.drag_dest_set(this.headerBar, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this.headerBar, dnd_manager.targets);
+            this.headerBar.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
+        }
 
+        public void drop_terminal(Terminal terminal) {
+            this.terminal_base.new_terminal_tab("", null, terminal);
+        }
+
+        public bool accepts_drop(Terminal terminal) {
+            return true;
         }
 
         public void
