@@ -42,6 +42,9 @@ namespace Terminus {
         private double title_r;
         private double title_g;
         private double title_b;
+        private double fg_r;
+        private double fg_g;
+        private double fg_b;
         private SplitAt split_mode;
         private bool doing_dnd;
         private bool had_focus;
@@ -435,7 +438,7 @@ namespace Terminus {
                 default:
                     break;
                 }
-                cr.set_source_rgba(1, 1, 1, 0.5);
+                cr.set_source_rgba(this.fg_r, this.fg_g, this.fg_b, 0.5);
                 cr.fill();
                 cr.restore();
                 return false;
@@ -552,6 +555,9 @@ namespace Terminus {
 
             case "fg-color":
                 this.vte_terminal.set_color_foreground(color);
+                this.fg_r = color.red;
+                this.fg_g = color.green;
+                this.fg_b = color.blue;
                 break;
 
             case "bg-color":

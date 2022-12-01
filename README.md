@@ -8,23 +8,37 @@ A new terminal for XWindows and Wayland
 
 There are plenty of graphic terminals for linux, so what makes this one different?
 
-First, it allows to split a window in several tiling subwindows, exactly like the old
+* it allows to split a window in several tiling subwindows, exactly like the old
 Terminator terminal. Of course it can create several simultaneous windows, and allows
 to have several tabs in each window.
 
-Second, allows to have an always-available drop-down terminal in all screens, with an
+* allows to have an always-available drop-down terminal in all screens, with an
 appearance similar to the Quake console, exactly like Guake.
-
 Of course, the Guake-like terminal can be split in tiling subwindows, wich is its main
 novelty.
 
-Third, it has been written in Vala and uses Gtk3, which allows it to take advantage
+* supports Drag'n'Drop of terminals between tabs and windows, allowing to reorder
+them at will.
+
+* it has been written in Vala and uses Gtk3, which allows it to take advantage
 of the new characteristics available and to use less resources.
 
 ## Using it ##
 
+Each Terminus window has two buttons at the left: one to create a new Terminus window,
+and another to create a new tab in the current window. Also, doing right-click on a
+terminal will open a contextual menu which also allows to subdivide it horizontally or
+vertically, in tiles.
+
+A terminal can be dragged from the top bar (the red one), and dropped into another
+terminal (being added as a new tile), into a new tab in an existing window by dropping
+it into the tabs bar or the title bar, or into a new window if dropped outside any
+window. A terminal can be moved between different windows too, and even between a
+normal window and the Guake one.
+
 By default, using Shift+F12 will show the Quake-like terminal, but you can change
-the key binding by pressing right-click and selecting "Properties".
+the key binding by pressing right-click and selecting "Properties". Nearly all the
+actions in Terminus have a configurable hotkey.
 
 Also by default, Ctrl+Shift combined with the keypad's Add, Subtract and Enter keys
 will increase, decrease, and return to normal, font size. You can also use
