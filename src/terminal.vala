@@ -368,6 +368,7 @@ namespace Terminus {
             settings_changed("terminal-bell");
             settings_changed("allow-bold");
             settings_changed("rewrap-on-resize");
+            settings_changed("pointer-autohide");
 
             // set DnD
             Gtk.drag_source_set(this.titlebox,
@@ -640,7 +641,11 @@ namespace Terminus {
                 this.vte_terminal.set_font(font_desc);
                 break;
 
-            default :
+            case "pointer-autohide" :
+                vte_terminal.pointer_autohide = Terminus.settings.get_boolean("pointer-autohide");
+                break;
+
+            default:
                 break;
             }
         }

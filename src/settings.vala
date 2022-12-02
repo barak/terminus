@@ -96,6 +96,7 @@ namespace Terminus {
         private Gtk.CheckButton use_cursor_color;
         private Gtk.CheckButton use_highlight_color;
         private Gtk.CheckButton use_custom_shell;
+        private Gtk.CheckButton pointer_autohide;
         private Gtk.SpinButton scroll_value;
         private Gtk.Button custom_font;
 
@@ -152,6 +153,7 @@ namespace Terminus {
             use_custom_shell.toggled.connect(() => {
                 this.custom_shell.sensitive = this.use_custom_shell.active;
             });
+            this.pointer_autohide = main_window.get_object("pointer_autohide") as Gtk.CheckButton;
             this.custom_font = main_window.get_object("custom_font") as Gtk.Button;
             use_system_font.toggled.connect(() => {
                 this.custom_font.sensitive = this.use_system_font.active;
@@ -272,6 +274,7 @@ namespace Terminus {
                                        "terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("shell-command", this.custom_shell, "text", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("use-custom-shell", this.use_custom_shell, "active", GLib.SettingsBindFlags.DEFAULT);
+            Terminus.settings.bind("pointer-autohide", this.pointer_autohide, "active", GLib.SettingsBindFlags.DEFAULT);
 
             int counter = -1;
             foreach (var scheme in Terminus.main_root.palettes) {
