@@ -87,6 +87,7 @@ namespace Terminus {
             this.add_keybinding(_("Split vertically"), "split-vertically");
             this.add_keybinding(_("Close the active tile"), "close-tile");
             this.add_keybinding(_("Close the active tab"), "close-tab");
+            this.add_keybinding(_("Select all"), "select-all");
         }
 
         private void

@@ -139,6 +139,13 @@ namespace Terminus {
 
             this.add_separator();
 
+            item = this.new_menu_element(_("Select all"));
+            item.activate.connect(() => {
+                this.vte_terminal.select_all();
+            });
+
+            this.add_separator();
+
             item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
             item.activate.connect(() => {
                 this.split_terminal(SplitAt.BOTTOM, null);
@@ -147,6 +154,8 @@ namespace Terminus {
             item.activate.connect(() => {
                 this.split_terminal(SplitAt.RIGHT, null);
             });
+
+            this.add_separator();
 
             item = this.new_menu_element(_("New tab"));
             item.activate.connect(() => {
@@ -747,6 +756,10 @@ namespace Terminus {
 
             case "close-tab":
                 this.top_container.ask_close_tab();
+                return true;
+
+            case "select-all":
+                this.vte_terminal.select_all();
                 return true;
 
             default:

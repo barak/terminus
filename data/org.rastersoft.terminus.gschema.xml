@@ -238,5 +238,10 @@
       <summary>Close the active tile</summary>
       <description></description>
     </key>
+    <key type="s" name="select-all">
+      <default><![CDATA['<Shift><Ctrl>a']]></default>
+      <summary>Close the active tile</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>
