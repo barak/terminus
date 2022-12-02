@@ -50,8 +50,6 @@ namespace Terminus {
         private Gtk.Paned paned;
         private Terminus.Fixed fixed;
         private bool is_guake;
-        private Gtk.Button new_tab_button;
-        private Gtk.Button new_window_button;
 
         private Terminus.Base terminal_base;
         private int initialized;
@@ -209,16 +207,16 @@ namespace Terminus {
             }
             this.application = application;
 
-            this.new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
-            this.headerBar.pack_start(this.new_window_button);
-            this.new_window_button.show_all();
-            this.new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic", Gtk.IconSize.BUTTON);
-            this.headerBar.pack_start(this.new_tab_button);
-            this.new_tab_button.show_all();
-            this.new_tab_button.clicked.connect(() => {
+            var new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
+            this.headerBar.pack_start(new_window_button);
+            new_window_button.show_all();
+            var new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic", Gtk.IconSize.BUTTON);
+            this.headerBar.pack_start(new_tab_button);
+            new_tab_button.show_all();
+            new_tab_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_tab("", null);
             });
-            this.new_window_button.clicked.connect(() => {
+            new_window_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_window();
             });
             Gtk.drag_dest_set(this.headerBar, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
