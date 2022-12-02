@@ -4,6 +4,7 @@
   * Added Drag'n'Drop support to move tiles between windows and tabs
   * Added "Select all" option
   * Added pointer autohide option
+  * Added reset and clear options
 * Version 1.20.0 (2022-11-20)
   * Fixed Guake window zero height on first run
   * Fixed Guake keybinding failing until re-set

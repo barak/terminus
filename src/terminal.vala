@@ -61,13 +61,6 @@ namespace Terminus {
             return this.vte_terminal == terminal;
         }
 
-        private void
-        add_separator()
-        {
-            var separator = new Gtk.SeparatorMenuItem();
-            this.menu_container.append(separator);
-        }
-
         public void
         extract_from_container()
         {
@@ -103,9 +96,21 @@ namespace Terminus {
             this.split_mode = SplitAt.NONE;
         }
 
+        private void
+        add_separator(Gtk.Menu ?menu = null)
+        {
+            var separator = new Gtk.SeparatorMenuItem();
+            if (menu == null) {
+                this.menu_container.append(separator);
+            } else {
+                menu.append(separator);
+            }
+        }
+
         private Gtk.MenuItem
-        new_menu_element(string  text,
-                         string ?icon = null)
+        new_menu_element(string    text,
+                         string ?  icon = null,
+                         Gtk.Menu ?menu = null)
         {
             Gtk.MenuItem item;
             if (icon == null) {
@@ -119,7 +124,11 @@ namespace Terminus {
                 tmpbox.pack_start(tmplabel, false, true);
                 item.add(tmpbox);
             }
-            this.menu_container.append(item);
+            if (menu == null) {
+                this.menu_container.append(item);
+            } else {
+                menu.append(item);
+            }
             return item;
         }
 
@@ -165,6 +174,22 @@ namespace Terminus {
             item = this.new_menu_element(_("New window"));
             item.activate.connect(() => {
                 this.main_container.new_terminal_window();
+            });
+
+            this.add_separator();
+
+            var submenu = new Gtk.Menu();
+            item = this.new_menu_element(_("Extra"));
+            item.submenu = submenu;
+
+            item = this.new_menu_element(_("Reset terminal"), null, submenu);
+            item.activate.connect(() => {
+                this.vte_terminal.reset(true, false);
+            });
+
+            item = this.new_menu_element(_("Reset and clear terminal"), null, submenu);
+            item.activate.connect(() => {
+                this.vte_terminal.reset(true, true);
             });
 
             this.add_separator();
