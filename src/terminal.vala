@@ -86,7 +86,7 @@ namespace Terminus {
             var old_container = this.container;
             this.container.extract_current_terminal();
             destination.drop_terminal(this);
-            old_container.ended(old_container);
+            old_container.ended_cb();
         }
 
         public void
