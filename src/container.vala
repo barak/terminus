@@ -135,6 +135,7 @@ namespace Terminus {
             this.terminal.ended.connect(this.ended_cb);
 
             this.terminal.split_terminal.connect(this.split_terminal_cb);
+            this.terminal.set_containers(this, this.top_container);
 
             this.paned = null;
             this.container1 = null;

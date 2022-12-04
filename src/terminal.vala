@@ -68,7 +68,7 @@ namespace Terminus {
             this.container.ended(this.container);
         }
 
-        public override bool
+        public bool
         accepts_drop(Terminal terminal)
         {
             return true;
