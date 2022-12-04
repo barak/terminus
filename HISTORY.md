@@ -1,7 +1,7 @@
 # History of versions #
 
-* Noversion 2.0.0 ()
-  * Added Drag'n'Drop support to move tiles between windows and tabs
+* Version 2.0.0 (2022-12-04)
+  * Added Drag'n'Drop support to move tiles between windows and tabs, or into a new window
   * Added "Select all" option
   * Added pointer autohide option
   * Added reset and clear options
