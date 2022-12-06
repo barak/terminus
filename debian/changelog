@@ -5,8 +5,9 @@ terminus (2.0-1) unstable; urgency=medium
     + Build-Depends: Drop versioned constraint on valac.
   [ Barak A. Pearlmutter ]
   * New upstream version
+  * Rebuild man page with help2man
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 06 Dec 2022 13:40:43 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 06 Dec 2022 13:59:19 +0000
 
 terminus (1.20.0-1) unstable; urgency=medium
 

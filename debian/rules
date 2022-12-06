@@ -25,9 +25,13 @@ override_dh_dwz:
 	@echo "dh_dwz: dwz -q -- debian/terminus/usr/bin/terminus returned exit code 1"
 
 # Automatically-generated man page.
-# Do this manually: might have to specify obj*/src/terminus for the executable.
+# Do this manually:
+#  rm debian/terminus.1
+#  debian/rules build
+#  debian/rules TERMINUS=obj-*/src/terminus debian/terminus.1
+TERMINUS=terminus
 debian/terminus.1:
 	help2man --no-info \
 	 --version-string="$(DEB_VERSION)" \
 	 --name="$(shell egrep '^Description: ' debian/control | head -1 | sed 's/Description: //')" \
-	 terminus > $@
+	 $(TERMINUS) > $@
