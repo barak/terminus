@@ -19,22 +19,25 @@
 using Gdk;
 
 namespace Terminus {
-
-    class KeyBinding: Object {
+    class KeyBinding : Object {
         public string name;
         public string description;
         private uint keyval;
         private Gdk.ModifierType state;
 
-        public KeyBinding(string name, string description) {
+        public KeyBinding(string name,
+                          string description)
+        {
             this.name = name;
             this.description = description;
             Terminus.keybind_settings.changed.connect(this.settings_changed);
             this.settings_changed(name);
         }
 
-        public void settings_changed(string name) {
-            uint keyval;
+        public void
+        settings_changed(string name)
+        {
+            uint             keyval;
             Gdk.ModifierType state;
 
             if (name != this.name) {
@@ -49,7 +52,9 @@ namespace Terminus {
             this.state = state;
         }
 
-        public bool check_key(Gdk.EventKey event) {
+        public bool
+        check_key(Gdk.EventKey event)
+        {
             if ((this.keyval == event.keyval) && (this.state == event.state)) {
                 return true;
             }
@@ -57,10 +62,11 @@ namespace Terminus {
         }
     }
 
-    class KeyBindings: Object {
+    class KeyBindings : Object {
         public KeyBinding[] key_binding_list;
 
-        public KeyBindings() {
+        public KeyBindings()
+        {
             this.key_binding_list = {};
             this.add_keybinding(_("New window"), "new-window");
             this.add_keybinding(_("New tab"), "new-tab");
@@ -81,13 +87,18 @@ namespace Terminus {
             this.add_keybinding(_("Split vertically"), "split-vertically");
             this.add_keybinding(_("Close the active tile"), "close-tile");
             this.add_keybinding(_("Close the active tab"), "close-tab");
+            this.add_keybinding(_("Select all"), "select-all");
         }
 
-        private void add_keybinding(string description, string name) {
+        private void
+        add_keybinding(string description,
+                       string name)
+        {
             this.key_binding_list += new KeyBinding(name, description);
         }
 
-        public string? find_key(Gdk.EventKey event) {
+        public string?find_key(Gdk.EventKey event)
+        {
             Gdk.EventKey eventkey = event.key;
             // SHIFT, CTRL, LEFT ALT, ALT+GR
             eventkey.state &= Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD1_MASK |
@@ -97,7 +108,7 @@ namespace Terminus {
                 // to avoid problems with upper and lower case
                 eventkey.keyval &= ~32;
             }
-            foreach(var key in this.key_binding_list) {
+            foreach (var key in this.key_binding_list) {
                 if (key.check_key(eventkey)) {
                     return key.name;
                 }

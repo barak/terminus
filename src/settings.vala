@@ -19,17 +19,20 @@ using Gtk;
 using Gdk;
 
 namespace Terminus {
-
-    class HTMLColorButton: Object {
+    class HTMLColorButton : Object {
         private Gtk.ColorButton color_button;
         private Gtk.ToggleButton ?toggle_button;
         private string property_name;
         private ulong connect_id;
         private ulong enable_id;
 
-        public signal void color_set();
+        public signal void
+        color_set();
 
-        public HTMLColorButton(Gtk.Builder builder, string color_button, string ?enable_button) {
+        public HTMLColorButton(Gtk.Builder builder,
+                               string      color_button,
+                               string ?    enable_button)
+        {
             property_name = color_button.replace("_", "-");
             this.color_button = builder.get_object(color_button) as Gtk.ColorButton;
             if (enable_button != null) {
@@ -55,28 +58,31 @@ namespace Terminus {
             }
         }
 
-        ~HTMLColorButton() {
+        ~HTMLColorButton()
+        {
             this.color_button.disconnect(this.connect_id);
             this.toggle_button.disconnect(this.enable_id);
         }
 
-        public void set_status() {
+        public void
+        set_status()
+        {
             if (this.toggle_button != null) {
                 if (!this.toggle_button.active) {
                     Terminus.settings.set_string(this.property_name, "");
                 }
                 this.color_button.sensitive = this.toggle_button.active;
-             } else {
+            } else {
                 var rgba = this.color_button.rgba;
-                Terminus.settings.set_string(this.property_name, "#%02X%02X%02X".printf(
-                    (uint)(255 * rgba.red),
-                    (uint)(255 * rgba.green),
-                    (uint)(255 * rgba.blue)
-                ));
+                Terminus.settings.set_string(this.property_name, "#%02X%02X%02X".printf((uint) (255 * rgba.red),
+                                                                                        (uint) (255 * rgba.green),
+                                                                                        (uint) (255 * rgba.blue)));
             }
         }
 
-        public void set_rgba(Gdk.RGBA new_color) {
+        public void
+        set_rgba(Gdk.RGBA new_color)
+        {
             this.color_button.rgba = new_color;
             this.set_status();
         }
@@ -90,6 +96,7 @@ namespace Terminus {
         private Gtk.CheckButton use_cursor_color;
         private Gtk.CheckButton use_highlight_color;
         private Gtk.CheckButton use_custom_shell;
+        private Gtk.CheckButton pointer_autohide;
         private Gtk.SpinButton scroll_value;
         private Gtk.Button custom_font;
 
@@ -146,6 +153,7 @@ namespace Terminus {
             use_custom_shell.toggled.connect(() => {
                 this.custom_shell.sensitive = this.use_custom_shell.active;
             });
+            this.pointer_autohide = main_window.get_object("pointer_autohide") as Gtk.CheckButton;
             this.custom_font = main_window.get_object("custom_font") as Gtk.Button;
             use_system_font.toggled.connect(() => {
                 this.custom_font.sensitive = this.use_system_font.active;
@@ -174,7 +182,7 @@ namespace Terminus {
             this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
             this.palette_colors = {};
             string[] palette_string = Terminus.settings.get_strv("color-palete");
-            var tmpcolor = Gdk.RGBA();
+            var      tmpcolor = Gdk.RGBA();
             for (int i = 0; i < 16; i++) {
                 Gtk.ColorButton palette_button = main_window.get_object("palette%d".printf(i)) as Gtk.ColorButton;
                 tmpcolor.parse(palette_string[i]);
@@ -266,6 +274,7 @@ namespace Terminus {
                                        "terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("shell-command", this.custom_shell, "text", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("use-custom-shell", this.use_custom_shell, "active", GLib.SettingsBindFlags.DEFAULT);
+            Terminus.settings.bind("pointer-autohide", this.pointer_autohide, "active", GLib.SettingsBindFlags.DEFAULT);
 
             int counter = -1;
             foreach (var scheme in Terminus.main_root.palettes) {

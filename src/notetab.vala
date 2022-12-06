@@ -24,11 +24,12 @@ namespace Terminus {
      * This is the widget put in each tab
      */
 
-    class Notetab : Gtk.EventBox, Killable {
+    public class Notetab : Gtk.EventBox, Killable, DnDDestination {
         private Terminus.Container top_container;
         private Gtk.Label title;
         private Terminus.Base main_container;
         private Gtk.Box inner_box;
+        private uint timeout_id;
 
         public Notetab(Terminus.Base      main_container,
                        Terminus.Container top_container)
@@ -38,6 +39,7 @@ namespace Terminus {
             this.top_container.close_tab.connect(() => {
                 this.close_tab();
             });
+            this.timeout_id = 0;
             this.inner_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             this.title = new Gtk.Label("");
             this.title.margin_end = 3;
@@ -57,6 +59,27 @@ namespace Terminus {
                 }
                 return false;
             });
+            this.drag_motion.connect(this.motion);
+            this.drag_leave.connect(this.leave);
+            Gtk.drag_dest_set(this, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this, dnd_manager.targets);
+            this.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
+        }
+
+        public void
+        drop_terminal(Terminal terminal)
+        {
+            this.main_container.new_terminal_tab("", null, terminal);
+        }
+
+        public bool
+        accepts_drop(Terminal terminal)
+        {
+            return true;
         }
 
         private void
@@ -75,12 +98,43 @@ namespace Terminus {
         kill_all_children()
         {
             this.main_container.delete_page(this.top_container);
+            this.drag_motion.disconnect(this.motion);
+            this.drag_leave.disconnect(this.leave);
         }
 
         public void
         change_title(string new_title)
         {
             this.title.label = new_title;
+        }
+
+        public bool
+        motion(Gtk.Widget      widget,
+               Gdk.DragContext context,
+               int             x,
+               int             y,
+               uint            t)
+        {
+            if (this.timeout_id != 0) {
+                GLib.Source.remove(this.timeout_id);
+            }
+            this.timeout_id = GLib.Timeout.add(500, () => {
+                this.main_container.set_current_page(this.main_container.page_num(this.top_container));
+                this.timeout_id = 0;
+                return false;
+            });
+            return true;
+        }
+
+        public void
+        leave(Gtk.Widget      widget,
+              Gdk.DragContext context,
+              uint            t)
+        {
+            if (this.timeout_id != 0) {
+                GLib.Source.remove(this.timeout_id);
+                this.timeout_id = 0;
+            }
         }
     }
 }

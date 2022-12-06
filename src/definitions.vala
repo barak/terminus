@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 (C) Raster Software Vigo (Sergio Costas)
+ * Copyright 2022 (C) Raster Software Vigo (Sergio Costas)
  *
  * This file is part of Terminus
  *
@@ -13,19 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-
-#include "gdk/gdk.h"
-#include "gdk/gdkwayland.h"
-
-int
-check_wayland()
-{
-    if (GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) {
-        return 1;
-    } else {
-        return 0;
-    }
+namespace Terminus {
+    public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
+    public enum SplitAt { TOP, LEFT, BOTTOM, RIGHT, NONE }
 }

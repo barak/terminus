@@ -38,19 +38,20 @@ namespace Terminus {
         }
     }
 
-    class Window : Gtk.ApplicationWindow, Killable {
+    class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
         public signal void
         ended(Terminus.Window window);
         public signal void
         new_window();
 
+        private Gtk.HeaderBar headerBar;
         private int current_size;
         private int mouseY;
         private Gtk.Paned paned;
         private Terminus.Fixed fixed;
         private bool is_guake;
 
-        private Terminus.Base terminal;
+        private Terminus.Base terminal_base;
         private int initialized;
 
         private Gdk.Rectangle
@@ -68,13 +69,21 @@ namespace Terminus {
             this.destroy();
         }
 
-        public Window(Gtk.Application  application,
-                      bool             guake_mode,
-                      string          ?working_directory,
-                      string[]         commands,
-                      Terminus.Base   ?terminal = null,
-                      string          ?window_title = null)
+        public Window(Gtk.Application    application,
+                      bool               guake_mode,
+                      string          ?  working_directory,
+                      string[]           commands,
+                      Terminus.Base   ?  terminal_base = null,
+                      string          ?  window_title = null,
+                      Terminus.Terminal ?inner_terminal = null)
         {
+            this.headerBar = new Gtk.HeaderBar();
+            this.set_titlebar(this.headerBar);
+            this.headerBar.has_subtitle = false;
+            this.headerBar.show_close_button = true;
+            this.headerBar.title = "Terminus";
+            this.headerBar.show();
+
             this.is_guake = guake_mode;
             this.initialized = 0;
 
@@ -82,11 +91,11 @@ namespace Terminus {
             this.focus_on_map = true;
 
             this.delete_event.connect(() => {
-                if (this.terminal.check_if_running_processes()) {
-                    this.terminal.ask_kill_childs(_("This window has running processes inside."),
-                                                  _("Closing it will kill them."),
-                                                  _("Close window"),
-                                                  this);
+                if (this.terminal_base.check_if_running_processes()) {
+                    this.terminal_base.ask_kill_childs(_("This window has running processes inside."),
+                                                       _("Closing it will kill them."),
+                                                       _("Close window"),
+                                                       this);
                     return true;
                 } else {
                     return false;
@@ -97,15 +106,15 @@ namespace Terminus {
                 this.ended(this);
             });
 
-            if (terminal == null) {
-                this.terminal = new Terminus.Base(working_directory, commands, this);
+            if (terminal_base == null) {
+                this.terminal_base = new Terminus.Base(working_directory, commands, this, inner_terminal);
             } else {
-                this.terminal = terminal;
-                terminal.top_window = this;
+                this.terminal_base = terminal_base;
+                terminal_base.top_window = this;
             }
-            this.terminal.ended.connect(this.ended_cb);
+            this.terminal_base.ended.connect(this.ended_cb);
 
-            this.terminal.new_window.connect(() => {
+            this.terminal_base.new_window.connect(() => {
                 this.new_window();
             });
 
@@ -137,7 +146,7 @@ namespace Terminus {
                 this.paned.events = Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
                                     Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK;
                 this.add(this.paned);
-                this.paned.add1(this.terminal);
+                this.paned.add1(this.terminal_base);
                 this.fixed = new Terminus.Fixed();
                 this.paned.add2(fixed);
                 this.mouseY = -1;
@@ -192,17 +201,49 @@ namespace Terminus {
 
                 this.paned.show_all();
             } else {
-                this.add(this.terminal);
-                this.terminal.show_all();
+                this.add(this.terminal_base);
+                this.terminal_base.show_all();
                 this.present();
             }
             this.application = application;
+
+            var new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
+            this.headerBar.pack_start(new_window_button);
+            new_window_button.show_all();
+            var new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic", Gtk.IconSize.BUTTON);
+            this.headerBar.pack_start(new_tab_button);
+            new_tab_button.show_all();
+            new_tab_button.clicked.connect(() => {
+                this.terminal_base.new_terminal_tab("", null);
+            });
+            new_window_button.clicked.connect(() => {
+                this.terminal_base.new_terminal_window();
+            });
+            Gtk.drag_dest_set(this.headerBar, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this.headerBar, dnd_manager.targets);
+            this.headerBar.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
+        }
+
+        public void
+        drop_terminal(Terminal terminal)
+        {
+            this.terminal_base.new_terminal_tab("", null, terminal);
+        }
+
+        public bool
+        accepts_drop(Terminal terminal)
+        {
+            return true;
         }
 
         public void
         ended_cb()
         {
-            this.terminal.ended.disconnect(this.ended_cb);
+            this.terminal_base.ended.disconnect(this.ended_cb);
             this.destroy();
         }
 

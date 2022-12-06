@@ -24,31 +24,61 @@ namespace Terminus {
      * enclosed in a window.
      */
 
-    class Base : Gtk.Notebook {
-        public signal void ended();
-        public signal void new_window();
+    public class Base : Gtk.Notebook, DnDDestination {
+        public signal void
+        ended();
+        public signal void
+        new_window();
+
         public Gtk.Window ?top_window;
         private Gtk.MessageDialog notification_window;
+        private ulong dnd_status_id;
 
-        public Base(string      working_directory,
-                    string[]   ?commands,
-                    Gtk.Window ?top_window)
+        public Base(string             working_directory,
+                    string[]   ?       commands,
+                    Gtk.Window ?       top_window,
+                    Terminus.Terminal ?terminal = null)
         {
             this.page_added.connect(this.check_pages);
             this.page_removed.connect(this.check_pages);
-            this.new_terminal_tab(working_directory, commands);
+            this.new_terminal_tab(working_directory, commands, terminal);
             this.scrollable = true;
             this.top_window = top_window;
+            this.dnd_status_id = Terminus.dnd_manager.dnd_status.connect(() => {
+                this.check_pages(null, 0);
+            });
+            Gtk.drag_dest_set(this, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this, dnd_manager.targets);
+            this.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
         }
 
         public void
-        ask_kill_childs(string title, string subtitle, string button_text, Killable obj)
+        drop_terminal(Terminal terminal)
+        {
+            this.new_terminal_tab("", null, terminal);
+        }
+
+        public bool
+        accepts_drop(Terminal terminal)
+        {
+            return true;
+        }
+
+        public void
+        ask_kill_childs(string   title,
+                        string   subtitle,
+                        string   button_text,
+                        Killable obj)
         {
             this.notification_window = new Gtk.MessageDialog(this.top_window,
                                                              Gtk.DialogFlags.MODAL | Gtk.DialogFlags.USE_HEADER_BAR,
                                                              Gtk.MessageType.QUESTION,
                                                              Gtk.ButtonsType.NONE,
-                                                             "<b>"+title+"</b>");
+                                                             "<b>" + title + "</b>");
             this.notification_window.format_secondary_markup(subtitle);
             this.notification_window.use_markup = true;
             this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
@@ -65,8 +95,9 @@ namespace Terminus {
         }
 
         public bool
-        check_if_running_processes() {
-            for(var i=0; i<this.get_n_pages(); i++) {
+        check_if_running_processes()
+        {
+            for (var i = 0; i < this.get_n_pages(); i++) {
                 var page = (Terminus.Container) this.get_nth_page(i);
                 if (page.check_if_running_processes()) {
                     return true;
@@ -77,9 +108,10 @@ namespace Terminus {
 
         public void
         new_terminal_tab(string    working_directory,
-                         string[] ?commands)
+                         string[] ?commands,
+                         Terminal ?terminal = null)
         {
-            var term = new Terminus.Container(this, working_directory, commands, null, null, null);
+            var term = new Terminus.Container(this, working_directory, commands, terminal, null, null);
             term.ended.connect((w) => {
                 this.delete_page(term);
             });
@@ -104,14 +136,15 @@ namespace Terminus {
         }
 
         public void
-        check_pages(Gtk.Widget child,
+        check_pages(Gtk.Widget?child,
                     uint       page_num)
         {
             var npages = this.get_n_pages();
             if (npages == 0) {
+                Terminus.dnd_manager.disconnect(this.dnd_status_id);
                 this.ended();
             }
-            if (npages <= 1) {
+            if ((npages <= 1) && (!Terminus.dnd_manager.doing_dnd)) {
                 this.show_tabs = false;
             } else {
                 this.show_tabs = true;

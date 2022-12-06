@@ -27,7 +27,7 @@ namespace Terminus {
      * This is the terminal itself, available in each container.
      */
 
-    class Terminal : Gtk.Box, Killable {
+    public class Terminal : Gtk.Box, Killable, DnDDestination {
         private int pid;
         private Vte.Terminal vte_terminal;
         private Gtk.Label title;
@@ -42,23 +42,75 @@ namespace Terminus {
         private double title_r;
         private double title_g;
         private double title_b;
-
+        private double fg_r;
+        private double fg_g;
+        private double fg_b;
+        private SplitAt split_mode;
+        private bool doing_dnd;
         private bool had_focus;
 
-        public signal void ended(Terminus.Terminal terminal);
-        public signal void split_horizontal(Terminus.Terminal terminal);
-        public signal void split_vertical(Terminus.Terminal terminal);
+        public signal void
+        ended(Terminus.Terminal terminal);
+        public signal void
+        split_terminal(SplitAt            where,
+                       Terminus.Terminal ?new_terminal);
+
+        public bool
+        compare_terminal(Vte.Terminal ?terminal)
+        {
+            return this.vte_terminal == terminal;
+        }
+
+        public void
+        extract_from_container()
+        {
+            this.container.extract_current_terminal();
+            this.container.ended(this.container);
+        }
+
+        public bool
+        accepts_drop(Terminal terminal)
+        {
+            return true;
+        }
+
+        public void
+        drop_into(DnDDestination destination)
+        {
+            if (!destination.accepts_drop(this)) {
+                return;
+            }
+            if (destination == this) {
+                return;
+            }
+            var old_container = this.container;
+            this.container.extract_current_terminal();
+            destination.drop_terminal(this);
+            old_container.ended_cb();
+        }
+
+        public void
+        drop_terminal(Terminal terminal)
+        {
+            this.split_terminal(this.split_mode, terminal);
+            this.split_mode = SplitAt.NONE;
+        }
 
         private void
-        add_separator()
+        add_separator(Gtk.Menu ?menu = null)
         {
             var separator = new Gtk.SeparatorMenuItem();
-            this.menu_container.append(separator);
+            if (menu == null) {
+                this.menu_container.append(separator);
+            } else {
+                menu.append(separator);
+            }
         }
 
         private Gtk.MenuItem
-        new_menu_element(string  text,
-                         string ?icon = null)
+        new_menu_element(string    text,
+                         string ?  icon = null,
+                         Gtk.Menu ?menu = null)
         {
             Gtk.MenuItem item;
             if (icon == null) {
@@ -72,7 +124,11 @@ namespace Terminus {
                 tmpbox.pack_start(tmplabel, false, true);
                 item.add(tmpbox);
             }
-            this.menu_container.append(item);
+            if (menu == null) {
+                this.menu_container.append(item);
+            } else {
+                menu.append(item);
+            }
             return item;
         }
 
@@ -92,14 +148,23 @@ namespace Terminus {
 
             this.add_separator();
 
+            item = this.new_menu_element(_("Select all"));
+            item.activate.connect(() => {
+                this.vte_terminal.select_all();
+            });
+
+            this.add_separator();
+
             item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
             item.activate.connect(() => {
-                this.split_horizontal(this);
+                this.split_terminal(SplitAt.BOTTOM, null);
             });
             item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
             item.activate.connect(() => {
-                this.split_vertical(this);
+                this.split_terminal(SplitAt.RIGHT, null);
             });
+
+            this.add_separator();
 
             item = this.new_menu_element(_("New tab"));
             item.activate.connect(() => {
@@ -109,6 +174,22 @@ namespace Terminus {
             item = this.new_menu_element(_("New window"));
             item.activate.connect(() => {
                 this.main_container.new_terminal_window();
+            });
+
+            this.add_separator();
+
+            var submenu = new Gtk.Menu();
+            item = this.new_menu_element(_("Extra"));
+            item.submenu = submenu;
+
+            item = this.new_menu_element(_("Reset terminal"), null, submenu);
+            item.activate.connect(() => {
+                this.vte_terminal.reset(true, false);
+            });
+
+            item = this.new_menu_element(_("Reset and clear terminal"), null, submenu);
+            item.activate.connect(() => {
+                this.vte_terminal.reset(true, true);
             });
 
             this.add_separator();
@@ -131,6 +212,14 @@ namespace Terminus {
         do_grab_focus()
         {
             this.vte_terminal.grab_focus();
+        }
+
+        public void
+        set_containers(Terminus.Container container,
+                       Terminus.Container top_container)
+        {
+            this.container = container;
+            this.top_container = top_container;
         }
 
         public void
@@ -166,6 +255,8 @@ namespace Terminus {
             this.container = container;
             // when creating a new terminal, it must take the focus
             had_focus = true;
+            this.split_mode = SplitAt.NONE;
+            this.doing_dnd = false;
             this.map.connect_after(() => {
                 // this ensures that the title is updated when the window is shown
                 GLib.Timeout.add(500, update_title_cb);
@@ -186,8 +277,7 @@ namespace Terminus {
             this.titlebox.add(this.title);
 
             this.closeButton = new Gtk.EventBox();
-            var label = new Gtk.Label("<span size=\"small\">   X   </span>");
-            label.use_markup = true;
+            var label = new Gtk.Image.from_icon_name("window-close-symbolic", Gtk.IconSize.BUTTON);
             this.closeButton.button_release_event.connect((event) => {
                 this.kill_child();
                 return false;
@@ -303,18 +393,106 @@ namespace Terminus {
             settings_changed("terminal-bell");
             settings_changed("allow-bold");
             settings_changed("rewrap-on-resize");
+            settings_changed("pointer-autohide");
 
+            // set DnD
+            Gtk.drag_source_set(this.titlebox,
+                                Gdk.ModifierType.BUTTON1_MASK,
+                                null,
+                                Gdk.DragAction.MOVE | Gdk.DragAction.COPY);
+            Gtk.drag_source_set_target_list(this.titlebox, dnd_manager.targets);
+            this.titlebox.drag_end.connect((widget, context) => {
+                Terminus.dnd_manager.do_drop();
+            });
+            this.titlebox.drag_begin.connect((widget, context) => {
+                Terminus.dnd_manager.begin_dnd();
+                Terminus.dnd_manager.set_origin(this);
+            });
+            Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(this.vte_terminal, dnd_manager.targets);
+            this.vte_terminal.drag_motion.connect((widget, context, x, y, time) => {
+                if (Terminus.dnd_manager.is_origin(widget as Vte.Terminal)) {
+                    this.doing_dnd = false;
+                    return false;
+                }
+                this.doing_dnd = true;
+                var nx = 2.0 * x / widget.get_allocated_width() - 1.0;
+                var ny = 2.0 * y / widget.get_allocated_height() - 1.0;
+
+                if (ny <= nx) {
+                    if (ny <= (-nx)) {
+                        this.split_mode = SplitAt.TOP;
+                    } else {
+                        this.split_mode = SplitAt.RIGHT;
+                    }
+                } else {
+                    if (ny <= (-nx)) {
+                        this.split_mode = SplitAt.LEFT;
+                    } else {
+                        this.split_mode = SplitAt.BOTTOM;
+                    }
+                }
+                this.vte_terminal.queue_draw();
+                return true;
+            });
+            this.vte_terminal.drag_leave.connect(() => {
+                this.doing_dnd = false;
+            });
+            this.vte_terminal.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(this);
+                return true;
+            });
+            // To avoid creating a new window if dropping accidentally over a terminal title
+            Gtk.drag_dest_set(titleContainer, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
+            Gtk.drag_dest_set_target_list(titleContainer, dnd_manager.targets);
+            titleContainer.drag_drop.connect((widget, context, x, y, time) => {
+                Terminus.dnd_manager.set_destination(new VoidDnDDestination());
+                return true;
+            });
+            this.vte_terminal.draw.connect_after((cr) => {
+                if (!this.doing_dnd) {
+                    return false;
+                }
+                cr.save();
+                cr.scale(this.vte_terminal.get_allocated_width(), this.vte_terminal.get_allocated_height());
+                switch (this.split_mode) {
+                case SplitAt.TOP:
+                    cr.rectangle(0, 0, 1, 0.5);
+                    break;
+
+                case SplitAt.BOTTOM:
+                    cr.rectangle(0, 0.5, 1, 0.5);
+                    break;
+
+                case SplitAt.LEFT:
+                    cr.rectangle(0, 0, 0.5, 1);
+                    break;
+
+                case SplitAt.RIGHT:
+                    cr.rectangle(0.5, 0, 0.5, 1);
+                    break;
+
+                default:
+                    break;
+                }
+                cr.set_source_rgba(this.fg_r, this.fg_g, this.fg_b, 0.5);
+                cr.fill();
+                cr.restore();
+                return false;
+            });
             this.show_all();
         }
 
         public bool
         has_child_running()
         {
-            var procdir = GLib.File.new_for_path("/proc");
-            var enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+            var      procdir = GLib.File.new_for_path("/proc");
+            var      enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
             FileInfo info = null;
-            while ((info = enumerator.next_file (null)) != null) {
-                if (info.get_file_type () != FileType.DIRECTORY) {
+            while ((info = enumerator.next_file(null)) != null) {
+                if (info.get_file_type() != FileType.DIRECTORY) {
                     continue;
                 }
                 var statusFile = GLib.File.new_build_filename("/proc", info.get_name(), "status");
@@ -322,7 +500,7 @@ namespace Terminus {
                     continue;
                 }
                 var is = statusFile.read(null);
-                Bytes data;
+                Bytes     data;
                 ByteArray buffer = new ByteArray();
                 while (true) {
                     data = is.read_bytes(1024, null);
@@ -331,8 +509,8 @@ namespace Terminus {
                     }
                     buffer.append(data.get_data());
                 }
-                buffer.append({0});
-                var lines = ((string)buffer.data).split("\n");
+                buffer.append({ 0 });
+                var lines = ((string) buffer.data).split("\n");
                 foreach (var line in lines) {
                     if (line.has_prefix("PPid:")) {
                         var ppid = int.parse(line.substring(5));
@@ -370,7 +548,6 @@ namespace Terminus {
             this.update_title();
             return false;
         }
-
 
         public void
         settings_changed(string key)
@@ -417,6 +594,9 @@ namespace Terminus {
 
             case "fg-color":
                 this.vte_terminal.set_color_foreground(color);
+                this.fg_r = color.red;
+                this.fg_g = color.green;
+                this.fg_b = color.blue;
                 break;
 
             case "bg-color":
@@ -429,6 +609,7 @@ namespace Terminus {
             case "inactive-bg-color":
                 this.update_title();
                 break;
+
             case "bold-color":
                 this.vte_terminal.set_color_bold(color);
                 break;
@@ -485,7 +666,11 @@ namespace Terminus {
                 this.vte_terminal.set_font(font_desc);
                 break;
 
-            default :
+            case "pointer-autohide" :
+                vte_terminal.pointer_autohide = Terminus.settings.get_boolean("pointer-autohide");
+                break;
+
+            default:
                 break;
             }
         }
@@ -529,62 +714,84 @@ namespace Terminus {
                 eventkey.keyval &= ~32;
             }
 
-            switch(key_bindings.find_key(eventkey)) {
+            switch (key_bindings.find_key(eventkey)) {
             case "new-window":
                 this.main_container.new_terminal_window();
                 return true;
+
             case "new-tab":
                 this.main_container.new_terminal_tab("", null);
                 return true;
+
             case "next-tab":
                 this.main_container.next_tab();
                 return true;
+
             case "previous-tab":
                 this.main_container.prev_tab();
                 return true;
+
             case "copy":
                 this.do_copy();
                 return true;
+
             case "paste":
                 this.do_paste();
                 return true;
+
             case "terminal-up":
                 this.container.move_terminal_focus(Terminus.MoveFocus.UP, null, true);
                 return true;
+
             case "terminal-down":
                 this.container.move_terminal_focus(Terminus.MoveFocus.DOWN, null, true);
                 return true;
+
             case "terminal-left":
                 this.container.move_terminal_focus(Terminus.MoveFocus.LEFT, null, true);
                 return true;
+
             case "terminal-right":
                 this.container.move_terminal_focus(Terminus.MoveFocus.RIGHT, null, true);
                 return true;
+
             case "font-size-big":
                 this.change_zoom(true);
                 return true;
+
             case "font-size-small":
                 this.change_zoom(false);
                 return true;
+
             case "font-size-normal":
                 this.vte_terminal.font_scale = 1;
                 return true;
+
             case "show-menu":
                 this.item_copy.sensitive = this.vte_terminal.get_has_selection();
                 this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
                 return true;
+
             case "split-horizontally":
-                this.split_horizontal(this);
+                this.split_terminal(SplitAt.BOTTOM, null);
                 return true;
+
             case "split-vertically":
-                this.split_vertical(this);
+                this.split_terminal(SplitAt.RIGHT, null);
                 return true;
+
             case "close-tile":
                 this.kill_child();
                 return true;
+
             case "close-tab":
                 this.top_container.ask_close_tab();
                 return true;
+
+            case "select-all":
+                this.vte_terminal.select_all();
+                return true;
+
             default:
                 return false;
             }
@@ -607,7 +814,7 @@ namespace Terminus {
 
             string fg;
             string bg;
-            var tmp_color = Gdk.RGBA();
+            var    tmp_color = Gdk.RGBA();
             if (this.vte_terminal.has_focus) {
                 fg = Terminus.settings.get_string("focused-fg-color");
                 bg = Terminus.settings.get_string("focused-bg-color");

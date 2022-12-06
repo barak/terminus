@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-12 21:18+0200\n"
+"POT-Creation-Date: 2022-12-02 23:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,69 +17,165 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/palete.vala:107 src/palete.vala:158
+#: src/base.vala:84
+msgid "Cancel"
+msgstr ""
+
+#: src/keybinding.vala:71 src/terminal.vala:165
+msgid "New window"
+msgstr ""
+
+#: src/keybinding.vala:72 src/terminal.vala:160
+msgid "New tab"
+msgstr ""
+
+#: src/keybinding.vala:73
+msgid "Next tab"
+msgstr ""
+
+#: src/keybinding.vala:74
+msgid "Previous tab"
+msgstr ""
+
+#: src/keybinding.vala:75
+msgid "Show guake terminal"
+msgstr ""
+
+#: src/keybinding.vala:76
+msgid "Copy text into the clipboard"
+msgstr ""
+
+#: src/keybinding.vala:77
+msgid "Paste text from the clipboard"
+msgstr ""
+
+#: src/keybinding.vala:78
+msgid "Move focus to the terminal on the left"
+msgstr ""
+
+#: src/keybinding.vala:79
+msgid "Move focus to the terminal on the right"
+msgstr ""
+
+#: src/keybinding.vala:80
+msgid "Move focus to the terminal above"
+msgstr ""
+
+#: src/keybinding.vala:81
+msgid "Move focus to the terminal below"
+msgstr ""
+
+#: src/keybinding.vala:82
+msgid "Make font bigger"
+msgstr ""
+
+#: src/keybinding.vala:83
+msgid "Make font smaller"
+msgstr ""
+
+#: src/keybinding.vala:84
+msgid "Reset font size"
+msgstr ""
+
+#: src/keybinding.vala:85
+msgid "Show menu"
+msgstr ""
+
+#: src/keybinding.vala:86 src/terminal.vala:149
+msgid "Split horizontally"
+msgstr ""
+
+#: src/keybinding.vala:87 src/terminal.vala:153
+msgid "Split vertically"
+msgstr ""
+
+#: src/keybinding.vala:88
+msgid "Close the active tile"
+msgstr ""
+
+#: src/keybinding.vala:89
+msgid "Close the active tab"
+msgstr ""
+
+#: src/keybinding.vala:90 src/terminal.vala:142
+msgid "Select all"
+msgstr ""
+
+#: src/notetab.vala:89
+msgid "This tab has running processes inside."
+msgstr ""
+
+#: src/notetab.vala:90 src/window.vala:96
+msgid "Closing it will kill them."
+msgstr ""
+
+#: src/notetab.vala:91
+msgid "Close tab"
+msgstr ""
+
+#: src/palete.vala:120 src/palete.vala:178
 #, c-format
 msgid "Error: palette file %s has unrecognized content at line %d\n"
 msgstr ""
 
-#: src/palete.vala:120
+#: src/palete.vala:136
 #, c-format
 msgid ""
 "Error: palette file %s has opens a bracket at line %d without closing it\n"
 msgstr ""
 
-#: src/palete.vala:133
+#: src/palete.vala:151
 #, c-format
 msgid "Error: palette file %s has an unrecognized color at line %d\n"
 msgstr ""
 
-#: src/palete.vala:143
+#: src/palete.vala:163
 #, c-format
 msgid "Warning: palette file %s has more than 16 colors\n"
 msgstr ""
 
-#: src/palete.vala:168
+#: src/palete.vala:190
 #, c-format
 msgid "Error: Palette file %s has less than 16 colors\n"
 msgstr ""
 
-#: src/palete.vala:172
+#: src/palete.vala:194
 #, c-format
 msgid "Error: Palette file %s has no palette name\n"
 msgstr ""
 
-#: src/palete.vala:176
+#: src/palete.vala:198
 #, c-format
 msgid "Error: Palette file %s has text_fg color but not text_bg color\n"
 msgstr ""
 
-#: src/palete.vala:180
+#: src/palete.vala:202
 #, c-format
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr ""
 
-#: src/params.vala:116
+#: src/params.vala:119
 #, c-format
 msgid ""
 "Parameter '%s' unknown.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:123
+#: src/params.vala:128
 #, c-format
 msgid ""
 "The '%s' parameter requires a path after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:129
+#: src/params.vala:136
 #, c-format
 msgid ""
 "The '%s' parameter requires a command after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:136
+#: src/params.vala:145
 msgid ""
 "Usage:\n"
 "terminus [OPTION...] [-- COMMAND ...]\n"
@@ -97,114 +193,64 @@ msgid ""
 "  --no-window                   launch Terminus but don't open a window\n"
 "  --nobindkey                   don't try to bind the Quake-mode key (useful "
 "for gnome shell)\n"
-"  --check-gnome                 exit if we are running it in Gnome Shell "
-"(guake mode should be managed by the extension)\n"
 msgstr ""
 
-#: src/settings.vala:70
+#: src/settings.vala:149
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/settings.vala:315 src/terminal.vala:118
-msgid "New window"
-msgstr ""
-
-#: src/settings.vala:316 src/terminal.vala:113
-msgid "New tab"
-msgstr ""
-
-#: src/settings.vala:317
-msgid "Next tab"
-msgstr ""
-
-#: src/settings.vala:318
-msgid "Previous tab"
-msgstr ""
-
-#: src/settings.vala:319
-msgid "Show guake terminal"
-msgstr ""
-
-#: src/settings.vala:320
-msgid "Copy text into the clipboard"
-msgstr ""
-
-#: src/settings.vala:321
-msgid "Paste text from the clipboard"
-msgstr ""
-
-#: src/settings.vala:322
-msgid "Move focus to the terminal on the left"
-msgstr ""
-
-#: src/settings.vala:323
-msgid "Move focus to the terminal on the right"
-msgstr ""
-
-#: src/settings.vala:324
-msgid "Move focus to the terminal above"
-msgstr ""
-
-#: src/settings.vala:325
-msgid "Move focus to the terminal below"
-msgstr ""
-
-#: src/settings.vala:326
-msgid "Make font bigger"
-msgstr ""
-
 #: src/settings.vala:327
-msgid "Make font smaller"
-msgstr ""
-
-#: src/settings.vala:328
-msgid "Reset font size"
-msgstr ""
-
-#: src/settings.vala:329
-msgid "Show menu"
-msgstr ""
-
-#: src/settings.vala:336
 msgid "Action"
 msgstr ""
 
-#: src/settings.vala:337
+#: src/settings.vala:328
 msgid "Key"
 msgstr ""
 
-#: src/terminal.vala:92
+#: src/terminal.vala:130
 msgid "Copy"
 msgstr ""
 
-#: src/terminal.vala:97
+#: src/terminal.vala:135
 msgid "Paste"
 msgstr ""
 
-#: src/terminal.vala:104
-msgid "Split horizontally"
-msgstr ""
-
-#: src/terminal.vala:108
-msgid "Split vertically"
-msgstr ""
-
-#: src/terminal.vala:125
+#: src/terminal.vala:172
 msgid "Preferences"
 msgstr ""
 
-#: src/terminal.vala:132
+#: src/terminal.vala:179
 msgid "Close"
 msgstr ""
 
-#: src/terminus.vala:60
+#: src/terminal.vala:507
+msgid "This terminal has a process running inside."
+msgstr ""
+
+#: src/terminal.vala:508
+msgid "Closing it will kill the process."
+msgstr ""
+
+#: src/terminal.vala:509
+msgid "Close terminal"
+msgstr ""
+
+#: src/terminus.vala:66
 #, c-format
 msgid "Version %s\n"
 msgstr ""
 
-#: src/terminus.vala:93
+#: src/terminus.vala:105
 msgid "Custom colors"
+msgstr ""
+
+#: src/window.vala:95
+msgid "This window has running processes inside."
+msgstr ""
+
+#: src/window.vala:97
+msgid "Close window"
 msgstr ""
 
 #: data/interface/properties.ui:22
@@ -243,87 +289,103 @@ msgstr ""
 msgid "Use custom shell"
 msgstr ""
 
-#: data/interface/properties.ui:200
+#: data/interface/properties.ui:196
+msgid "Pointer autohide"
+msgstr ""
+
+#: data/interface/properties.ui:214
 msgid "General"
 msgstr ""
 
-#: data/interface/properties.ui:221 data/interface/properties.ui:477
+#: data/interface/properties.ui:235 data/interface/properties.ui:484
 msgid "Built-in schemes:"
 msgstr ""
 
-#: data/interface/properties.ui:276
+#: data/interface/properties.ui:288 data/interface/properties.ui:800
 msgid "Text"
 msgstr ""
 
-#: data/interface/properties.ui:288
+#: data/interface/properties.ui:300 data/interface/properties.ui:812
 msgid "Background"
 msgstr ""
 
-#: data/interface/properties.ui:312
+#: data/interface/properties.ui:324
 msgid "Default color:"
 msgstr ""
 
-#: data/interface/properties.ui:321
+#: data/interface/properties.ui:333
 msgid "Bold color:"
 msgstr ""
 
-#: data/interface/properties.ui:335
+#: data/interface/properties.ui:347
 msgid "Cursor color:"
 msgstr ""
 
-#: data/interface/properties.ui:349
+#: data/interface/properties.ui:361
 msgid "Highlight color:"
 msgstr ""
 
-#: data/interface/properties.ui:426
+#: data/interface/properties.ui:433
 msgid "<b>Text and background colors</b>"
 msgstr ""
 
-#: data/interface/properties.ui:440
+#: data/interface/properties.ui:447
 msgid "<b>Palette</b>"
 msgstr ""
 
-#: data/interface/properties.ui:509
+#: data/interface/properties.ui:516
 msgid "Colors palete:"
 msgstr ""
 
-#: data/interface/properties.ui:782
+#: data/interface/properties.ui:763
+msgid "<b>Top bar</b>"
+msgstr ""
+
+#: data/interface/properties.ui:825
+msgid "Focused terminal:"
+msgstr ""
+
+#: data/interface/properties.ui:837
+msgid "Inactive terminal:"
+msgstr ""
+
+#: data/interface/properties.ui:909
 msgid "Colors"
 msgstr ""
 
-#: data/interface/properties.ui:808
+#: data/interface/properties.ui:935
 msgid "Scrollback lines:"
 msgstr ""
 
-#: data/interface/properties.ui:830
+#: data/interface/properties.ui:957
 msgid "0"
 msgstr ""
 
-#: data/interface/properties.ui:840
+#: data/interface/properties.ui:967
 msgid "Infinite Scrollback"
 msgstr ""
 
-#: data/interface/properties.ui:887
+#: data/interface/properties.ui:1014
 msgid "Scroll on output"
 msgstr ""
 
-#: data/interface/properties.ui:901
+#: data/interface/properties.ui:1028
 msgid "Scroll on keystroke"
 msgstr ""
 
-#: data/interface/properties.ui:922
+#: data/interface/properties.ui:1049
 msgid "Scrolling"
 msgstr ""
 
-#: data/interface/properties.ui:950
+#: data/interface/properties.ui:1077
 msgid "Keybindings"
 msgstr ""
 
-#: data/interface/properties.ui:970
+#: data/interface/properties.ui:1097
 msgid "Terminus"
 msgstr ""
 
-#: data/interface/properties.ui:993
+#: data/interface/properties.ui:1120
 msgid ""
 "A tiled terminal emulator.\n"
 "\n"
@@ -333,6 +395,6 @@ msgid ""
 "rastersoft@gmail.com"
 msgstr ""
 
-#: data/interface/properties.ui:1016
+#: data/interface/properties.ui:1143
 msgid "About"
 msgstr ""

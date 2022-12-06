@@ -21,6 +21,7 @@ using Gee;
 
 namespace Terminus {
     TerminusRoot     main_root;
+    DnDManager       dnd_manager;
     KeyBindings      key_bindings;
     GLib.Settings    settings = null;
     GLib.Settings    keybind_settings = null;
@@ -210,9 +211,10 @@ namespace Terminus {
         }
 
         public void
-        create_window(bool      guake_mode,
-                      string   ?working_directory,
-                      string[] ?commands)
+        create_window(bool              guake_mode,
+                      string   ?        working_directory,
+                      string[] ?        commands,
+                      Terminus.Terminal?terminal = null)
         {
             Terminus.Window window;
 
@@ -232,7 +234,7 @@ namespace Terminus {
                 this.guake_window = window;
                 Terminus.bindkey.show_guake.connect(this.show_hide);
             } else {
-                window = new Terminus.Window(this, false, working_directory, commands);
+                window = new Terminus.Window(this, false, working_directory, commands, null, null, terminal);
             }
             window.ended.connect((w) => {
                 window_list.remove(w);
@@ -336,6 +338,7 @@ main(string[] argv)
 
     Terminus.settings = new GLib.Settings("org.rastersoft.terminus");
     Terminus.keybind_settings = new GLib.Settings("org.rastersoft.terminus.keybindings");
+    Terminus.dnd_manager = new Terminus.DnDManager();
 
     Terminus.check_palette();
 
