@@ -216,10 +216,12 @@ namespace Terminus {
 
         public void
         set_containers(Terminus.Container container,
-                       Terminus.Container top_container)
+                       Terminus.Container top_container,
+                       Terminus.Base      main_container)
         {
             this.container = container;
             this.top_container = top_container;
+            this.main_container = main_container;
         }
 
         public void

@@ -1,3 +1,9 @@
+terminus (2.0.1-Debian1) sid; urgency=low
+
+  * Fixed "new tab" operation after DnD into a new window
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 11 Dec 2022 23:55:00 +0200
+
 terminus (2.0.0-Debian1) sid; urgency=low
 
   * Added Drag'n'Drop support to move tiles between windows and tabs, or

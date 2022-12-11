@@ -75,7 +75,7 @@ namespace Terminus {
                                                       this);
             } else {
                 this.terminal = terminal;
-                this.terminal.set_containers(this, this.top_container);
+                this.terminal.set_containers(this, this.top_container, this.main_container);
             }
             this.set_terminal_child();
             this.container1 = null;
@@ -135,7 +135,7 @@ namespace Terminus {
             this.terminal.ended.connect(this.ended_cb);
 
             this.terminal.split_terminal.connect(this.split_terminal_cb);
-            this.terminal.set_containers(this, this.top_container);
+            this.terminal.set_containers(this, this.top_container, this.main_container);
 
             this.paned = null;
             this.container1 = null;
@@ -199,7 +199,7 @@ namespace Terminus {
                                                      this);
             this.terminal.set_container(current_to_first ?this.container1 : this.container2);
             if (new_terminal != null) {
-                new_terminal.set_containers(current_to_first ?this.container2 : this.container1, this.top_container);
+                new_terminal.set_containers(current_to_first ?this.container2 : this.container1, this.top_container, this.main_container);
             }
             this.container1.ended.connect(this.ended_child);
             this.container2.ended.connect(this.ended_child);
