@@ -1,3 +1,9 @@
+terminus (2.0.1-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 14 Dec 2022 16:48:25 +0000
+
 terminus (2.0-1) unstable; urgency=medium
 
   [ Debian Janitor ]
