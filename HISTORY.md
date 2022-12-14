@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.0.1 (2022-12-11)
+  * Fixed "new tab" operation after DnD into a new window
 * Version 2.0.0 (2022-12-04)
   * Added Drag'n'Drop support to move tiles between windows and tabs, or into a new window
   * Added "Select all" option
