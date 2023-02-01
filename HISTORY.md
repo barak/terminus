@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.1.0 (2023-01-28)
+  * Ensure that the Guake window is always inside the screen
 * Version 2.0.1 (2022-12-11)
   * Fixed "new tab" operation after DnD into a new window
 * Version 2.0.0 (2022-12-04)
