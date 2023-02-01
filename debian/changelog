@@ -1,6 +1,7 @@
 terminus (2.0.1-2) UNRELEASED; urgency=medium
 
   * Set upstream metadata fields: Bug-Database, Bug-Submit.
+  * Update standards version to 4.6.2, no changes needed.
 
  -- Barak A. Pearlmutter <bap@debian.org>  Wed, 01 Feb 2023 16:34:54 -0000
 
