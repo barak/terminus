@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.2.0 (2023-02-12)
+  * Added macros support
 * Version 2.1.0 (2023-01-28)
   * Ensure that the Guake window is always inside the screen
 * Version 2.0.1 (2022-12-11)

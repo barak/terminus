@@ -5,6 +5,7 @@ src/container.vala
 src/definitions.vala
 src/dndManager.vala
 src/keybinding.vala
+src/macros.vala
 src/notetab.vala
 src/palete.vala
 src/params.vala

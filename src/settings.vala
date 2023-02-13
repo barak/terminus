@@ -122,15 +122,24 @@ namespace Terminus {
         private Gtk.ListStore keybindings;
         private Gtk.Entry custom_shell;
 
-        private bool editing_keybind;
+        private EditingKeybindMode editing_keybind;
         private bool changing_guake;
         private string old_keybind;
         private Gtk.TreePath old_keybind_path;
         private bool disable_palette_change;
 
+        private Gtk.TreeView macros_view;
+        private Gtk.ListStore macros_store;
+        private Gtk.Button add_macro;
+        private Gtk.Button delete_macro;
+        private Gtk.Entry macro_keybinding;
+        private Gtk.Entry macro_command;
+        private string? selected_key;
+
         public Properties()
         {
-            this.editing_keybind = false;
+            this.selected_key = null;
+            this.editing_keybind = EditingKeybindMode.NONE;
             disable_palette_change = false;
 
             this.delete_event.connect((w) => {
@@ -141,7 +150,7 @@ namespace Terminus {
             var      main_window = new Gtk.Builder();
             string[] elements =
             { "properties_notebook", "color_schemes", "palette_schemes", "scroll_lines", "transparency_level",
-              "cursor_liststore" };
+              "cursor_liststore", "macros_store", "macro_keybinding", "macro_command", "add_macro", "delete_macro" };
             main_window.add_objects_from_resource("/com/rastersoft/terminus/interface/properties.ui", elements);
             this.add(main_window.get_object("properties_notebook") as Gtk.Widget);
 
@@ -180,6 +189,54 @@ namespace Terminus {
             this.palette_scheme = main_window.get_object("palette_scheme") as Gtk.ComboBox;
             this.palette_schemes = main_window.get_object("palette_schemes") as Gtk.ListStore;
             this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
+            this.macros_store = main_window.get_object("macros_store") as Gtk.ListStore;
+            this.macros_view = main_window.get_object("macros_view") as Gtk.TreeView;
+            this.macro_keybinding = main_window.get_object("macro_keybinding") as Gtk.Entry;
+            this.macro_command = main_window.get_object("macro_command") as Gtk.Entry;
+            this.add_macro = main_window.get_object("add_macro") as Gtk.Button;
+            this.delete_macro = main_window.get_object("delete_macro") as Gtk.Button;
+
+            this.macro_command.changed.connect(() => {
+                this.update_macro_state();
+            });
+            this.macro_command.activate.connect(() => {
+                this.add_macro_to_config();
+            });
+            this.macro_keybinding.changed.connect(() => {
+                this.update_macro_state();
+            });
+            this.macro_keybinding.focus_in_event.connect(() => {
+                this.editing_keybind = EditingKeybindMode.MACRO;
+                return false;
+            });
+            this.macro_keybinding.key_press_event.connect((ev) => {
+                if (this.on_key_press(ev)) {
+                    this.focus(DirectionType.RIGHT);
+                }
+                return true;
+            });
+            this.add_macro.clicked.connect(() => {
+                this.add_macro_to_config();
+            });
+            this.delete_macro.clicked.connect(() => {
+                if (this.selected_key == null) {
+                    return;
+                }
+                GLib.Variant[] entries = {};
+                foreach(var entry in Terminus.settings.get_value("macros")) {
+                    if (entry.get_child_value(0).get_string() != this.selected_key) {
+                        entries += entry;
+                    }
+                }
+                var new_settings = new GLib.Variant.array(new GLib.VariantType("(sss)"), entries);
+                Terminus.settings.set_value("macros", new_settings);
+                this.selected_key = null;
+                this.update_macros_list();
+            });
+
+            this.add_macro.sensitive = false;
+            this.delete_macro.sensitive = false;
+
             this.palette_colors = {};
             string[] palette_string = Terminus.settings.get_strv("color-palete");
             var      tmpcolor = Gdk.RGBA();
@@ -314,21 +371,88 @@ namespace Terminus {
             }
             this.palette_scheme.set_active(this.get_current_palette());
 
+            macros_view.activate_on_single_click = true;
+            macros_view.row_activated.connect(this.keymacro_clicked_cb);
+
+            this.update_macros_list();
+
             this.keybindings = new Gtk.ListStore(3, typeof(string), typeof(string), typeof(string));
             foreach (var kb in Terminus.key_bindings.key_binding_list) {
                 this.add_keybinding(kb.description, kb.name);
             }
-
             var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
             keybindings_view.activate_on_single_click = true;
             keybindings_view.row_activated.connect(this.keybind_clicked_cb);
             keybindings_view.set_model(this.keybindings);
-            Gtk.CellRendererText cell = new Gtk.CellRendererText();
+            var cell = new Gtk.CellRendererText();
             keybindings_view.insert_column_with_attributes(-1, _("Action"), cell, "text", 0);
             keybindings_view.insert_column_with_attributes(-1, _("Key"), cell, "text", 1);
 
             this.events = Gdk.EventMask.KEY_PRESS_MASK;
-            this.key_press_event.connect(this.on_key_press);
+            keybindings_view.key_press_event.connect((event) => {
+                this.on_key_press(event);
+                return false;
+            });
+        }
+
+        private void
+        update_macros_list()
+        {
+            var macros = Terminus.settings.get_value("macros");
+            int counter = 0;
+            this.macros_store.clear();
+            foreach(var entry in macros) {
+                Gtk.TreeIter iter;
+                this.macros_store.append(out iter);
+                var key = GLib.Value(typeof(string));
+                var key_string = entry.get_child_value(0).get_string();
+                key.set_string(key_string);
+                var command = GLib.Value(typeof(string));
+                var command_string = entry.get_child_value(1).get_string();
+                command.set_string(command_string);
+                var program = GLib.Value(typeof(string));
+                var program_string = entry.get_child_value(2).get_string();
+                program.set_string(program_string);
+                this.macros_store.set_value(iter, 0, key);
+                this.macros_store.set_value(iter, 1, command);
+                counter++;
+            }
+            this.selected_key = null;
+            this.macro_keybinding.text = "";
+            this.macro_command.text = "";
+            this.update_macro_state();
+        }
+
+        private void
+        add_macro_to_config()
+        {
+            var keybind = this.macro_keybinding.text;
+            var command = this.macro_command.text;
+
+            if ((keybind == "") || (command == "")) {
+                return;
+            }
+
+            var new_entry = new GLib.Variant("(sss)", keybind, command, "");
+
+            GLib.Variant[] entries = {};
+            bool found = false;
+            foreach(var entry in Terminus.settings.get_value("macros")) {
+                if (entry.get_child_value(0).get_string() == keybind) {
+                    entries += new_entry;
+                    found = true;
+                } else {
+                    entries += entry;
+                }
+            }
+            if (found == false) {
+                entries += new_entry;
+            }
+            var new_settings = new GLib.Variant.array(null, entries);
+            Terminus.settings.set_value("macros", new_settings);
+            this.macro_keybinding.text = "";
+            this.macro_command.text = "";
+            this.update_macros_list();
         }
 
         private void
@@ -404,6 +528,43 @@ namespace Terminus {
             this.keybindings.set(iter, 0, name, 1, Terminus.keybind_settings.get_string(setting), 2, setting);
         }
 
+
+        public void
+        keymacro_clicked_cb(TreePath       path,
+                            TreeViewColumn column)
+        {
+            Gtk.TreeIter iter;
+            GLib.Value   val;
+
+            this.macros_store.get_iter(out iter, path);
+            this.macros_store.get_value(iter, 0, out val);
+            this.macro_keybinding.set_text(val.get_string());
+            this.selected_key = val.get_string();
+            this.macros_store.get_value(iter, 1, out val);
+            this.macro_command.set_text(val.get_string());
+            this.update_macro_state();
+        }
+
+        private void
+        update_macro_state()
+        {
+            TreePath? path;
+            TreeViewColumn? column;
+
+            this.macros_view.get_cursor(out path, out column);
+            if (path == null) {
+                this.delete_macro.sensitive = false;
+            } else {
+                this.delete_macro.sensitive = true;
+            }
+
+            if ((this.macro_command.text != "") && (this.macro_keybinding.text != "")) {
+                this.add_macro.sensitive = true;
+            } else {
+                this.add_macro.sensitive = false;
+            }
+        }
+
         public void
         keybind_clicked_cb(TreePath       path,
                            TreeViewColumn column)
@@ -411,15 +572,15 @@ namespace Terminus {
             Gtk.TreeIter iter;
             GLib.Value   val;
 
-            if (this.editing_keybind) {
-                this.editing_keybind = false;
+            if (this.editing_keybind != EditingKeybindMode.NONE) {
+                this.editing_keybind = EditingKeybindMode.NONE;
                 this.keybindings.get_iter(out iter, this.old_keybind_path);
                 this.keybindings.set(iter, 1, this.old_keybind);
                 if (this.changing_guake) {
                     Terminus.keybind_settings.set_string("guake-mode", old_keybind);
                 }
             } else {
-                this.editing_keybind = true;
+                this.editing_keybind = EditingKeybindMode.KEYBIND;
                 this.keybindings.get_iter(out iter, path);
                 this.keybindings.get_value(iter, 1, out val);
                 this.old_keybind = val.get_string();
@@ -438,7 +599,7 @@ namespace Terminus {
         public bool
         on_key_press(Gdk.EventKey eventkey)
         {
-            if (this.editing_keybind == false) {
+            if (this.editing_keybind == EditingKeybindMode.NONE) {
                 return false;
             }
 
@@ -462,27 +623,36 @@ namespace Terminus {
                 break;
             }
 
-            this.editing_keybind = false;
+            // avoid mod2 and other odd mods
+            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
+                              Gdk.ModifierType.CONTROL_MASK |
+                              Gdk.ModifierType.SUPER_MASK |
+                              Gdk.ModifierType.META_MASK |
+                              Gdk.ModifierType.HYPER_MASK |
+                              Gdk.ModifierType.MOD1_MASK;
 
-            eventkey.state &= 0x07;
-
-            if ((eventkey.keyval >= 97) && (eventkey.keyval <= 122)) {
+            if ((eventkey.keyval >= 'a') && (eventkey.keyval <= 'z')) {
                 eventkey.keyval &= ~32;
             }
 
             var new_keybind = Gtk.accelerator_name(eventkey.keyval, eventkey.state);
 
-            Gtk.TreeIter iter;
-            Value        val;
+            if (this.editing_keybind == EditingKeybindMode.KEYBIND) {
+                Gtk.TreeIter iter;
+                Value        val;
 
-            this.editing_keybind = false;
-            this.keybindings.get_iter(out iter, this.old_keybind_path);
-            this.keybindings.set(iter, 1, new_keybind);
-            this.keybindings.get_value(iter, 2, out val);
-            var key = val.get_string();
-            Terminus.keybind_settings.set_string(key, new_keybind);
+                this.keybindings.get_iter(out iter, this.old_keybind_path);
+                this.keybindings.set(iter, 1, new_keybind);
+                this.keybindings.get_value(iter, 2, out val);
+                var key = val.get_string();
+                Terminus.keybind_settings.set_string(key, new_keybind);
+            } else {
+                // macro
+                this.macro_keybinding.text = new_keybind;
+            }
 
-            return false;
+            this.editing_keybind = EditingKeybindMode.NONE;
+            return true;
         }
     }
 }

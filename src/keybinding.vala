@@ -45,7 +45,7 @@ namespace Terminus {
             }
 
             Gtk.accelerator_parse(Terminus.keybind_settings.get_string(this.name), out keyval, out state);
-            if (keyval < 128) {
+            if ((keyval >= 'a') && (keyval <= 'z')) {
                 keyval &= ~32;
             }
             this.keyval = keyval;
@@ -101,8 +101,12 @@ namespace Terminus {
         {
             Gdk.EventKey eventkey = event.key;
             // SHIFT, CTRL, LEFT ALT, ALT+GR
-            eventkey.state &= Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD1_MASK |
-                              Gdk.ModifierType.MOD5_MASK;
+            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
+                              Gdk.ModifierType.CONTROL_MASK |
+                              Gdk.ModifierType.SUPER_MASK |
+                              Gdk.ModifierType.META_MASK |
+                              Gdk.ModifierType.HYPER_MASK |
+                              Gdk.ModifierType.MOD1_MASK;
 
             if (eventkey.keyval < 128) {
                 // to avoid problems with upper and lower case
