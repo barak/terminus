@@ -35,9 +35,9 @@ namespace Terminus {
         private Gtk.EventBox closeButton;
         private Gtk.MenuItem item_copy;
         private Gtk.Menu menu_container;
-        private Terminus.Container top_container;
-        private Terminus.Container container;
-        private Terminus.Base main_container;
+        private weak Terminus.Container top_container;
+        private weak Terminus.Container container;
+        private weak Terminus.Base main_container;
         private Gtk.Scrollbar right_scroll;
         private double title_r;
         private double title_g;

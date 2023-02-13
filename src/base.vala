@@ -30,7 +30,7 @@ namespace Terminus {
         public signal void
         new_window();
 
-        public Gtk.Window ?top_window;
+        public weak Gtk.Window ?top_window;
         private Gtk.MessageDialog notification_window;
         private ulong dnd_status_id;
 
@@ -112,11 +112,14 @@ namespace Terminus {
                          Terminal ?terminal = null)
         {
             var term = new Terminus.Container(this, working_directory, commands, terminal, null, null);
+            var notetab = new Terminus.Notetab(this, term);
+            term.notetab = notetab;
             term.ended.connect((w) => {
                 this.delete_page(term);
+                term.dispose();
             });
             term.show_all();
-            var page = this.append_page(term, term.notetab);
+            var page = this.append_page(term, notetab);
             this.set_current_page(page);
         }
 
@@ -131,7 +134,9 @@ namespace Terminus {
         {
             var page = this.page_num(top_container);
             if (page != -1) {
+                var term = this.get_nth_page(page);
                 this.remove_page(page);
+                term.dispose();
             }
         }
 

@@ -26,9 +26,9 @@ namespace Terminus {
      */
 
     public class Notetab : Gtk.EventBox, Killable, DnDDestination {
-        private Terminus.Container top_container;
+        private weak Terminus.Container top_container;
         private Gtk.Label title;
-        private Terminus.Base main_container;
+        private weak Terminus.Base main_container;
         private Gtk.Box inner_box;
         private uint timeout_id;
         private string current_title;
