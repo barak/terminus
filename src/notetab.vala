@@ -18,6 +18,7 @@
 using Vte;
 using Gtk;
 using Gdk;
+using Pango;
 
 namespace Terminus {
     /**
@@ -106,6 +107,7 @@ namespace Terminus {
         change_title(string new_title)
         {
             this.title.label = new_title;
+            this.title.ellipsize = Pango.EllipsizeMode.START;
         }
 
         public bool

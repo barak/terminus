@@ -708,8 +708,12 @@ namespace Terminus {
         {
             Gdk.EventKey eventkey = event.key;
             // SHIFT, CTRL, LEFT ALT, ALT+GR
-            eventkey.state &= Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD1_MASK |
-                              Gdk.ModifierType.MOD5_MASK;
+            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
+                              Gdk.ModifierType.CONTROL_MASK |
+                              Gdk.ModifierType.SUPER_MASK |
+                              Gdk.ModifierType.META_MASK |
+                              Gdk.ModifierType.HYPER_MASK |
+                              Gdk.ModifierType.MOD1_MASK;
 
             if (eventkey.keyval < 128) {
                 // to avoid problems with upper and lower case
@@ -793,10 +797,14 @@ namespace Terminus {
             case "select-all":
                 this.vte_terminal.select_all();
                 return true;
-
-            default:
-                return false;
             }
+
+            var command = Terminus.macros.check_macro(eventkey);
+            if (command != null) {
+                this.vte_terminal.feed_child((uint8[])command.to_utf8());
+                return true;
+            }
+            return false;
         }
 
         private void

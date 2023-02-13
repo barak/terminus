@@ -18,4 +18,5 @@
 namespace Terminus {
     public enum MoveFocus { UP, DOWN, LEFT, RIGHT }
     public enum SplitAt { TOP, LEFT, BOTTOM, RIGHT, NONE }
+    public enum EditingKeybindMode { NONE, KEYBIND, MACRO }
 }
