@@ -166,12 +166,10 @@ class TerminusClass {
 	_set_window_position(window) {
 		let area = window.get_work_area_current_monitor();
 		let guake_height = this._settings2.get_int("guake-height");
-		global.log(`Antiguo tamaño: ${guake_height}`);
 		if (guake_height >= area.height) {
 			guake_height = Math.round(area.height * 2 / 3);
 			this._settings2.set_int("guake-height", guake_height);
 		}
-		global.log(`Nuevo tamaño: ${guake_height}`);
 		window.move_resize_frame(false, area.x, area.y, area.width, guake_height);
 	}
 
