@@ -18,6 +18,7 @@
 using Vte;
 using Gtk;
 using Gdk;
+using Pango;
 
 namespace Terminus {
     /**
@@ -25,15 +26,17 @@ namespace Terminus {
      */
 
     public class Notetab : Gtk.EventBox, Killable, DnDDestination {
-        private Terminus.Container top_container;
+        private weak Terminus.Container top_container;
         private Gtk.Label title;
-        private Terminus.Base main_container;
+        private weak Terminus.Base main_container;
         private Gtk.Box inner_box;
         private uint timeout_id;
+        private string current_title;
 
         public Notetab(Terminus.Base      main_container,
                        Terminus.Container top_container)
         {
+            this.current_title = "";
             this.main_container = main_container;
             this.top_container = top_container;
             this.top_container.close_tab.connect(() => {
@@ -67,6 +70,11 @@ namespace Terminus {
             this.drag_drop.connect((widget, context, x, y, time) => {
                 Terminus.dnd_manager.set_destination(this);
                 return true;
+            });
+            Terminus.settings.changed.connect((name) => {
+                if (name == "max-tab-text-len") {
+                    this.update_title();
+                }
             });
         }
 
@@ -105,7 +113,17 @@ namespace Terminus {
         public void
         change_title(string new_title)
         {
-            this.title.label = new_title;
+            this.current_title = new_title;
+            this.update_title();
+        }
+
+        private void update_title() {
+            var max_title_len = Terminus.settings.get_int("max-tab-text-len");
+            if (this.current_title.length > max_title_len) {
+                this.title.label = "..." + this.current_title.substring(this.current_title.length - max_title_len);
+            } else {
+                this.title.label = this.current_title;
+            }
         }
 
         public bool

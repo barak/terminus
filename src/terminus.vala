@@ -23,6 +23,7 @@ namespace Terminus {
     TerminusRoot     main_root;
     DnDManager       dnd_manager;
     KeyBindings      key_bindings;
+    Macros           macros;
     GLib.Settings    settings = null;
     GLib.Settings    keybind_settings = null;
     Terminus.Bindkey bindkey;
@@ -94,6 +95,7 @@ namespace Terminus {
         do_startup()
         {
             Terminus.key_bindings = new Terminus.KeyBindings();
+            Terminus.macros = new Terminus.Macros();
             this.read_color_schemes(GLib.Path.build_filename(Constants.DATADIR, "terminus"));
             this.read_color_schemes(GLib.Path.build_filename(Environment.get_home_dir(),
                                                              ".local",

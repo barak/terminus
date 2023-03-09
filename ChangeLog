@@ -1,3 +1,11 @@
+terminus (2.2.0-Debian1) sid; urgency=low
+
+  * Added macros support
+  * Show 30 characters in tabs
+  * Fixed several leaks
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 12 Feb 2023 23:55:00 +0200
+
 terminus (2.1.0-Debian1) sid; urgency=low
 
   * Ensure that the Guake window is always inside the screen

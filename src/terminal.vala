@@ -35,9 +35,9 @@ namespace Terminus {
         private Gtk.EventBox closeButton;
         private Gtk.MenuItem item_copy;
         private Gtk.Menu menu_container;
-        private Terminus.Container top_container;
-        private Terminus.Container container;
-        private Terminus.Base main_container;
+        private weak Terminus.Container top_container;
+        private weak Terminus.Container container;
+        private weak Terminus.Base main_container;
         private Gtk.Scrollbar right_scroll;
         private double title_r;
         private double title_g;
@@ -708,8 +708,12 @@ namespace Terminus {
         {
             Gdk.EventKey eventkey = event.key;
             // SHIFT, CTRL, LEFT ALT, ALT+GR
-            eventkey.state &= Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD1_MASK |
-                              Gdk.ModifierType.MOD5_MASK;
+            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
+                              Gdk.ModifierType.CONTROL_MASK |
+                              Gdk.ModifierType.SUPER_MASK |
+                              Gdk.ModifierType.META_MASK |
+                              Gdk.ModifierType.HYPER_MASK |
+                              Gdk.ModifierType.MOD1_MASK;
 
             if (eventkey.keyval < 128) {
                 // to avoid problems with upper and lower case
@@ -793,10 +797,14 @@ namespace Terminus {
             case "select-all":
                 this.vte_terminal.select_all();
                 return true;
-
-            default:
-                return false;
             }
+
+            var command = Terminus.macros.check_macro(eventkey);
+            if (command != null) {
+                this.vte_terminal.feed_child((uint8[])command.to_utf8());
+                return true;
+            }
+            return false;
         }
 
         private void

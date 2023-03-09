@@ -34,13 +34,13 @@ namespace Terminus {
     public class Container : Gtk.Bin {
         public Terminus.Container ?container1;
         public Terminus.Container ?container2;
-        public Terminus.Notetab ?notetab;
+        public weak Terminus.Notetab ?notetab;
 
         private Terminus.Terminal ?terminal;
         private Terminus.PanedPercentage ?paned;
-        private Terminus.Container top_container;
-        private Terminus.Container upper_container;
-        private Terminus.Base main_container;
+        private weak Terminus.Container top_container;
+        private weak Terminus.Container upper_container;
+        private weak Terminus.Base main_container;
         private bool splited_horizontal;
         private string working_directory;
 
@@ -59,12 +59,11 @@ namespace Terminus {
             this.working_directory = working_directory;
             this.main_container = main_container;
             this.upper_container = upper_container;
+            this.notetab = null;
             if (top_container == null) {
                 this.top_container = this;
-                this.notetab = new Terminus.Notetab(this.main_container, this);
             } else {
                 this.top_container = top_container;
-                this.notetab = null;
             }
 
             if (terminal == null) {

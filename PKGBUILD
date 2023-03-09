@@ -1,5 +1,5 @@
 pkgname=terminus-rastersoft
-pkgver=2.1.0
+pkgver=2.2.0
 pkgrel=2
 pkgdesc="X & Wayland terminal that mixes the capabilities of Guake and Terminator"
 license=('GPL3')

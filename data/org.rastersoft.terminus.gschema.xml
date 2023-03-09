@@ -136,6 +136,16 @@
       <summary>Hide the mouse cursor when typing, and show it again when moving the mouse.</summary>
       <description></description>
     </key>
+    <key type="a(sss)" name="macros">
+      <default>[]</default>
+      <summary>Array with the macros defined.</summary>
+      <description>An array with all the macros defined. Each macro comprises three strings: the first is the key, the second is the command to run, and the third is the program where to use that macro (empty to use it in any program).</description>
+    </key>
+    <key type="i" name="max-tab-text-len">
+      <default>30</default>
+      <summary>Maximum lenght for tab text</summary>
+      <description>The maximum lenght for the text in each tab.</description>
+    </key>
 	  <!--<key type="" name="">
       <default></default>
       <summary></summary>
