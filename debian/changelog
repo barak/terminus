@@ -1,3 +1,9 @@
+terminus (2.2.1-2) unstable; urgency=medium
+
+  * Refresh man page
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 09 Mar 2023 21:39:50 +0000
+
 terminus (2.2.1-1) unstable; urgency=medium
 
   * New upstream version
