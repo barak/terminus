@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.2.1 (2023-03-01)
+  * Removed debug prints
 * Version 2.2.0 (2023-02-12)
   * Added macros support
   * Show 30 characters in tabs
