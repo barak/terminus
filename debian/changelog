@@ -1,3 +1,10 @@
+terminus (2.3.0-Debian1) sid; urgency=low
+
+  * Allow to reorder tabs
+  * Added support for links
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 09 Apr 2023 23:55:00 +0200
+
 terminus (2.2.1-Debian1) sid; urgency=low
 
   * Removed debug prints

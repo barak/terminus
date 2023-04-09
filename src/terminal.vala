@@ -321,6 +321,7 @@ namespace Terminus {
                     });
                 }
             });
+            this.vte_terminal.allow_hyperlink = true;
 
             Terminus.settings.bind("scroll-on-output",
                                    this.vte_terminal,
@@ -855,6 +856,10 @@ namespace Terminus {
             }
             if ((event.button == 2) && ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0)) {
                 this.vte_terminal.font_scale = 1;
+                return true;
+            }
+            if ((event.button == 1) && (this.vte_terminal.hyperlink_hover_uri != null)) {
+                GLib.AppInfo.launch_default_for_uri(this.vte_terminal.hyperlink_hover_uri, null);
                 return true;
             }
             return false;
