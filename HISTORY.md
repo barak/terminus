@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 2.3.0 (2023-04-09)
+  * Allow to reorder tabs
+  * Added support for links
 * Version 2.2.1 (2023-03-01)
   * Removed debug prints
 * Version 2.2.0 (2023-02-12)

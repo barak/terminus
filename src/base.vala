@@ -121,6 +121,7 @@ namespace Terminus {
             term.show_all();
             var page = this.append_page(term, notetab);
             this.set_current_page(page);
+            this.set_tab_reorderable(term, true);
         }
 
         public void

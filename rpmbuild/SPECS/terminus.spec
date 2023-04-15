@@ -1,5 +1,5 @@
 Name: terminus
-Version: 2.2.1
+Version: 2.3.0
 Release: 1
 License: Unknown/not set
 Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator
