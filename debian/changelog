@@ -3,8 +3,9 @@ terminus (2.3.0-1) unstable; urgency=medium
   * New upstream version
   * Refresh man page
   * Update build dependencies per lintian
+  * Bump copyright to 2023 per lintian
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sat, 15 Apr 2023 22:57:13 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 16 Apr 2023 10:26:07 +0100
 
 terminus (2.2.1-2) unstable; urgency=medium
 

@@ -3,7 +3,7 @@ Upstream-Name: terminus
 Source: https://gitlab.com/rastersoft/terminus
 
 Files:     *
-Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
+Copyright: 2016-2023 (C) Raster Software Vigo (Sergio Costas)
 License:   GPL-3.0
 
 Files:     cmake/*
@@ -15,7 +15,7 @@ License:   BSD-2-Clause
 
 Files:     debian/*
 Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
-           2018-2022 Barak A. Pearlmutter <bap@debian.org>
+           2018-2023 Barak A. Pearlmutter <bap@debian.org>
 License:   GPL-3.0
 
 License:   GPL-3.0
