@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.3.1 (2023-04-17)
+  * Added support for gnome shell 44
 * Version 2.3.0 (2023-04-09)
   * Allow to reorder tabs
   * Added support for links
