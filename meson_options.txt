@@ -1,1 +1,1 @@
-option('GNOME45',type : 'string', value: '')
+option('GNOME44',type : 'string', value: '')

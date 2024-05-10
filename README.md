@@ -67,11 +67,11 @@ Just follow the classic meson instructions:
 If, during meson stage, you receive an error for missing libraries, install them
 and run meson again, until there are no more missing libraries.
 
-### Gnome 45 ###
+### Gnome 44 or previous ###
 
-To build a version compatible with Gnome 45, just use
+To build a version compatible with Gnome 44 or previous, just use
 
-    meson -DGNOME45=on
+    meson -DGNOME44=on
 
 with the previous instructions.
 

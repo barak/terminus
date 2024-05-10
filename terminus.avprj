@@ -1,15 +1,15 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 2.4.0
+project_version: 2.4.1
 vala_version: 0.30
 
-if GNOME45
-custom: terminus_gnome_shell45/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
-custom: terminus_gnome_shell45/metadata.json share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
-else
+if GNOME44
 custom: terminus_gnome_shell/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
 custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
+else
+custom: terminus_gnome_shell45/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
+custom: terminus_gnome_shell45/metadata.json share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
 end
 
 *gresource: extras_gresource_xml data/extras.gresource.xml
@@ -17,7 +17,7 @@ end
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 2.4.0
+*version: 2.4.1
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
