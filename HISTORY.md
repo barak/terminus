@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.4.0 (2024-05-10)
+  * Added Gnome Shell 45 and 46 support
 * Version 2.3.1 (2023-04-17)
   * Added support for gnome shell 44
 * Version 2.3.0 (2023-04-09)
