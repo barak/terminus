@@ -49,6 +49,7 @@ vala_check_package: gtk+-3.0
 *vala_source: terminus.vala
 *vala_source: window.vala
 *c_source: checkwayland.c
+h_folder: .
 
 
 *po: po

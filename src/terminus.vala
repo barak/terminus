@@ -84,7 +84,7 @@ namespace Terminus {
             if (params.check_guake && (
                     (GLib.Environment.get_variable("XDG_CURRENT_DESKTOP").index_of("GNOME") != -1) || // under Gnome Shell and family always rely on the extension
                     (Terminus.settings.get_boolean("enable-guake-mode") == false)) ||                 // if Guake mode is disabled, don't launch it
-                (check_wayland() != 0)                                                                // don't launch it if we are in Wayland
+                (PrivateVapi.check_wayland() != 0)                                                                // don't launch it if we are in Wayland
                 ) {
                 return true;
             }
@@ -293,7 +293,7 @@ namespace Terminus {
             if (this.guake_window.visible) {
                 this.guake_window.hide();
             } else {
-                if (check_wayland() == 0) {
+                if (PrivateVapi.check_wayland() == 0) {
                     this.guake_window.set_screen(Gdk.Screen.get_default());
                 }
                 this.guake_window.present();

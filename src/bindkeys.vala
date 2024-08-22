@@ -37,7 +37,7 @@ namespace Terminus {
 
         public Bindkey(bool use_bindkey)
         {
-            if (check_wayland() != 0) {
+            if (PrivateVapi.check_wayland() != 0) {
                 this.use_bindkey = false;
             } else {
                 this.use_bindkey = use_bindkey;

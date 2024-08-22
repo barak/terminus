@@ -68,6 +68,8 @@ endif()
 
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
 
+include_directories (AFTER . )
+
 vala_precompile(VALA_C terminus
 	${APP_SOURCES}
 PACKAGES

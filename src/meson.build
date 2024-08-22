@@ -52,11 +52,13 @@ if GNOME44
   terminus_c_args += ['-DGNOME44']
 endif
 terminus_link_args = ['-rdynamic']
+terminus_hfolders = ['.']
 
 executable('terminus',terminus_sources,
     dependencies: terminus_deps,
     vala_args: terminus_vala_args,
     c_args: terminus_c_args,
     link_args: terminus_link_args,
+    include_directories: include_directories(terminus_hfolders),
     install: true)
 
