@@ -17,7 +17,7 @@ end
 *vapidir: src/vapidir
 
 vala_binary: src/terminus
-*version: 2.4.1
+*version: 2.4.2
 use_gresource: extras_gresource_xml
 vala_vapi: checkwayland.vapi
 *vala_package: posix
