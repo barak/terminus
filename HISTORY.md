@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.4.2 (2024-08-22)
+  * Fix build
 * Version 2.4.1 (2024-05-10)
   * Set Gnome Shell 45 as default
 * Version 2.4.0 (2024-05-10)

@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 2.4.1
+project_version: 2.4.2
 vala_version: 0.30
 
 if GNOME44
