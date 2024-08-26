@@ -167,7 +167,7 @@ namespace Terminus {
                     int newval = y - this.mouseY;
                     this.current_size += newval;
                     this.mouseY = y;
-                    if (check_wayland() == 0) {
+                    if (PrivateVapi.check_wayland() == 0) {
                         this.resize(this.get_monitor_workarea().width, this.current_size);
                         this.set_size_request(this.get_monitor_workarea().width, this.current_size);
                     } else {
@@ -257,7 +257,7 @@ namespace Terminus {
         private void
         set_properties()
         {
-            if (check_wayland() == 0) {
+            if (PrivateVapi.check_wayland() == 0) {
                 this.stick();
                 this.set_keep_above(true);
                 this.set_skip_taskbar_hint(true);
@@ -269,7 +269,7 @@ namespace Terminus {
         private void
         set_size()
         {
-            if (check_wayland() == 0) {
+            if (PrivateVapi.check_wayland() == 0) {
                 var workarea = this.get_monitor_workarea();
                 this.move(workarea.x, workarea.y);
                 this.paned.set_position(this.current_size);

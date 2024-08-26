@@ -1,6 +1,8 @@
 project('terminus',
   ['c','vala'],
-  version: '2.3.1')
+  version: '2.4.2')
+
+GNOME44 = (get_option('GNOME44') != '')
 
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
@@ -24,10 +26,17 @@ subdir('po')
 cfg_dbus_data = configuration_data()
 cfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))
 meson.add_install_script('meson_scripts/update_icon.sh')
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','extension.js'))
+if GNOME44
+	meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','extension.js'))
 
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','metadata.json'))
+	meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell','metadata.json'))
 
+else
+	meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','extension.js'))
+
+	meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','metadata.json'))
+
+endif
 extras_gresource_xml_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/data' , '--generate-source', '--target=@BUILD_DIR@/extras.gresource.xml.c', '@INPUT@'], output: '@PLAINNAME@.c')
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])

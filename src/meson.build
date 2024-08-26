@@ -4,7 +4,7 @@ cfg_terminus.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
-cfg_terminus.set('VERSION', '2.3.1')
+cfg_terminus.set('VERSION', '2.4.2')
 cfg_terminus.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_2 = configure_file(
@@ -46,11 +46,19 @@ terminus_sources += [join_paths(meson.current_source_dir(),'checkwayland.vapi')]
 terminus_vala_args = ['--pkg','posix']
 terminus_vala_args += ['--vapidir='+join_paths(meson.source_root(),'src/vapidir')]
 terminus_vala_args += ['--gresources='+join_paths(meson.source_root(),'data/extras.gresource.xml')]
+terminus_c_args = []
+if GNOME44
+  terminus_vala_args += ['-D', 'GNOME44']
+  terminus_c_args += ['-DGNOME44']
+endif
 terminus_link_args = ['-rdynamic']
+terminus_hfolders = ['.']
 
 executable('terminus',terminus_sources,
     dependencies: terminus_deps,
     vala_args: terminus_vala_args,
+    c_args: terminus_c_args,
     link_args: terminus_link_args,
+    include_directories: include_directories(terminus_hfolders),
     install: true)
 

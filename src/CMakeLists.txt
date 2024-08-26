@@ -7,13 +7,13 @@ set (GETTEXT_PACKAGE "terminus")
 set (RELEASE_NAME "terminus")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "2.3.1")
+set (VERSION "2.4.2")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.base ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "2.3.1")
+set (VERSION "2.4.2")
 add_definitions (${DEPS_CFLAGS})
 link_libraries ( ${DEPS_LIBRARIES} )
 link_directories ( ${DEPS_LIBRARY_DIRS} )
@@ -55,6 +55,11 @@ set (APP_SOURCES ${APP_SOURCES} window.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/src/checkwayland.vapi)
 
+if (GNOME44)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D GNOME44)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGNOME44 " )
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGNOME44 " )
+endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --vapidir=${CMAKE_SOURCE_DIR}/src/vapidir )
 
 if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
@@ -62,6 +67,8 @@ if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "Rel
 endif()
 
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
+
+include_directories (AFTER . )
 
 vala_precompile(VALA_C terminus
 	${APP_SOURCES}
