@@ -1,3 +1,9 @@
+terminus (2.5.0-Debian1) sid; urgency=low
+
+  * Open new subterminals in the same path than the current one
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 23 Aug 2024 23:55:00 +0200
+
 terminus (2.4.2-Debian1) sid; urgency=low
 
   * Added support for gnome shell 45 and 46

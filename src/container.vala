@@ -164,7 +164,8 @@ namespace Terminus {
 
         public void
         split_terminal_cb(SplitAt   where,
-                          Terminal ?new_terminal)
+                          Terminal ?new_terminal,
+                          string   ?path)
         {
             if ((where == SplitAt.TOP) || (where == SplitAt.BOTTOM)) {
                 this.splited_horizontal = true;
@@ -184,16 +185,17 @@ namespace Terminus {
             this.paned = new Terminus.PanedPercentage(
                 this.splited_horizontal ?Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL,
                 0.5);
+
             this.container1 = new Terminus.Container(this.main_container,
-                                                     this.working_directory,
+                                                     path != null ? path : this.working_directory,
                                                      null,
-                                                     current_to_first ?this.terminal : new_terminal,
+                                                     current_to_first ? this.terminal : new_terminal,
                                                      this.top_container,
                                                      this);
             this.container2 = new Terminus.Container(this.main_container,
-                                                     this.working_directory,
+                                                     path != null ? path : this.working_directory,
                                                      null,
-                                                     current_to_first ?new_terminal : this.terminal,
+                                                     current_to_first ? new_terminal : this.terminal,
                                                      this.top_container,
                                                      this);
             this.terminal.set_container(current_to_first ?this.container1 : this.container2);

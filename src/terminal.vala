@@ -53,7 +53,8 @@ namespace Terminus {
         ended(Terminus.Terminal terminal);
         public signal void
         split_terminal(SplitAt            where,
-                       Terminus.Terminal ?new_terminal);
+                       Terminus.Terminal ?new_terminal,
+                       string            ?path);
 
         public bool
         compare_terminal(Vte.Terminal ?terminal)
@@ -92,7 +93,7 @@ namespace Terminus {
         public void
         drop_terminal(Terminal terminal)
         {
-            this.split_terminal(this.split_mode, terminal);
+            this.split_terminal(this.split_mode, terminal, null);
             this.split_mode = SplitAt.NONE;
         }
 
@@ -157,11 +158,11 @@ namespace Terminus {
 
             item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
             item.activate.connect(() => {
-                this.split_terminal(SplitAt.BOTTOM, null);
+                this.split_terminal(SplitAt.BOTTOM, null, this.get_current_path());
             });
             item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
             item.activate.connect(() => {
-                this.split_terminal(SplitAt.RIGHT, null);
+                this.split_terminal(SplitAt.RIGHT, null, this.get_current_path());
             });
 
             this.add_separator();
@@ -488,6 +489,15 @@ namespace Terminus {
             this.show_all();
         }
 
+        public string?
+        get_current_path()
+        {
+            var procPath = "/proc/%d/cwd".printf(this.pid);
+            var cwdFile = GLib.File.new_for_path(procPath);
+            var cwdFileInfo = cwdFile.query_info(GLib.FileAttribute.STANDARD_SYMLINK_TARGET, GLib.FileQueryInfoFlags.NONE, null);
+            return cwdFileInfo.get_symlink_target();
+        }
+
         public bool
         has_child_running()
         {
@@ -780,11 +790,11 @@ namespace Terminus {
                 return true;
 
             case "split-horizontally":
-                this.split_terminal(SplitAt.BOTTOM, null);
+                this.split_terminal(SplitAt.BOTTOM, null, this.get_current_path());
                 return true;
 
             case "split-vertically":
-                this.split_terminal(SplitAt.RIGHT, null);
+                this.split_terminal(SplitAt.RIGHT, null, this.get_current_path());
                 return true;
 
             case "close-tile":
