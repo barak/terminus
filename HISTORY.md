@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 2.5.1 (2025-01-16)
+  * Added support for Gnome Shell 47
 * Version 2.5.0 (2025-01-04)
   * Open new subterminals in the same path than the current one
 * Version 2.4.2 (2024-08-22)

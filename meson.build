@@ -1,6 +1,6 @@
 project('terminus',
   ['c','vala'],
-  version: '2.5.0')
+  version: '2.5.1')
 
 GNOME44 = (get_option('GNOME44') != '')
 
