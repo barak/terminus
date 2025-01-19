@@ -70,7 +70,7 @@ export default class TerminusClass {
 			if (this._enabled === false) {
 				return;
 			}
-			this._launchProcessId = GLib.timeout_add(this._reloadTime, () => {
+			this._launchProcessId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, this._reloadTime, () => {
 				this._launchProcessId = 0;
 				this._launch_process();
 			});
@@ -226,10 +226,10 @@ var LaunchSubprocess = class {
 				try {
 					let [d, stdout, stderr] = object.communicate_utf8_finish(res);
 					if (stdout.length != 0) {
-						global.log(`${this._process_id}: ${stdout}`);
+						console.log(`${this._process_id}: ${stdout}`);
 					}
 				} catch (e) {
-					global.log(`${this._process_id}_Error: ${e}`);
+					console.log(`${this._process_id}_Error: ${e}`);
 				}
 			});
 			this.subprocess.wait_async(null, () => {
