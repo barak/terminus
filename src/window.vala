@@ -69,13 +69,13 @@ namespace Terminus {
             this.destroy();
         }
 
-        public Window(Gtk.Application    application,
-                      bool               guake_mode,
-                      string          ?  working_directory,
-                      string[]           commands,
-                      Terminus.Base   ?  terminal_base = null,
-                      string          ?  window_title = null,
-                      Terminus.Terminal ?inner_terminal = null)
+        public Window(Terminus.TerminusRoot application,
+                      bool                  guake_mode,
+                      string ?              working_directory,
+                      string[]              commands,
+                      Terminus.Base ?       terminal_base = null,
+                      string ?              window_title = null,
+                      Terminus.Terminal ?   inner_terminal = null)
         {
             this.headerBar = new Gtk.HeaderBar();
             this.set_titlebar(this.headerBar);
@@ -107,7 +107,7 @@ namespace Terminus {
             });
 
             if (terminal_base == null) {
-                this.terminal_base = new Terminus.Base(working_directory, commands, this, inner_terminal);
+                this.terminal_base = new Terminus.Base(application, working_directory, commands, this, inner_terminal);
             } else {
                 this.terminal_base = terminal_base;
                 terminal_base.top_window = this;
@@ -219,7 +219,9 @@ namespace Terminus {
             new_window_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_window();
             });
-            Gtk.drag_dest_set(this.headerBar, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+            Gtk.drag_dest_set(this.headerBar,
+                              Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP,
+                              null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
             Gtk.drag_dest_set_target_list(this.headerBar, dnd_manager.targets);
             this.headerBar.drag_drop.connect((widget, context, x, y, time) => {
@@ -283,6 +285,12 @@ namespace Terminus {
                 this.unmaximize();
                 this.paned.set_position(this.current_size);
             }
+        }
+
+        public Terminus.Terminal ?
+        find_terminal_by_pid(int pid)
+        {
+            return this.terminal_base.find_terminal_by_pid(pid);
         }
     }
 }

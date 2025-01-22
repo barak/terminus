@@ -133,7 +133,7 @@ class TerminusClass {
 						'/com/rastersoft/terminus'
 					);
 				}
-				this.terminusInstance.activate_action('swap_guake', null);
+				this.terminusInstance.activate_action('swap-guake', null);
 			}
 		);
 		this._idMap = global.window_manager.connect_after('map', (obj, windowActor) => {

@@ -81,6 +81,12 @@ namespace Terminus {
             this.container2 = null;
         }
 
+        public void
+        set_copy_enabled(bool enabled)
+        {
+            this.main_container.set_copy_enabled(enabled);
+        }
+
         public Terminal?
         extract_current_terminal()
         {
@@ -335,6 +341,18 @@ namespace Terminus {
                 this.paned.show_all();
                 this.container1.do_grab_focus();
             }
+        }
+        public Terminus.Terminal?
+        find_terminal_by_pid(int pid)
+        {
+            if (this.terminal != null) {
+                return this.terminal.find_terminal_by_pid(pid);
+            }
+            var terminal = this.container1.find_terminal_by_pid(pid);
+            if (terminal == null) {
+                terminal = this.container2.find_terminal_by_pid(pid);
+            }
+            return terminal;
         }
     }
 }

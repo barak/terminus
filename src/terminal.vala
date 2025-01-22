@@ -19,7 +19,6 @@
 using Vte;
 using Gtk;
 using Gdk;
-using GLib;
 using Posix;
 
 namespace Terminus {
@@ -33,8 +32,9 @@ namespace Terminus {
         private Gtk.Label title;
         private Gtk.EventBox titlebox;
         private Gtk.EventBox closeButton;
-        private Gtk.MenuItem item_copy;
-        private Gtk.Menu menu_container;
+        private Gtk.Popover menuPopover;
+        private Gtk.Button item_copy;
+        private GLib.Menu ?menu_container = null;
         private weak Terminus.Container top_container;
         private weak Terminus.Container container;
         private weak Terminus.Base main_container;
@@ -54,7 +54,16 @@ namespace Terminus {
         public signal void
         split_terminal(SplitAt            where,
                        Terminus.Terminal ?new_terminal,
-                       string            ?path);
+                       string ?           path);
+
+        public Terminus.Terminal ?find_terminal_by_pid(int pid)
+        {
+            if (pid == this.pid) {
+                return this;
+            } else {
+                return null;
+            }
+        }
 
         public bool
         compare_terminal(Vte.Terminal ?terminal)
@@ -97,116 +106,130 @@ namespace Terminus {
             this.split_mode = SplitAt.NONE;
         }
 
-        private void
-        add_separator(Gtk.Menu ?menu = null)
+        public void
+        do_select_all()
         {
-            var separator = new Gtk.SeparatorMenuItem();
-            if (menu == null) {
-                this.menu_container.append(separator);
-            } else {
-                menu.append(separator);
-            }
+            this.vte_terminal.select_all();
         }
 
-        private Gtk.MenuItem
-        new_menu_element(string    text,
-                         string ?  icon = null,
-                         Gtk.Menu ?menu = null)
+        public void
+        do_split_horizontally()
         {
-            Gtk.MenuItem item;
-            if (icon == null) {
-                item = new Gtk.MenuItem.with_label(text);
-            } else {
-                item = new Gtk.MenuItem();
-                var tmpbox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-                var tmplabel = new Gtk.Label(text);
-                var tmpicon = new Gtk.Image.from_resource(icon);
-                tmpbox.pack_start(tmpicon, false, true);
-                tmpbox.pack_start(tmplabel, false, true);
-                item.add(tmpbox);
-            }
-            if (menu == null) {
-                this.menu_container.append(item);
-            } else {
-                menu.append(item);
-            }
-            return item;
+            this.split_terminal(SplitAt.BOTTOM, null, this.get_current_path());
+        }
+
+        public void
+        do_split_vertically()
+        {
+            this.split_terminal(SplitAt.RIGHT, null, this.get_current_path());
+        }
+
+        public void
+        do_new_tab()
+        {
+            this.main_container.new_terminal_tab("", null);
+        }
+
+        public void
+        do_new_window()
+        {
+            this.main_container.new_terminal_window();
+        }
+
+        public void
+        do_close()
+        {
+            this.kill_child();
+        }
+
+        public void
+        do_copy()
+        {
+            this.vte_terminal.copy_primary();
+            var primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
+            var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
+            clipboard.set_text(primary.wait_for_text(), -1);
+        }
+
+        public void
+        do_paste()
+        {
+            var primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
+            var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
+            primary.set_text(clipboard.wait_for_text(), -1);
+            this.vte_terminal.paste_primary();
+        }
+
+        public void
+        do_reset()
+        {
+            this.vte_terminal.reset(true, false);
+        }
+
+        public void
+        do_reset_clear()
+        {
+            this.vte_terminal.reset(true, true);
+        }
+
+        private void
+        new_menu_element(string     text,
+                         string     action,
+                         GLib.Menu ?menu = this.menu_container)
+        {
+            var item = new GLib.MenuItem(text, null);
+            item.set_action_and_target_value(action, new Variant.int32(this.pid));
+            menu.append_item(item);
+        }
+
+        private GLib.Menu
+        new_section(GLib.Menu menu = this.menu_container)
+        {
+            var section = new GLib.Menu();
+            menu.append_section(null, section);
+            return section;
         }
 
         private void
         create_menu()
         {
-            this.menu_container = new Gtk.Menu();
-            this.item_copy = this.new_menu_element(_("Copy"));
-            this.item_copy.activate.connect(() => {
-                this.do_copy();
-            });
+            this.menu_container = new GLib.Menu();
+            var section1 = new_section();
+            this.new_menu_element(_("Copy"), "app.copy", section1);
+            this.new_menu_element(_("Paste"), "app.paste", section1);
 
-            var item = this.new_menu_element(_("Paste"));
-            item.activate.connect(() => {
-                this.do_paste();
-            });
+            var section2 = new_section();
+            this.new_menu_element(_("Select all"), "app.select-all", section2);
 
-            this.add_separator();
+            var section3 = new_section();
 
-            item = this.new_menu_element(_("Select all"));
-            item.activate.connect(() => {
-                this.vte_terminal.select_all();
-            });
+            this.new_menu_element(_("Split horizontally"),
+                                  "app.hsplit",
+                                  section3);
+            this.new_menu_element(_("Split vertically"),
+                                  "app.vsplit",
+                                  section3);
 
-            this.add_separator();
+            var section4 = new_section();
+            this.new_menu_element(_("New tab"), "app.new-tab", section4);
+            this.new_menu_element(_("New window"), "app.new-window", section4);
 
-            item = this.new_menu_element(_("Split horizontally"), "/com/rastersoft/terminus/pixmaps/horizontal.svg");
-            item.activate.connect(() => {
-                this.split_terminal(SplitAt.BOTTOM, null, this.get_current_path());
-            });
-            item = this.new_menu_element(_("Split vertically"), "/com/rastersoft/terminus/pixmaps/vertical.svg");
-            item.activate.connect(() => {
-                this.split_terminal(SplitAt.RIGHT, null, this.get_current_path());
-            });
+            var section5 = new_section();
 
-            this.add_separator();
+            var submenu = new GLib.Menu();
 
-            item = this.new_menu_element(_("New tab"));
-            item.activate.connect(() => {
-                this.main_container.new_terminal_tab("", null);
-            });
+            section5.append_submenu(_("Extra"), submenu);
 
-            item = this.new_menu_element(_("New window"));
-            item.activate.connect(() => {
-                this.main_container.new_terminal_window();
-            });
+            this.new_menu_element(_("Reset terminal"), "app.reset-terminal", submenu);
+            this.new_menu_element(_("Reset and clear terminal"), "app.reset-clear-terminal", submenu);
 
-            this.add_separator();
+            var section6 = new_section();
 
-            var submenu = new Gtk.Menu();
-            item = this.new_menu_element(_("Extra"));
-            item.submenu = submenu;
+            this.new_menu_element(_("Preferences"), "app.preferences", section6);
 
-            item = this.new_menu_element(_("Reset terminal"), null, submenu);
-            item.activate.connect(() => {
-                this.vte_terminal.reset(true, false);
-            });
+            var section7 = new_section();
 
-            item = this.new_menu_element(_("Reset and clear terminal"), null, submenu);
-            item.activate.connect(() => {
-                this.vte_terminal.reset(true, true);
-            });
-
-            this.add_separator();
-
-            item = this.new_menu_element(_("Preferences"));
-            item.activate.connect(() => {
-                Terminus.main_root.show_properties();
-            });
-
-            this.add_separator();
-
-            item = this.new_menu_element(_("Close"));
-            item.activate.connect(() => {
-                this.kill_child();
-            });
-            this.menu_container.show_all();
+            this.new_menu_element(_("Close"), "app.close", section7);
         }
 
         public void
@@ -231,29 +254,11 @@ namespace Terminus {
             this.container = container;
         }
 
-        private void
-        do_copy()
-        {
-            this.vte_terminal.copy_primary();
-            var primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
-            var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
-            clipboard.set_text(primary.wait_for_text(), -1);
-        }
-
-        private void
-        do_paste()
-        {
-            var primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY);
-            var clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD);
-            primary.set_text(clipboard.wait_for_text(), -1);
-            this.vte_terminal.paste_primary();
-        }
-
-        public Terminal(Terminus.Base       main_container,
-                        string              working_directory,
-                        string[]           ?commands,
-                        Terminus.Container  top_container,
-                        Terminus.Container  container)
+        public Terminal(Terminus.Base      main_container,
+                        string             working_directory,
+                        string[] ?         commands,
+                        Terminus.Container top_container,
+                        Terminus.Container container)
         {
             this.container = container;
             // when creating a new terminal, it must take the focus
@@ -412,7 +417,9 @@ namespace Terminus {
                 Terminus.dnd_manager.begin_dnd();
                 Terminus.dnd_manager.set_origin(this);
             });
-            Gtk.drag_dest_set(this.vte_terminal, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+            Gtk.drag_dest_set(this.vte_terminal,
+                              Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP,
+                              null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
             Gtk.drag_dest_set_target_list(this.vte_terminal, dnd_manager.targets);
             this.vte_terminal.drag_motion.connect((widget, context, x, y, time) => {
@@ -448,7 +455,9 @@ namespace Terminus {
                 return true;
             });
             // To avoid creating a new window if dropping accidentally over a terminal title
-            Gtk.drag_dest_set(titleContainer, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
+            Gtk.drag_dest_set(titleContainer,
+                              Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP,
+                              null,
                               Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
             Gtk.drag_dest_set_target_list(titleContainer, dnd_manager.targets);
             titleContainer.drag_drop.connect((widget, context, x, y, time) => {
@@ -494,7 +503,9 @@ namespace Terminus {
         {
             var procPath = "/proc/%d/cwd".printf(this.pid);
             var cwdFile = GLib.File.new_for_path(procPath);
-            var cwdFileInfo = cwdFile.query_info(GLib.FileAttribute.STANDARD_SYMLINK_TARGET, GLib.FileQueryInfoFlags.NONE, null);
+            var cwdFileInfo = cwdFile.query_info(GLib.FileAttribute.STANDARD_SYMLINK_TARGET,
+                                                 GLib.FileQueryInfoFlags.NONE,
+                                                 null);
             return cwdFileInfo.get_symlink_target();
         }
 
@@ -785,8 +796,7 @@ namespace Terminus {
                 return true;
 
             case "show-menu":
-                this.item_copy.sensitive = this.vte_terminal.get_has_selection();
-                this.menu_container.popup_at_widget(this.vte_terminal, Gdk.Gravity.CENTER, Gdk.Gravity.CENTER, event);
+                this.show_menu(null);
                 return true;
 
             case "split-horizontally":
@@ -856,12 +866,33 @@ namespace Terminus {
             this.titlebox.queue_draw();
         }
 
+        private void
+        show_menu(Gdk.EventButton ?event)
+        {
+            this.menuPopover = new Gtk.Popover(this.vte_terminal);
+            this.menuPopover.bind_model(this.menu_container, "app");
+            this.menuPopover.set_constrain_to(Gtk.PopoverConstraint.WINDOW);
+            this.menuPopover.set_modal(true);
+            this.top_container.set_copy_enabled(this.vte_terminal.get_has_selection());
+            var rect = Gdk.Rectangle();
+            if (event != null) {
+                rect.x = (int)(event.x);
+                rect.y = (int)(event.y);
+            } else {
+                rect.x = 0;
+                rect.y = 0;
+            }
+            rect.width = 1;
+            rect.height = 1;
+            this.menuPopover.set_pointing_to(rect);
+            this.menuPopover.popup();
+        }
+
         public bool
         button_event(Gdk.EventButton event)
         {
             if (event.button == 3) {
-                this.item_copy.sensitive = this.vte_terminal.get_has_selection();
-                this.menu_container.popup_at_pointer(event);
+                this.show_menu(event);
                 return true;
             }
             if ((event.button == 2) && ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0)) {

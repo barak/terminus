@@ -31,14 +31,17 @@ namespace Terminus {
         new_window();
 
         public weak Gtk.Window ?top_window;
+        public weak TerminusRoot root;
         private Gtk.MessageDialog notification_window;
         private ulong dnd_status_id;
 
-        public Base(string             working_directory,
+        public Base(TerminusRoot       root,
+                    string             working_directory,
                     string[]   ?       commands,
                     Gtk.Window ?       top_window,
                     Terminus.Terminal ?terminal = null)
         {
+            this.root = root;
             this.page_added.connect(this.check_pages);
             this.page_removed.connect(this.check_pages);
             this.new_terminal_tab(working_directory, commands, terminal);
@@ -54,6 +57,12 @@ namespace Terminus {
                 Terminus.dnd_manager.set_destination(this);
                 return true;
             });
+        }
+
+        public void
+        set_copy_enabled(bool enabled)
+        {
+            this.root.set_copy_enabled(enabled);
         }
 
         public void
@@ -177,6 +186,19 @@ namespace Terminus {
             } else {
                 this.prev_page();
             }
+        }
+
+        public Terminus.Terminal?
+        find_terminal_by_pid(int pid)
+        {
+            for(int i=0; i<this.get_n_pages(); i++) {
+                var container = this.get_nth_page(i) as Terminus.Container;
+                var terminal = container.find_terminal_by_pid(pid);
+                if (terminal != null) {
+                    return terminal;
+                }
+            }
+            return null;
         }
     }
 }
