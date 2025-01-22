@@ -34,6 +34,7 @@ namespace Terminus {
         private Terminus.Window ?guake_window = null;
         private string ?guake_title = null;
         private bool executed_hold = false;
+        private GLib.SimpleAction? copy_action = null;
 
         private Terminus.Parameters ?parameters = null;
 
@@ -108,26 +109,90 @@ namespace Terminus {
             this.palettes.add(palette);
             this.palettes.sort(this.ComparePalettes);
 
-            var show_guake = new GLib.SimpleAction("show_guake", null);
+            var show_guake = new GLib.SimpleAction("show-guake", null);
             show_guake.activate.connect(() => {
                 this.show_hide_global(0);
             });
             this.add_action(show_guake);
-            var hide_guake = new GLib.SimpleAction("hide_guake", null);
+            var hide_guake = new GLib.SimpleAction("hide-guake", null);
             hide_guake.activate.connect(() => {
                 this.show_hide_global(1);
             });
             this.add_action(hide_guake);
-            var swap_guake = new GLib.SimpleAction("swap_guake", null);
+            var swap_guake = new GLib.SimpleAction("swap-guake", null);
             swap_guake.activate.connect(() => {
                 this.show_hide_global(2);
             });
             this.add_action(swap_guake);
-            var disable_keybind = new GLib.SimpleAction("disable_keybind", null);
+            var disable_keybind = new GLib.SimpleAction("disable-keybind", null);
             disable_keybind.activate.connect(() => {
                 bindkey.unset_bindkey();
             });
             this.add_action(disable_keybind);
+
+            this.copy_action = this.add_new_action("app.copy", (terminal) => {
+                terminal.do_copy();
+            });
+
+            this.add_new_action("app.paste", (terminal) => {
+                terminal.do_paste();
+            });
+
+            this.add_new_action("app.select-all", (terminal) => {
+                terminal.do_select_all();
+            });
+
+            this.add_new_action("app.hsplit", (terminal) => {
+                terminal.do_split_horizontally();
+            });
+
+            this.add_new_action("app.vsplit", (terminal) => {
+                terminal.do_split_vertically();
+            });
+
+            this.add_new_action("app.new-tab", (terminal) => {
+                terminal.do_new_tab();
+            });
+
+            this.add_new_action("app.new-window", (terminal) => {
+                terminal.do_new_window();
+            });
+
+            this.add_new_action("app.preferences", (terminal) => {
+                this.show_properties();
+            });
+
+            this.add_new_action("app.close", (terminal) => {
+                terminal.do_close();
+            });
+
+            this.add_new_action("app.reset-terminal", (terminal) => {
+                terminal.do_reset();
+            });
+
+            this.add_new_action("app.reset-clear-terminal", (terminal) => {
+                terminal.do_reset_clear();
+            });
+        }
+
+        public void
+        set_copy_enabled(bool enabled)
+        {
+            this.copy_action.set_enabled(enabled);
+        }
+
+        delegate void action_func(Terminus.Terminal terminal);
+
+        private GLib.SimpleAction add_new_action(string name, action_func f) {
+            var action = new GLib.SimpleAction(name, new GLib.VariantType("i"));
+            action.activate.connect((pid) => {
+                var terminal = this.find_terminal_by_pid(pid.get_int32());
+                if (terminal != null) {
+                    f(terminal);
+                }
+            });
+            this.add_action(action);
+            return action;
         }
 
         protected int
@@ -225,7 +290,7 @@ namespace Terminus {
             }
             if (guake_mode) {
                 if (this.guake_terminal == null) {
-                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null, null);
+                    this.guake_terminal = new Terminus.Base(this, GLib.Environment.get_home_dir(), null, null);
                 }
                 window = new Terminus.Window(this,
                                              true,
@@ -251,6 +316,18 @@ namespace Terminus {
                 this.create_window(false, null, null);
             });
             window_list.add(window);
+        }
+
+        public Terminus.Terminal?
+        find_terminal_by_pid(int pid)
+        {
+            foreach(Terminus.Window window in this.window_list) {
+                var terminal = window.find_terminal_by_pid(pid);
+                if (terminal != null) {
+                    return terminal;
+                }
+            }
+            return null;
         }
 
         public void
