@@ -29,9 +29,11 @@ namespace Terminus {
     public interface Killable : Object {
         public abstract void
         kill_all_children();
+        public abstract void
+        close();
     }
 
-    public class Container : Gtk.Bin {
+    public class Container : Gtk.Box {
         public Terminus.Container ?container1;
         public Terminus.Container ?container2;
         public weak Terminus.Notetab ?notetab;
@@ -44,6 +46,9 @@ namespace Terminus {
         private bool splited_horizontal;
         private string working_directory;
 
+        private weak Terminus.Terminal ?last_focus = null;
+        private bool setting_focus = false;
+
         public signal void
         ended(Terminus.Container who);
         public signal void
@@ -51,8 +56,8 @@ namespace Terminus {
 
         public Container(Terminus.Base       main_container,
                          string              working_directory,
-                         string[]           ?commands,
-                         Terminus.Terminal  ?terminal,
+                         string[] ?          commands,
+                         Terminus.Terminal ? terminal,
                          Terminus.Container ?top_container,
                          Terminus.Container ?upper_container)
         {
@@ -82,12 +87,40 @@ namespace Terminus {
         }
 
         public void
+        update_focus()
+        {
+            if (this.last_focus != null) {
+                this.setting_focus = true;
+                GLib.Timeout.add_once(350, () => {
+                    this.last_focus.do_grab_focus();
+                    this.setting_focus = false;
+                });
+            }
+        }
+
+        public void
+        set_last_focus(Terminus.Terminal terminal)
+        {
+            if (this.setting_focus == false) {
+                this.last_focus = terminal;
+            }
+        }
+
+        public void
+        terminal_ended(Terminus.Terminal terminal)
+        {
+            if (this.last_focus == terminal) {
+                this.last_focus = null;
+            }
+        }
+
+        public void
         set_copy_enabled(bool enabled)
         {
             this.main_container.set_copy_enabled(enabled);
         }
 
-        public Terminal?
+        public Terminal ?
         extract_current_terminal()
         {
             if (this.terminal == null) {
@@ -106,7 +139,7 @@ namespace Terminus {
                         string   button_text,
                         Killable obj)
         {
-            this.main_container.ask_kill_childs(title, subtitle, button_text, obj);
+            this.main_container.ask_kill_childs.begin(title, subtitle, button_text, obj);
         }
 
         public bool
@@ -136,7 +169,7 @@ namespace Terminus {
         public void
         set_terminal_child()
         {
-            this.add(this.terminal);
+            this.append(this.terminal);
             this.terminal.ended.connect(this.ended_cb);
 
             this.terminal.split_terminal.connect(this.split_terminal_cb);
@@ -171,7 +204,7 @@ namespace Terminus {
         public void
         split_terminal_cb(SplitAt   where,
                           Terminal ?new_terminal,
-                          string   ?path)
+                          string ?  path)
         {
             if ((where == SplitAt.TOP) || (where == SplitAt.BOTTOM)) {
                 this.splited_horizontal = true;
@@ -189,31 +222,33 @@ namespace Terminus {
             this.terminal.ended.disconnect(this.ended_cb);
 
             this.paned = new Terminus.PanedPercentage(
-                this.splited_horizontal ?Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL,
-                0.5);
+                this.splited_horizontal ?Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL, 0.5);
+            this.paned.hexpand = true;
+            this.paned.vexpand = true;
 
             this.container1 = new Terminus.Container(this.main_container,
-                                                     path != null ? path : this.working_directory,
+                                                     path != null ?path : this.working_directory,
                                                      null,
-                                                     current_to_first ? this.terminal : new_terminal,
+                                                     current_to_first ?this.terminal : new_terminal,
                                                      this.top_container,
                                                      this);
             this.container2 = new Terminus.Container(this.main_container,
-                                                     path != null ? path : this.working_directory,
+                                                     path != null ?path : this.working_directory,
                                                      null,
-                                                     current_to_first ? new_terminal : this.terminal,
+                                                     current_to_first ?new_terminal : this.terminal,
                                                      this.top_container,
                                                      this);
             this.terminal.set_container(current_to_first ?this.container1 : this.container2);
             if (new_terminal != null) {
-                new_terminal.set_containers(current_to_first ?this.container2 : this.container1, this.top_container, this.main_container);
+                new_terminal.set_containers(current_to_first ?this.container2 : this.container1, this.top_container,
+                                            this.main_container);
             }
             this.container1.ended.connect(this.ended_child);
             this.container2.ended.connect(this.ended_child);
-            this.paned.add1(this.container1);
-            this.paned.add2(this.container2);
-            this.add(this.paned);
-            this.paned.show_all();
+            this.paned.start_child = this.container1;
+            this.paned.end_child = this.container2;
+            this.append(this.paned);
+            this.paned.show();
             this.terminal = null;
         }
 
@@ -314,12 +349,12 @@ namespace Terminus {
             }
             var new_child = old_container.get_current_child();
             if (this.container1 != null) {
-                this.paned.remove(this.container1);
+                this.paned.start_child = null; //remove(this.container1);
                 this.container1.ended.disconnect(this.ended_child);
                 this.container1 = null;
             }
             if (this.container2 != null) {
-                this.paned.remove(this.container2);
+                this.paned.end_child = null; //remove(this.container2);
                 this.container2.ended.disconnect(this.ended_child);
                 this.container2 = null;
             }
@@ -337,12 +372,13 @@ namespace Terminus {
                 this.container2 = old_container.container2;
                 this.container1.ended.connect(this.ended_child);
                 this.container2.ended.connect(this.ended_child);
-                this.add(this.paned);
-                this.paned.show_all();
+                this.append(this.paned);
+                this.paned.show();
                 this.container1.do_grab_focus();
             }
         }
-        public Terminus.Terminal?
+
+        public Terminus.Terminal ?
         find_terminal_by_pid(int pid)
         {
             if (this.terminal != null) {

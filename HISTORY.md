@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.0.0 (2025-02-01)
+  * Migration to Gtk4
 * Version 2.6.0 (2025-01-19)
   * Fixed reload when killen in guake mode
 * Version 2.5.1 (2025-01-16)

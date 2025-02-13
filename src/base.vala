@@ -24,45 +24,46 @@ namespace Terminus {
      * enclosed in a window.
      */
 
-    public class Base : Gtk.Notebook, DnDDestination {
+    public class Base {
         public signal void
         ended();
         public signal void
         new_window();
 
         public weak Gtk.Window ?top_window;
-        public weak TerminusRoot root;
-        private Gtk.MessageDialog notification_window;
-        private ulong dnd_status_id;
+        public weak TerminusRoot terminus_root;
+        private Gtk.Notebook notebook;
 
         public Base(TerminusRoot       root,
                     string             working_directory,
-                    string[]   ?       commands,
+                    string[] ?         commands,
                     Gtk.Window ?       top_window,
                     Terminus.Terminal ?terminal = null)
         {
-            this.root = root;
-            this.page_added.connect(this.check_pages);
-            this.page_removed.connect(this.check_pages);
+            this.notebook = new Gtk.Notebook();
+            this.terminus_root = root;
+            this.notebook.page_added.connect(this.check_pages);
+            this.notebook.page_removed.connect(this.check_pages);
             this.new_terminal_tab(working_directory, commands, terminal);
-            this.scrollable = true;
+            this.notebook.scrollable = true;
             this.top_window = top_window;
-            this.dnd_status_id = Terminus.dnd_manager.dnd_status.connect(() => {
-                this.check_pages(null, 0);
+            this.notebook.switch_page.connect((notebook, page_widget, page_num) => {
+                var container = page_widget as Terminus.Container;
+                container.update_focus();
             });
-            Gtk.drag_dest_set(this, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
-                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
-            Gtk.drag_dest_set_target_list(this, dnd_manager.targets);
-            this.drag_drop.connect((widget, context, x, y, time) => {
-                Terminus.dnd_manager.set_destination(this);
-                return true;
-            });
+        }
+
+        public void
+        insert_notebook_into(Gtk.Window window)
+        {
+            window.set_child(this.notebook);
+            this.notebook.show();
         }
 
         public void
         set_copy_enabled(bool enabled)
         {
-            this.root.set_copy_enabled(enabled);
+            this.terminus_root.set_copy_enabled(enabled);
         }
 
         public void
@@ -77,37 +78,34 @@ namespace Terminus {
             return true;
         }
 
-        public void
+        public async void
         ask_kill_childs(string   title,
                         string   subtitle,
                         string   button_text,
                         Killable obj)
         {
-            this.notification_window = new Gtk.MessageDialog(this.top_window,
-                                                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.USE_HEADER_BAR,
-                                                             Gtk.MessageType.QUESTION,
-                                                             Gtk.ButtonsType.NONE,
-                                                             "<b>" + title + "</b>");
-            this.notification_window.format_secondary_markup(subtitle);
-            this.notification_window.use_markup = true;
-            this.notification_window.add_button(_("Cancel"), Gtk.ResponseType.REJECT);
-            var close_button = this.notification_window.add_button(button_text, Gtk.ResponseType.ACCEPT);
-            close_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-            this.notification_window.set_default_response(Gtk.ResponseType.REJECT);
-            this.notification_window.response.connect((response_id) => {
-                this.notification_window.hide();
-                if (response_id == Gtk.ResponseType.ACCEPT) {
-                    obj.kill_all_children();
-                }
-            });
-            this.notification_window.show_all();
+            var notification_window = new Gtk.AlertDialog(title);
+            notification_window.detail = subtitle;
+            notification_window.buttons = {
+                _("Cancel"), button_text
+            };
+            notification_window.cancel_button = 0;
+            notification_window.default_button = 1;
+            var result = yield notification_window.
+                         choose(this.top_window,
+                                null);
+
+            if (result == 1) {
+                obj.kill_all_children();
+                obj.close();
+            }
         }
 
         public bool
         check_if_running_processes()
         {
-            for (var i = 0; i < this.get_n_pages(); i++) {
-                var page = (Terminus.Container) this.get_nth_page(i);
+            for (var i = 0; i < this.notebook.get_n_pages(); i++) {
+                var page = (Terminus.Container) this.notebook.get_nth_page(i);
                 if (page.check_if_running_processes()) {
                     return true;
                 }
@@ -120,17 +118,16 @@ namespace Terminus {
                          string[] ?commands,
                          Terminal ?terminal = null)
         {
-            var term = new Terminus.Container(this, working_directory, commands, terminal, null, null);
-            var notetab = new Terminus.Notetab(this, term);
-            term.notetab = notetab;
-            term.ended.connect((w) => {
-                this.delete_page(term);
-                term.dispose();
+            var container = new Terminus.Container(this, working_directory, commands, terminal, null, null);
+            var notetab = new Terminus.Notetab(this, container);
+            container.notetab = notetab;
+            container.ended.connect((w) => {
+                this.delete_page(container);
             });
-            term.show_all();
-            var page = this.append_page(term, notetab);
-            this.set_current_page(page);
-            this.set_tab_reorderable(term, true);
+            container.show();
+            var page = this.notebook.append_page(container, notetab);
+            this.notebook.set_current_page(page);
+            this.notebook.set_tab_reorderable(container, true);
         }
 
         public void
@@ -140,59 +137,68 @@ namespace Terminus {
         }
 
         public void
+        focus_page_containing(Terminus.Container element)
+        {
+            this.notebook.set_current_page(this.notebook.page_num(element));
+        }
+
+        public void
         delete_page(Terminus.Container top_container)
         {
-            var page = this.page_num(top_container);
+            var page = this.notebook.page_num(top_container);
             if (page != -1) {
-                var term = this.get_nth_page(page);
-                this.remove_page(page);
-                term.dispose();
+                this.notebook.remove_page(page);
             }
         }
 
         public void
-        check_pages(Gtk.Widget?child,
-                    uint       page_num)
+        check_pages(Gtk.Widget ?child,
+                    uint        page_num)
         {
-            var npages = this.get_n_pages();
+            var npages = this.notebook.get_n_pages();
             if (npages == 0) {
-                Terminus.dnd_manager.disconnect(this.dnd_status_id);
                 this.ended();
             }
-            if ((npages <= 1) && (!Terminus.dnd_manager.doing_dnd)) {
-                this.show_tabs = false;
+            if ((npages <= 1)) {
+                this.notebook.show_tabs = false;
             } else {
-                this.show_tabs = true;
+                this.notebook.show_tabs = true;
             }
         }
 
         public void
         next_tab()
         {
-            var p = this.get_n_pages();
-            if (this.page + 1 == p) {
-                this.set_current_page(0);
+            var p = this.notebook.get_n_pages();
+            if (this.notebook.page + 1 == p) {
+                this.notebook.set_current_page(0);
             } else {
-                this.next_page();
+                this.notebook.next_page();
             }
         }
 
         public void
         prev_tab()
         {
-            if (this.page == 0) {
-                var p = this.get_n_pages();
-                this.set_current_page(p - 1);
+            if (this.notebook.page == 0) {
+                var p = this.notebook.get_n_pages();
+                this.notebook.set_current_page(p - 1);
             } else {
-                this.prev_page();
+                this.notebook.prev_page();
             }
         }
 
-        public Terminus.Terminal?
+        public void
+        show()
+        {
+            this.notebook.show();
+        }
+
+        public Terminus.Terminal ?
         find_terminal_by_pid(int pid)
         {
-            for(int i=0; i<this.get_n_pages(); i++) {
-                var container = this.get_nth_page(i) as Terminus.Container;
+            for (int i = 0; i < this.notebook.get_n_pages(); i++) {
+                var container = this.notebook.get_nth_page(i) as Terminus.Container;
                 var terminal = container.find_terminal_by_pid(pid);
                 if (terminal != null) {
                     return terminal;

@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Gdk;
 
 namespace Terminus {
-    class Macro:Object {
-
+    class Macro : Object {
         private uint keyval;
         private Gdk.ModifierType state;
         private string command;
 
-        public Macro(string key, string command) {
+        public Macro(string key,
+                     string command)
+        {
             uint             keyval;
             Gdk.ModifierType state;
 
@@ -39,8 +39,11 @@ namespace Terminus {
             this.command = command;
         }
 
-        public string? check_macro(Gdk.EventKey event) {
-            if ((this.keyval == event.keyval) && (this.state == event.state)) {
+        public string ?
+        check_macro(uint             keyval,
+                    Gdk.ModifierType state)
+        {
+            if ((this.keyval == keyval) && (this.state == state)) {
                 return this.command;
             } else {
                 return null;
@@ -48,10 +51,11 @@ namespace Terminus {
         }
     }
 
-    public class Macros:Object {
+    public class Macros : Object {
         private Macro[] macro_list;
 
-        public Macros() {
+        public Macros()
+        {
             Terminus.settings.changed.connect((key) => {
                 if (key == "macros") {
                     this.update_macros();
@@ -60,10 +64,12 @@ namespace Terminus {
             this.update_macros();
         }
 
-        public void update_macros() {
+        public void
+        update_macros()
+        {
             this.macro_list = {};
             var macros = Terminus.settings.get_value("macros");
-            foreach(var entry in macros) {
+            foreach (var entry in macros) {
                 var key = entry.get_child_value(0);
                 var command = entry.get_child_value(1);
                 var macro = new Macro(key.get_string(), command.get_string());
@@ -71,9 +77,12 @@ namespace Terminus {
             }
         }
 
-        public string? check_macro(Gdk.EventKey event) {
-            foreach(var macro in this.macro_list) {
-                var command = macro.check_macro(event);
+        public string ?
+        check_macro(uint             keyval,
+                    Gdk.ModifierType state)
+        {
+            foreach (var macro in this.macro_list) {
+                var command = macro.check_macro(keyval, state);
                 if (command != null) {
                     return command;
                 }
