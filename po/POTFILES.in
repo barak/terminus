@@ -1,6 +1,5 @@
 src/PanedPercentage.vala
 src/base.vala
-src/bindkeys.vala
 src/container.vala
 src/definitions.vala
 src/dndManager.vala
@@ -13,5 +12,4 @@ src/settings.vala
 src/terminal.vala
 src/terminus.vala
 src/window.vala
-src/checkwayland.c
 data/interface/properties.ui

@@ -1,3 +1,9 @@
+terminus (3.0.0-Debian1) sid; urgency=low
+
+  * Migration to Gtk4
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 01 Feb 2025 23:55:00 +0200
+
 terminus (2.6.0-Debian1) sid; urgency=low
 
   * Fixed reload when killen in guake mode

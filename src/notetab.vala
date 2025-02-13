@@ -17,7 +17,7 @@
 
 using Vte;
 using Gtk;
-using Gdk;
+
 using Pango;
 
 namespace Terminus {
@@ -25,7 +25,7 @@ namespace Terminus {
      * This is the widget put in each tab
      */
 
-    public class Notetab : Gtk.EventBox, Killable, DnDDestination {
+    public class Notetab : Gtk.Box, Killable, DnDDestination {
         private weak Terminus.Container top_container;
         private Gtk.Label title;
         private weak Terminus.Base main_container;
@@ -47,35 +47,56 @@ namespace Terminus {
             this.title = new Gtk.Label("");
             this.title.margin_end = 3;
             var close_button = new Gtk.Button.from_icon_name("window-close");
-            this.inner_box.pack_start(this.title, true, true);
-            this.inner_box.pack_start(close_button, false, true);
-            this.add(this.inner_box);
-            this.show_all();
+            this.inner_box.append(this.title);
+            this.inner_box.append(close_button);
+            this.append(this.inner_box);
+            this.show();
             close_button.clicked.connect(() => {
                 this.close_tab();
             });
-            this.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK);
-            this.button_release_event.connect((event) => {
-                if (event.button == 2) {
+            var click_controller = new Gtk.GestureClick();
+            click_controller.button = 2;
+            this.add_controller(click_controller);
+            click_controller.released.connect((controller, n_press, x, y) => {
+                if (n_press == 1) {
                     this.close_tab();
-                    return true;
                 }
-                return false;
             });
-            this.drag_motion.connect(this.motion);
-            this.drag_leave.connect(this.leave);
-            Gtk.drag_dest_set(this, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
-                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
-            Gtk.drag_dest_set_target_list(this, dnd_manager.targets);
-            this.drag_drop.connect((widget, context, x, y, time) => {
-                Terminus.dnd_manager.set_destination(this);
+            var drop_target_terminal = new Gtk.DropTarget(typeof(Terminus.Terminal),
+                                                          Gdk.DragAction.COPY | Gdk.DragAction.MOVE |
+                                                          Gdk.DragAction.LINK);
+            this.add_controller(drop_target_terminal);
+            drop_target_terminal.drop.connect((target, drag_value, x, y) => {
+                Terminus.Terminal terminal = drag_value as Terminus.Terminal;
+                terminal.drop_terminal_into(this);
                 return true;
+            });
+            drop_target_terminal.motion.connect((target, x, y) => {
+                if (this.timeout_id != 0) {
+                    GLib.Source.remove(this.timeout_id);
+                }
+                this.timeout_id = GLib.Timeout.add_once(500, () => {
+                    this.main_container.focus_page_containing(this.top_container);
+                    this.timeout_id = 0;
+                });
+                return Gdk.DragAction.MOVE;
+            });
+            drop_target_terminal.leave.connect((target) => {
+                if (this.timeout_id != 0) {
+                    GLib.Source.remove(this.timeout_id);
+                    this.timeout_id = 0;
+                }
             });
             Terminus.settings.changed.connect((name) => {
                 if (name == "max-tab-text-len") {
                     this.update_title();
                 }
             });
+        }
+
+        public void
+        close()
+        {
         }
 
         public void
@@ -94,9 +115,9 @@ namespace Terminus {
         close_tab()
         {
             if (this.top_container.check_if_running_processes()) {
-                this.main_container.ask_kill_childs(_("This tab has running processes inside."),
-                                                    _("Closing it will kill them."),
-                                                    _("Close tab"), this);
+                this.main_container.ask_kill_childs.begin(_("This tab has running processes inside."),
+                                                          _("Closing it will kill them."),
+                                                          _("Close tab"), this);
             } else {
                 this.kill_all_children();
             }
@@ -106,8 +127,6 @@ namespace Terminus {
         kill_all_children()
         {
             this.main_container.delete_page(this.top_container);
-            this.drag_motion.disconnect(this.motion);
-            this.drag_leave.disconnect(this.leave);
         }
 
         public void
@@ -117,41 +136,14 @@ namespace Terminus {
             this.update_title();
         }
 
-        private void update_title() {
+        private void
+        update_title()
+        {
             var max_title_len = Terminus.settings.get_int("max-tab-text-len");
             if (this.current_title.length > max_title_len) {
                 this.title.label = "..." + this.current_title.substring(this.current_title.length - max_title_len);
             } else {
                 this.title.label = this.current_title;
-            }
-        }
-
-        public bool
-        motion(Gtk.Widget      widget,
-               Gdk.DragContext context,
-               int             x,
-               int             y,
-               uint            t)
-        {
-            if (this.timeout_id != 0) {
-                GLib.Source.remove(this.timeout_id);
-            }
-            this.timeout_id = GLib.Timeout.add(500, () => {
-                this.main_container.set_current_page(this.main_container.page_num(this.top_container));
-                this.timeout_id = 0;
-                return false;
-            });
-            return true;
-        }
-
-        public void
-        leave(Gtk.Widget      widget,
-              Gdk.DragContext context,
-              uint            t)
-        {
-            if (this.timeout_id != 0) {
-                GLib.Source.remove(this.timeout_id);
-                this.timeout_id = 0;
             }
         }
     }

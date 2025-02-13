@@ -58,22 +58,12 @@ you to launch the Guake mode terminal.
 
 Just follow the classic meson instructions:
 
-    mkdir install
-    cd install
-    meson
-    ninja
-    sudo ninja install
+    meson setup _build
+    ninja -C _build
+    sudo ninja install -C _build
 
 If, during meson stage, you receive an error for missing libraries, install them
 and run meson again, until there are no more missing libraries.
-
-### Gnome 44 or previous ###
-
-To build a version compatible with Gnome 44 or previous, just use
-
-    meson -DGNOME44=on
-
-with the previous instructions.
 
 ## Creating new palettes ##
 
@@ -152,6 +142,6 @@ and add there the desired hotkey, associating it with "terminus_showhide" progra
 ## Contacting the author ##
 
 Sergio Costas Rodriguez  
-rastersoft@gmail.com  
+<rastersoft@gmail.com>  
 <http://www.rastersoft.com>  
 <https://gitlab.com/rastersoft/terminus>

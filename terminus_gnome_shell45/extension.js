@@ -81,6 +81,9 @@ export default class TerminusClass {
 	 * Enables the extension
 	 */
 	enable() {
+		if (this._enabled) {
+			return;
+		}
 		// If the desktop is still starting up, we wait until it is ready
 		if (Main.layoutManager._startingUp) {
 			this._startupPreparedId = Main.layoutManager.connect('startup-complete', () => {
@@ -139,24 +142,19 @@ export default class TerminusClass {
 				window.connect('position-changed', () => {
 					this._set_window_position(window);
 				});
-				window.connect('size-changed', () => {
-					this._set_window_position(window);
-				});
 			}
 		});
 	}
 
 	_set_window_position(window) {
 		let area = window.get_work_area_current_monitor();
-		let guake_height = this._settings2.get_int("guake-height");
-		if (guake_height >= area.height) {
-			guake_height = Math.round(area.height * 2 / 3);
-			this._settings2.set_int("guake-height", guake_height);
-		}
-		window.move_resize_frame(false, area.x, area.y, area.width, guake_height);
+		window.move_frame(false, area.x, area.y);
 	}
 
 	disable() {
+		if (!this._enabled) {
+			return;
+		}
 		this._enabled = false;
 		if (this._settingsChangedConnect) {
 			this._settings.disconnect(this._settingsChangedConnect);

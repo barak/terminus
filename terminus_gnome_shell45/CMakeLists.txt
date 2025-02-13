@@ -1,8 +1,7 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-if (NOT(GNOME44))
-	IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extension.js)
+IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extension.js)
 	install(DIRECTORY
 		${CMAKE_CURRENT_SOURCE_DIR}/extension.js
 	DESTINATION
@@ -30,4 +29,3 @@ ELSE()
 	)
 ENDIF()
 
-endif ()

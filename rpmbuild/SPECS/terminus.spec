@@ -1,5 +1,5 @@
 Name: terminus
-Version: 2.6.0
+Version: 3.0.0
 Release: 1
 License: Unknown/not set
 Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator
@@ -8,18 +8,17 @@ BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: vala
 BuildRequires: glibc-headers
-BuildRequires: gtk3-devel
+BuildRequires: gtk4-devel
 BuildRequires: libgee-devel
 BuildRequires: glib2-devel
-BuildRequires: keybinder3-devel
-BuildRequires: vte291-devel
+BuildRequires: vte291-gtk4-devel
 BuildRequires: cmake
 BuildRequires: gettext
 BuildRequires: pkgconf-pkg-config
 BuildRequires: make
 BuildRequires: intltool
 
-Requires: gtk3
+Requires: gtk4
 Requires: pango
 Requires: gdk-pixbuf2
 Requires: cairo-gobject
@@ -27,8 +26,7 @@ Requires: cairo
 Requires: glib2
 Requires: atk
 Requires: libgee
-Requires: keybinder3
-Requires: vte291
+Requires: vte291-gtk4
 Requires: zlib
 Requires: pcre2
 Requires: gnutls

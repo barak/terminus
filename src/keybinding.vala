@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Gdk;
 
 namespace Terminus {
     class KeyBinding : Object {
@@ -53,9 +52,10 @@ namespace Terminus {
         }
 
         public bool
-        check_key(Gdk.EventKey event)
+        check_key(uint             keyval,
+                  Gdk.ModifierType state)
         {
-            if ((this.keyval == event.keyval) && (this.state == event.state)) {
+            if ((this.keyval == keyval) && (this.state == state)) {
                 return true;
             }
             return false;
@@ -97,23 +97,24 @@ namespace Terminus {
             this.key_binding_list += new KeyBinding(name, description);
         }
 
-        public string?find_key(Gdk.EventKey event)
+        public string ?
+        find_key(uint             keyval,
+                 Gdk.ModifierType state)
         {
-            Gdk.EventKey eventkey = event.key;
             // SHIFT, CTRL, LEFT ALT, ALT+GR
-            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
-                              Gdk.ModifierType.CONTROL_MASK |
-                              Gdk.ModifierType.SUPER_MASK |
-                              Gdk.ModifierType.META_MASK |
-                              Gdk.ModifierType.HYPER_MASK |
-                              Gdk.ModifierType.MOD1_MASK;
+            state &= Gdk.ModifierType.SHIFT_MASK |
+                     Gdk.ModifierType.CONTROL_MASK |
+                     Gdk.ModifierType.SUPER_MASK |
+                     Gdk.ModifierType.META_MASK |
+                     Gdk.ModifierType.HYPER_MASK |
+                     Gdk.ModifierType.ALT_MASK;
 
-            if (eventkey.keyval < 128) {
+            if ((keyval <= 'z') && (keyval >= 'a')) {
                 // to avoid problems with upper and lower case
-                eventkey.keyval &= ~32;
+                keyval &= ~32;
             }
             foreach (var key in this.key_binding_list) {
-                if (key.check_key(eventkey)) {
+                if (key.check_key(keyval, state)) {
                     return key.name;
                 }
             }
