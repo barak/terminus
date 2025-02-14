@@ -28,6 +28,8 @@ namespace Terminus {
      * This is the terminal itself, available in each container.
      */
 
+    uint32 RegExMultilineFlag = 0x0400;
+
     public class Terminal : Gtk.Box, Killable, DnDDestination {
         private int pid;
         private Vte.Terminal vte_terminal;
@@ -275,7 +277,11 @@ namespace Terminus {
             this.vte_terminal.vexpand = true;
             this.hexpand = true;
             this.vexpand = true;
-
+            // regex for URIs: search for anything that begins with http:// or https:// and continues until
+            // a blank space, but remove any period, comma, colon or semicolon at the end.
+            var regex = new Vte.Regex.for_match("https?://.+?(?= |: |; |, |\\. )", -1, RegExMultilineFlag);
+            var tag_regex = this.vte_terminal.match_add_regex(regex, 0);
+            this.vte_terminal.match_set_cursor_name(tag_regex, "pointer");
 
             this.vte_terminal.window_title_changed.connect_after(() => {
                 this.update_title();
@@ -292,7 +298,7 @@ namespace Terminus {
                 this.had_focus = false;
                 this.update_title_color();
             });
-            this.vte_terminal.resize_window.connect_after((x, y) => {
+            this.vte_terminal.notify.connect((pspec) => {
                 this.update_title();
             });
             this.vte_terminal.map.connect_after((w) => {
@@ -839,6 +845,13 @@ namespace Terminus {
             }
             if (this.vte_terminal.hyperlink_hover_uri != null) {
                 GLib.AppInfo.launch_default_for_uri(this.vte_terminal.hyperlink_hover_uri, null);
+                return;
+            }
+            int tag;
+            var uri = this.vte_terminal.check_match_at(x, y, out tag);
+            if (uri != null) {
+                GLib.AppInfo.launch_default_for_uri(uri, null);
+                return;
             }
         }
     }
