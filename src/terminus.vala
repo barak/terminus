@@ -33,7 +33,7 @@ namespace Terminus {
         private string ?guake_title = null;
         private bool executed_hold = false;
         private GLib.SimpleAction ?copy_action = null;
-        private Gtk.CssProvider ?css_provider = null;
+        private CssManager css_manager = null;
 
         private Terminus.Parameters ?parameters = null;
 
@@ -87,47 +87,6 @@ namespace Terminus {
             return false;
         }
 
-        private void
-        update_css()
-        {
-            if (this.css_provider != null) {
-                Gtk.StyleContext.remove_provider_for_display(Gdk.Display.get_default(), this.css_provider);
-            }
-            var fg_color = Terminus.settings.get_string("fg-color");
-            var bg_color = Terminus.settings.get_string("bg-color");
-            var focused_fg_color = Terminus.settings.get_string("focused-fg-color");
-            var focused_bg_color = Terminus.settings.get_string("focused-bg-color");
-            var inactive_fg_color = Terminus.settings.get_string("inactive-fg-color");
-            var inactive_bg_color = Terminus.settings.get_string("inactive-bg-color");
-            this.css_provider = new Gtk.CssProvider();
-            var css = "";
-            css +=
-                @".dndbottom {background: linear-gradient(0deg, $fg_color 0%, $fg_color 49%, $bg_color 51%, $bg_color 100%);}\n";
-            css +=
-                @".dndleft {background: linear-gradient(90deg, $fg_color 0%, $fg_color 49%, $bg_color 51%, $bg_color 100%);}\n";
-            css +=
-                @".dndtop {background: linear-gradient(180deg, $fg_color 0%, $fg_color 49%, $bg_color 51%, $bg_color 100%);}\n";
-            css +=
-                @".dndright {background: linear-gradient(270deg, $fg_color 0%, $fg_color 49%, $bg_color 51%, $bg_color 100%);}\n";
-            css += @".terminaltitlefocused {background-color: $focused_bg_color; color: $focused_fg_color;}\n";
-            css += @".terminaltitleinactive {background-color: $inactive_bg_color; color: $inactive_fg_color;}\n";
-            this.css_provider.load_from_string(css);
-            Gtk.StyleContext.add_provider_for_display(
-                Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
-        }
-
-        private void
-        settings_changed(string key)
-        {
-            string settings_list[] = {
-                "fg-color", "bg-color", "inactive-bg-color", "inactive-fg-color", "focused-bg-color",
-                "focused-fg-color"
-            };
-            if (key in settings_list) {
-                this.update_css();
-            }
-        }
-
         protected void
         do_startup()
         {
@@ -139,8 +98,7 @@ namespace Terminus {
                                                              "share",
                                                              "terminus"));
 
-            Terminus.settings.changed.connect(this.settings_changed);
-            this.update_css();
+            this.css_manager = new Terminus.CssManager();
             var palette = new Terminus.Terminuspalette();
             palette.custom = true;
             palette.name = _("Custom colors");
@@ -415,11 +373,11 @@ namespace Terminus {
                 if ((i < palette_string.length) && (color.parse(palette_string[i]))) {
                     tmp += palette_string[i];
                 } else {
-                    var v = (i < 8) ?0xAA : 0xFF;
+                    var v = (i < 8) ? 0xAA : 0xFF;
                     tmp +=
-                        "#%02X%02X%02X".printf(((v & 0x01) != 0 ?v : 0),
-                                               ((v & 0x02) != 0 ?v : 0),
-                                               ((v & 0x04) != 0 ?v : 0));
+                        "#%02X%02X%02X".printf(((v & 0x01) != 0 ? v : 0),
+                                               ((v & 0x02) != 0 ? v : 0),
+                                               ((v & 0x04) != 0 ? v : 0));
                 }
             }
             Terminus.settings.set_strv("color-palete", tmp);

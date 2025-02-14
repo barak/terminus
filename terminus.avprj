@@ -26,6 +26,7 @@ vala_check_package: vte-2.91-gtk4
 *vala_source: PanedPercentage.vala
 *vala_source: base.vala
 *vala_source: container.vala
+*vala_source: css.vala
 *vala_source: definitions.vala
 *vala_source: dndManager.vala
 *vala_source: keybinding.vala
@@ -46,6 +47,7 @@ h_folder: .
 *translate: vala src/PanedPercentage.vala
 *translate: vala src/base.vala
 *translate: vala src/container.vala
+*translate: vala src/css.vala
 *translate: vala src/definitions.vala
 *translate: vala src/dndManager.vala
 *translate: vala src/keybinding.vala
