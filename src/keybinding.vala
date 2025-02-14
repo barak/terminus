@@ -88,6 +88,7 @@ namespace Terminus {
             this.add_keybinding(_("Close the active tile"), "close-tile");
             this.add_keybinding(_("Close the active tab"), "close-tab");
             this.add_keybinding(_("Select all"), "select-all");
+            this.add_keybinding(_("Search"), "search");
         }
 
         private void

@@ -30,6 +30,16 @@ and another to create a new tab in the current window. Also, doing right-click o
 terminal will open a contextual menu which also allows to subdivide it horizontally or
 vertically, in tiles.
 
+In the top-left side of the terminal there is a "search" icon. Clicking on it (or
+pressing Ctrl+f) will open the search subwindow for that terminal. Typing anything
+and pressing Return will highlight the first match in the full buffer. Pressing
+Return again will show the next match; pressing Shift+Return will show the previous
+match.
+
+By default, literal matches will be shown; but clicking on the "Use regular expressions"
+checkbox will change this, allowing to use RegExes in the search entry. If the regular
+expression is invalid, an "error" icon will be shown to the right of the entry.
+
 A terminal can be dragged from the top bar (the red one), and dropped into another
 terminal (being added as a new tile), into a new tab in an existing window by dropping
 it into the tabs bar or the title bar, or into a new window if dropped outside any
@@ -41,9 +51,7 @@ the key binding by pressing right-click and selecting "Properties". Nearly all t
 actions in Terminus have a configurable hotkey.
 
 Also by default, Ctrl+Shift combined with the keypad's Add, Subtract and Enter keys
-will increase, decrease, and return to normal, font size. You can also use
-Ctrl + Mouse Wheel to change the font size (and Ctrl + middle button to return to
-the normal size).
+will increase, decrease, and return to normal, font size.
 
 By default, terminus is launched during startup to check if the user wants to have
 the Quake-like terminal available, so just installing it and rebooting will guarantee

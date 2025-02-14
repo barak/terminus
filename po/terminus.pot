@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-02 23:23+0100\n"
+"POT-Creation-Date: 2025-02-15 13:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/base.vala:84
+#: src/base.vala:90
 msgid "Cancel"
 msgstr ""
 
-#: src/keybinding.vala:71 src/terminal.vala:165
+#: src/keybinding.vala:71 src/terminal.vala:198
 msgid "New window"
 msgstr ""
 
-#: src/keybinding.vala:72 src/terminal.vala:160
+#: src/keybinding.vala:72 src/terminal.vala:197
 msgid "New tab"
 msgstr ""
 
@@ -81,11 +81,11 @@ msgstr ""
 msgid "Show menu"
 msgstr ""
 
-#: src/keybinding.vala:86 src/terminal.vala:149
+#: src/keybinding.vala:86 src/terminal.vala:189
 msgid "Split horizontally"
 msgstr ""
 
-#: src/keybinding.vala:87 src/terminal.vala:153
+#: src/keybinding.vala:87 src/terminal.vala:192
 msgid "Split vertically"
 msgstr ""
 
@@ -97,19 +97,23 @@ msgstr ""
 msgid "Close the active tab"
 msgstr ""
 
-#: src/keybinding.vala:90 src/terminal.vala:142
+#: src/keybinding.vala:90 src/terminal.vala:185
 msgid "Select all"
 msgstr ""
 
-#: src/notetab.vala:89
+#: src/keybinding.vala:91
+msgid "Search"
+msgstr ""
+
+#: src/notetab.vala:118
 msgid "This tab has running processes inside."
 msgstr ""
 
-#: src/notetab.vala:90 src/window.vala:96
+#: src/notetab.vala:119 src/window.vala:58
 msgid "Closing it will kill them."
 msgstr ""
 
-#: src/notetab.vala:91
+#: src/notetab.vala:120
 msgid "Close tab"
 msgstr ""
 
@@ -195,197 +199,237 @@ msgid ""
 "for gnome shell)\n"
 msgstr ""
 
-#: src/settings.vala:149
+#: src/settings.vala:163
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/settings.vala:327
+#: src/settings.vala:388
+msgid "Keybind"
+msgstr ""
+
+#: src/settings.vala:389 data/interface/properties.ui:1010
+msgid "Command"
+msgstr ""
+
+#: src/settings.vala:414
 msgid "Action"
 msgstr ""
 
-#: src/settings.vala:328
+#: src/settings.vala:415
 msgid "Key"
 msgstr ""
 
-#: src/terminal.vala:130
+#: src/terminal.vala:181
 msgid "Copy"
 msgstr ""
 
-#: src/terminal.vala:135
+#: src/terminal.vala:182
 msgid "Paste"
 msgstr ""
 
-#: src/terminal.vala:172
+#: src/terminal.vala:204
+msgid "Extra"
+msgstr ""
+
+#: src/terminal.vala:206
+msgid "Reset terminal"
+msgstr ""
+
+#: src/terminal.vala:207
+msgid "Reset and clear terminal"
+msgstr ""
+
+#: src/terminal.vala:211
 msgid "Preferences"
 msgstr ""
 
-#: src/terminal.vala:179
+#: src/terminal.vala:215
 msgid "Close"
 msgstr ""
 
-#: src/terminal.vala:507
+#: src/terminal.vala:345
+msgid "Use regular expressions"
+msgstr ""
+
+#: src/terminal.vala:665
 msgid "This terminal has a process running inside."
 msgstr ""
 
-#: src/terminal.vala:508
+#: src/terminal.vala:666
 msgid "Closing it will kill the process."
 msgstr ""
 
-#: src/terminal.vala:509
+#: src/terminal.vala:667
 msgid "Close terminal"
 msgstr ""
 
-#: src/terminus.vala:66
+#: src/terminus.vala:67
 #, c-format
 msgid "Version %s\n"
 msgstr ""
 
-#: src/terminus.vala:105
+#: src/terminus.vala:146
 msgid "Custom colors"
 msgstr ""
 
-#: src/window.vala:95
+#: src/window.vala:57
 msgid "This window has running processes inside."
 msgstr ""
 
-#: src/window.vala:97
+#: src/window.vala:59
 msgid "Close window"
 msgstr ""
 
-#: data/interface/properties.ui:22
-msgid "Block"
-msgstr ""
-
-#: data/interface/properties.ui:26
-msgid "Double T"
-msgstr ""
-
-#: data/interface/properties.ui:30
-msgid "Underscore"
-msgstr ""
-
-#: data/interface/properties.ui:80
+#: data/interface/properties.ui:40
 msgid "Enable guake mode"
 msgstr ""
 
-#: data/interface/properties.ui:99
+#: data/interface/properties.ui:58
 msgid "Cursor shape:"
 msgstr ""
 
-#: data/interface/properties.ui:128
+#: data/interface/properties.ui:73
+msgid "Block"
+msgstr ""
+
+#: data/interface/properties.ui:74
+msgid "Double T"
+msgstr ""
+
+#: data/interface/properties.ui:75
+msgid "Underscore"
+msgstr ""
+
+#: data/interface/properties.ui:87
 msgid "Terminal bell"
 msgstr ""
 
-#: data/interface/properties.ui:144
+#: data/interface/properties.ui:102
 msgid "Custom font:"
 msgstr ""
 
-#: data/interface/properties.ui:161
+#: data/interface/properties.ui:118
 msgid "Custom command shell:"
 msgstr ""
 
-#: data/interface/properties.ui:180
+#: data/interface/properties.ui:137
 msgid "Use custom shell"
 msgstr ""
 
-#: data/interface/properties.ui:196
+#: data/interface/properties.ui:152
 msgid "Pointer autohide"
 msgstr ""
 
-#: data/interface/properties.ui:214
+#: data/interface/properties.ui:169
 msgid "General"
 msgstr ""
 
-#: data/interface/properties.ui:235 data/interface/properties.ui:484
+#: data/interface/properties.ui:190 data/interface/properties.ui:429
 msgid "Built-in schemes:"
 msgstr ""
 
-#: data/interface/properties.ui:288 data/interface/properties.ui:800
+#: data/interface/properties.ui:236 data/interface/properties.ui:722
 msgid "Text"
 msgstr ""
 
-#: data/interface/properties.ui:300 data/interface/properties.ui:812
+#: data/interface/properties.ui:248 data/interface/properties.ui:734
 msgid "Background"
 msgstr ""
 
-#: data/interface/properties.ui:324
+#: data/interface/properties.ui:272
 msgid "Default color:"
 msgstr ""
 
-#: data/interface/properties.ui:333
+#: data/interface/properties.ui:281
 msgid "Bold color:"
 msgstr ""
 
-#: data/interface/properties.ui:347
+#: data/interface/properties.ui:294
 msgid "Cursor color:"
 msgstr ""
 
-#: data/interface/properties.ui:361
+#: data/interface/properties.ui:307
 msgid "Highlight color:"
 msgstr ""
 
-#: data/interface/properties.ui:433
+#: data/interface/properties.ui:378
 msgid "<b>Text and background colors</b>"
 msgstr ""
 
-#: data/interface/properties.ui:447
+#: data/interface/properties.ui:392
 msgid "<b>Palette</b>"
 msgstr ""
 
-#: data/interface/properties.ui:516
+#: data/interface/properties.ui:454
 msgid "Colors palete:"
 msgstr ""
 
-#: data/interface/properties.ui:763
+#: data/interface/properties.ui:685
 msgid "<b>Top bar</b>"
 msgstr ""
 
-#: data/interface/properties.ui:825
+#: data/interface/properties.ui:747
 msgid "Focused terminal:"
 msgstr ""
 
-#: data/interface/properties.ui:837
+#: data/interface/properties.ui:759
 msgid "Inactive terminal:"
 msgstr ""
 
-#: data/interface/properties.ui:909
+#: data/interface/properties.ui:831
 msgid "Colors"
 msgstr ""
 
-#: data/interface/properties.ui:935
+#: data/interface/properties.ui:857
 msgid "Scrollback lines:"
 msgstr ""
 
-#: data/interface/properties.ui:957
+#: data/interface/properties.ui:879
 msgid "0"
 msgstr ""
 
-#: data/interface/properties.ui:967
+#: data/interface/properties.ui:889
 msgid "Infinite Scrollback"
 msgstr ""
 
-#: data/interface/properties.ui:1014
+#: data/interface/properties.ui:910
 msgid "Scroll on output"
 msgstr ""
 
-#: data/interface/properties.ui:1028
+#: data/interface/properties.ui:918
 msgid "Scroll on keystroke"
 msgstr ""
 
-#: data/interface/properties.ui:1049
+#: data/interface/properties.ui:933
 msgid "Scrolling"
 msgstr ""
 
-#: data/interface/properties.ui:1077
+#: data/interface/properties.ui:963
 msgid "Keybindings"
 msgstr ""
 
-#: data/interface/properties.ui:1097
+#: data/interface/properties.ui:999
+msgid "Keybinding"
+msgstr ""
+
+#: data/interface/properties.ui:1043
+msgid "Add"
+msgstr ""
+
+#: data/interface/properties.ui:1055
+msgid "Delete"
+msgstr ""
+
+#: data/interface/properties.ui:1076
+msgid "Macros"
+msgstr ""
+
+#: data/interface/properties.ui:1096
 msgid "Terminus"
 msgstr ""
 
-#: data/interface/properties.ui:1120
+#: data/interface/properties.ui:1109
 msgid ""
 "A tiled terminal emulator.\n"
 "\n"
@@ -395,6 +439,6 @@ msgid ""
 "rastersoft@gmail.com"
 msgstr ""
 
-#: data/interface/properties.ui:1143
+#: data/interface/properties.ui:1127
 msgid "About"
 msgstr ""
