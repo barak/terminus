@@ -35,8 +35,6 @@ namespace Terminus {
         private Vte.Terminal vte_terminal;
         private Gtk.Label title;
         private Gtk.GestureClick click_controller_1;
-        private Gtk.GestureClick click_controller_2;
-        private Gtk.GestureClick click_controller_3;
         private Gtk.EventControllerKey key_controller;
         private weak Terminus.Container top_container;
         private weak Terminus.Container container;
@@ -46,6 +44,7 @@ namespace Terminus {
         private string last_css = "";
         private string last_title_css = "";
         private bool had_focus;
+        private bool bell = false;
 
         public signal void
         ended(Terminus.Terminal terminal);
@@ -373,17 +372,23 @@ namespace Terminus {
                 this.ended(this);
             });
 
+            this.vte_terminal.bell.connect(() => {
+                if (this.bell) {
+                    return;
+                }
+                this.bell = true;
+                this.update_title_color();
+                GLib.Timeout.add_once(200, () => {
+                    this.bell = false;
+                    this.update_title_color();
+                });
+            });
+
             this.click_controller_1 = new Gtk.GestureClick();
             this.click_controller_1.button = 1;
-            this.click_controller_2 = new Gtk.GestureClick();
-            this.click_controller_2.button = 2;
-            this.click_controller_3 = new Gtk.GestureClick();
-            this.click_controller_3.button = 3;
             this.key_controller = new Gtk.EventControllerKey();
 
             this.vte_terminal.add_controller(this.click_controller_1);
-            this.vte_terminal.add_controller(this.click_controller_2);
-            this.vte_terminal.add_controller(this.click_controller_3);
             this.vte_terminal.add_controller(this.key_controller);
             this.key_controller.key_pressed.connect(this.on_key_press);
             this.click_controller_1.pressed.connect(this.button_1_event);
@@ -804,11 +809,7 @@ namespace Terminus {
             if (this.last_title_css != "") {
                 this.title.remove_css_class(this.last_title_css);
             }
-            if (this.had_focus) {
-                this.last_title_css = "terminaltitlefocused";
-            } else {
-                this.last_title_css = "terminaltitleinactive";
-            }
+            this.last_title_css = "terminaltitle" + ((this.had_focus ^ this.bell) ? "focused" : "inactive");
             this.title.add_css_class(this.last_title_css);
         }
 

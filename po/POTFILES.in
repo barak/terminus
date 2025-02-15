@@ -1,6 +1,7 @@
 src/PanedPercentage.vala
 src/base.vala
 src/container.vala
+src/css.vala
 src/definitions.vala
 src/dndManager.vala
 src/keybinding.vala

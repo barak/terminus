@@ -222,25 +222,25 @@ namespace Terminus {
             this.terminal.ended.disconnect(this.ended_cb);
 
             this.paned = new Terminus.PanedPercentage(
-                this.splited_horizontal ?Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL, 0.5);
+                this.splited_horizontal ? Gtk.Orientation.VERTICAL : Gtk.Orientation.HORIZONTAL, 0.5);
             this.paned.hexpand = true;
             this.paned.vexpand = true;
 
             this.container1 = new Terminus.Container(this.main_container,
-                                                     path != null ?path : this.working_directory,
+                                                     path != null ? path : this.working_directory,
                                                      null,
-                                                     current_to_first ?this.terminal : new_terminal,
+                                                     current_to_first ? this.terminal : new_terminal,
                                                      this.top_container,
                                                      this);
             this.container2 = new Terminus.Container(this.main_container,
-                                                     path != null ?path : this.working_directory,
+                                                     path != null ? path : this.working_directory,
                                                      null,
-                                                     current_to_first ?new_terminal : this.terminal,
+                                                     current_to_first ? new_terminal : this.terminal,
                                                      this.top_container,
                                                      this);
-            this.terminal.set_container(current_to_first ?this.container1 : this.container2);
+            this.terminal.set_container(current_to_first ? this.container1 : this.container2);
             if (new_terminal != null) {
-                new_terminal.set_containers(current_to_first ?this.container2 : this.container1, this.top_container,
+                new_terminal.set_containers(current_to_first ? this.container2 : this.container1, this.top_container,
                                             this.main_container);
             }
             this.container1.ended.connect(this.ended_child);
