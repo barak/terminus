@@ -62,6 +62,10 @@ namespace Terminus {
             this.paned.valign = Gtk.Align.FILL;
             this.button_pressed = false;
 
+            this.destroy.connect(() => {
+                this.paned.unparent();
+            });
+
             if (orientation == Gtk.Orientation.VERTICAL) {
                 this.horizontal = true;
             } else {
