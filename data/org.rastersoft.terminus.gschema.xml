@@ -258,5 +258,10 @@
       <summary>Close the active tile</summary>
       <description></description>
     </key>
+    <key type="s" name="search">
+      <default><![CDATA['<Ctrl>f']]></default>
+      <summary>Shows/hides the search entry</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>

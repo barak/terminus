@@ -45,6 +45,12 @@ namespace Terminus {
         private string last_title_css = "";
         private bool had_focus;
         private bool bell = false;
+        private Gtk.Box search_bar;
+        private Gtk.Entry search_entry;
+        private Gtk.CheckButton search_is_regex;
+        private string[] regex_special_chars = {
+            "\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "[", "]"
+        };
 
         public signal void
         ended(Terminus.Terminal terminal);
@@ -263,7 +269,17 @@ namespace Terminus {
             controller.released.connect(() => {
                 this.kill_child();
             });
+
+            var do_search = new Gtk.Image.from_icon_name("system-search-symbolic");
+            var controller_search = new Gtk.GestureClick();
+            do_search.add_controller(controller_search);
+
+            controller_search.released.connect(() => {
+                this.switch_search_visibility();
+            });
+
             var titleContainer = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            titleContainer.append(do_search);
             titleContainer.append(this.title);
             titleContainer.append(close_terminal);
 
@@ -322,6 +338,63 @@ namespace Terminus {
 
             terminal_box.append(this.vte_terminal);
             terminal_box.append(right_scroll);
+
+            this.search_bar = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            this.search_entry = new Gtk.Entry();
+            this.search_is_regex = new Gtk.CheckButton.with_label(_("Use regular expressions"));
+            var prev_search = new Gtk.Button.from_icon_name("go-previous");
+            var next_search = new Gtk.Button.from_icon_name("go-next");
+            this.vte_terminal.search_set_wrap_around(true);
+
+            this.search_entry.changed.connect(() => {
+                this.update_search();
+            });
+
+            this.search_is_regex.toggled.connect(() => {
+                this.update_search();
+            });
+
+            this.search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "system-search-symbolic");
+
+            prev_search.clicked.connect(() => {
+                this.vte_terminal.search_find_previous();
+            });
+            next_search.clicked.connect(() => {
+                this.vte_terminal.search_find_next();
+            });
+
+            this.search_bar.append(this.search_entry);
+            this.search_bar.append(prev_search);
+            this.search_bar.append(next_search);
+            this.search_bar.append(search_is_regex);
+            this.append(search_bar);
+
+            var search_key_controller = new Gtk.EventControllerKey();
+            this.search_entry.add_controller(search_key_controller);
+            search_key_controller.key_pressed.connect((controller, keyval, keycode, state) => {
+                switch (keyval) {
+                    case Gdk.Key.Escape:
+                        this.hide_search();
+                        return true;
+
+                    case Gdk.Key.Return:
+                        if ((state & Gdk.ModifierType.SHIFT_MASK) != 0) {
+                            this.vte_terminal.search_find_previous();
+                        } else {
+                            this.vte_terminal.search_find_next();
+                        }
+                        return true;
+
+                    default:
+                        return false;
+
+                        break;
+                }
+                return false;
+            });
+            this.search_entry.activate.connect(() => {
+                this.vte_terminal.search_find_next();
+            });
 
             string[] cmd = {};
             if (Terminus.settings.get_boolean("use-custom-shell")) {
@@ -480,6 +553,52 @@ namespace Terminus {
                 this.split_mode = SplitAt.NONE;
             });
             this.show();
+            this.hide_search();
+        }
+
+        private void
+        update_search()
+        {
+            var search = this.search_entry.get_buffer().get_text();
+            if (!this.search_is_regex.get_active()) {
+                // escape all the regex special chars
+                foreach (var ch in this.regex_special_chars) {
+                    search = search.replace(ch, "\\" + ch);
+                }
+            }
+
+            Vte.Regex ?search_regex = null;
+            try {
+                search_regex = new Vte.Regex.for_search(search, -1, RegExMultilineFlag);
+                this.search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, null);
+            } catch(Error e) {
+                this.search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "dialog-error");
+            }
+            this.vte_terminal.search_set_regex(search_regex, 0);
+        }
+
+        private void
+        hide_search()
+        {
+            this.search_bar.hide();
+            this.vte_terminal.grab_focus();
+        }
+
+        private void
+        show_search()
+        {
+            this.search_bar.show();
+            this.search_entry.grab_focus_without_selecting();
+        }
+
+        private void
+        switch_search_visibility()
+        {
+            if (this.search_bar.visible) {
+                this.hide_search();
+            } else {
+                this.show_search();
+            }
         }
 
         public void
@@ -711,6 +830,10 @@ namespace Terminus {
                      Gdk.ModifierType.HYPER_MASK |
                      Gdk.ModifierType.ALT_MASK;
 
+            if (keyval == Gdk.Key.Escape) {
+                this.hide_search();
+            }
+
             if ((keyval <= 'z') && (keyval >= 'a')) {
                 // to avoid problems with upper and lower case
                 keyval &= ~32;
@@ -787,6 +910,10 @@ namespace Terminus {
 
             case "select-all":
                 this.vte_terminal.select_all();
+                return true;
+
+            case "search":
+                this.switch_search_visibility();
                 return true;
             }
 
