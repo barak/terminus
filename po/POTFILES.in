@@ -9,6 +9,7 @@ src/macros.vala
 src/notetab.vala
 src/palete.vala
 src/params.vala
+src/processes.vala
 src/settings.vala
 src/terminal.vala
 src/terminus.vala

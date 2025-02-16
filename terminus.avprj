@@ -34,6 +34,7 @@ vala_check_package: vte-2.91-gtk4
 *vala_source: notetab.vala
 *vala_source: palete.vala
 *vala_source: params.vala
+*vala_source: processes.vala
 *vala_source: settings.vala
 *vala_source: terminal.vala
 *vala_source: terminus.vala
@@ -55,6 +56,7 @@ h_folder: .
 *translate: vala src/notetab.vala
 *translate: vala src/palete.vala
 *translate: vala src/params.vala
+*translate: vala src/processes.vala
 *translate: vala src/settings.vala
 *translate: vala src/terminal.vala
 *translate: vala src/terminus.vala

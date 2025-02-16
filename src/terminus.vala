@@ -23,6 +23,7 @@ namespace Terminus {
     TerminusRoot  main_root;
     KeyBindings   key_bindings;
     Macros        macros;
+    Processes     processes;
     GLib.Settings settings = null;
     GLib.Settings keybind_settings = null;
 
@@ -92,6 +93,7 @@ namespace Terminus {
         {
             Terminus.key_bindings = new Terminus.KeyBindings();
             Terminus.macros = new Terminus.Macros();
+            Terminus.processes = new Terminus.Processes();
             this.read_color_schemes(GLib.Path.build_filename(Constants.DATADIR, "terminus"));
             this.read_color_schemes(GLib.Path.build_filename(Environment.get_home_dir(),
                                                              ".local",

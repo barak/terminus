@@ -264,7 +264,8 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="default-color">
+                <property name="hexpand">True</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
@@ -740,7 +741,8 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="terminal-title-focused">
+                <property name="hexpand">True</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
@@ -752,14 +754,28 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="terminal-title-root-focused">
+                <property name="hexpand">True</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Focused root terminal:</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">14</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="terminal-title-inactive">
+                <property name="hexpand">True</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">Inactive terminal:</property>
                 <layout>
                   <property name="column">1</property>
-                  <property name="row">14</property>
+                  <property name="row">15</property>
                 </layout>
               </object>
             </child>
@@ -775,13 +791,24 @@
               </object>
             </child>
             <child>
-              <object class="GtkColorDialogButton" id="inactive_fg_color">
+              <object class="GtkColorDialogButton" id="focused_root_fg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <layout>
                   <property name="column">2</property>
                   <property name="row">14</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkColorDialogButton" id="inactive_fg_color">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="row">15</property>
                 </layout>
               </object>
             </child>
@@ -797,13 +824,24 @@
               </object>
             </child>
             <child>
-              <object class="GtkColorDialogButton" id="inactive_bg_color">
+              <object class="GtkColorDialogButton" id="focused_root_bg_color">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <layout>
                   <property name="column">3</property>
                   <property name="row">14</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkColorDialogButton" id="inactive_bg_color">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <layout>
+                  <property name="column">3</property>
+                  <property name="row">15</property>
                 </layout>
               </object>
             </child>

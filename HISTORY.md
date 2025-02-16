@@ -5,6 +5,7 @@
   * Added search function
   * Added visual bell notification
   * Added URL detection in the buffer
+  * Show in the top bar if the terminal has a root/sudo process
 * Version 2.6.0 (2025-01-19)
   * Fixed reload when killen in guake mode
 * Version 2.5.1 (2025-01-16)
