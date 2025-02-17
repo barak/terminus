@@ -110,6 +110,8 @@ namespace Terminus {
         private HTMLColorButton highlight_color_bg;
         private HTMLColorButton focused_fg_color;
         private HTMLColorButton focused_bg_color;
+        private HTMLColorButton focused_root_fg_color;
+        private HTMLColorButton focused_root_bg_color;
         private HTMLColorButton inactive_fg_color;
         private HTMLColorButton inactive_bg_color;
 
@@ -174,6 +176,18 @@ namespace Terminus {
                 this.custom_font.sensitive = this.use_system_font.active;
             });
 
+            var focused_label = main_window.get_object("terminal-title-focused") as Gtk.Label;
+            var focused_root_label = main_window.get_object("terminal-title-root-focused") as Gtk.Label;
+            var inactive_label = main_window.get_object("terminal-title-inactive") as Gtk.Label;
+            var default_label = main_window.get_object("default-color") as Gtk.Label;
+            focused_label.add_css_class("terminaltitlefocused");
+            focused_label.halign = Gtk.Align.FILL;
+            focused_root_label.add_css_class("terminaltitlerootfocused");
+            focused_root_label.halign = Gtk.Align.FILL;
+            inactive_label.add_css_class("terminaltitleinactive");
+            inactive_label.halign = Gtk.Align.FILL;
+            default_label.add_css_class("terminalbase");
+            default_label.halign = Gtk.Align.FILL;
             this.fg_color = new HTMLColorButton(main_window, "fg_color", null);
             this.bg_color = new HTMLColorButton(main_window, "bg_color", null);
             this.bold_color = new HTMLColorButton(main_window, "bold_color", "use_bold_color");
@@ -183,6 +197,8 @@ namespace Terminus {
             this.highlight_color_bg = new HTMLColorButton(main_window, "highlight_bg_color", "use_highlight_color");
             this.focused_fg_color = new HTMLColorButton(main_window, "focused_fg_color", null);
             this.focused_bg_color = new HTMLColorButton(main_window, "focused_bg_color", null);
+            this.focused_root_fg_color = new HTMLColorButton(main_window, "focused_root_fg_color", null);
+            this.focused_root_bg_color = new HTMLColorButton(main_window, "focused_root_bg_color", null);
             this.inactive_fg_color = new HTMLColorButton(main_window, "inactive_fg_color", null);
             this.inactive_bg_color = new HTMLColorButton(main_window, "inactive_bg_color", null);
             this.use_bold_color = main_window.get_object("use_bold_color") as Gtk.CheckButton;

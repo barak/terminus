@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-15 13:08+0100\n"
-"PO-Revision-Date: 2025-02-15 13:08+0100\n"
+"POT-Creation-Date: 2025-02-16 20:18+0100\n"
+"PO-Revision-Date: 2025-02-16 20:18+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: es\n"
@@ -23,11 +23,11 @@ msgstr ""
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/keybinding.vala:71 src/terminal.vala:198
+#: src/keybinding.vala:71 src/terminal.vala:197
 msgid "New window"
 msgstr "Nueva ventana"
 
-#: src/keybinding.vala:72 src/terminal.vala:197
+#: src/keybinding.vala:72 src/terminal.vala:196
 msgid "New tab"
 msgstr "Nueva pestaña"
 
@@ -83,11 +83,11 @@ msgstr "Reiniciar el tamaño de la fuente de letra"
 msgid "Show menu"
 msgstr "Mostrar el menú"
 
-#: src/keybinding.vala:86 src/terminal.vala:189
+#: src/keybinding.vala:86 src/terminal.vala:188
 msgid "Split horizontally"
 msgstr "Dividir horizontalmente"
 
-#: src/keybinding.vala:87 src/terminal.vala:192
+#: src/keybinding.vala:87 src/terminal.vala:191
 msgid "Split vertically"
 msgstr "Dividir verticalmente"
 
@@ -99,7 +99,7 @@ msgstr "Cerrar la tesela activa"
 msgid "Close the active tab"
 msgstr "Cerrar la pestaña activa"
 
-#: src/keybinding.vala:90 src/terminal.vala:185
+#: src/keybinding.vala:90 src/terminal.vala:184
 msgid "Select all"
 msgstr "Seleccionar todo"
 
@@ -225,77 +225,77 @@ msgstr ""
 "  --nobindkey                   no intentar apropiarse de la tecla para "
 "mostrar el modo Quake (útil para gnome shell)\n"
 
-#: src/settings.vala:163
+#: src/settings.vala:165
 #, c-format
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: src/settings.vala:388
+#: src/settings.vala:404
 msgid "Keybind"
 msgstr "Tecla"
 
-#: src/settings.vala:389 data/interface/properties.ui:1010
+#: src/settings.vala:405 data/interface/properties.ui:1048
 msgid "Command"
 msgstr "Comando"
 
-#: src/settings.vala:414
+#: src/settings.vala:430
 msgid "Action"
 msgstr "Acción"
 
-#: src/settings.vala:415
+#: src/settings.vala:431
 msgid "Key"
 msgstr "Tecla"
 
-#: src/terminal.vala:181
+#: src/terminal.vala:180
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/terminal.vala:182
+#: src/terminal.vala:181
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/terminal.vala:204
+#: src/terminal.vala:203
 msgid "Extra"
 msgstr "Extra"
 
-#: src/terminal.vala:206
+#: src/terminal.vala:205
 msgid "Reset terminal"
 msgstr "Reiniciar el terminal"
 
-#: src/terminal.vala:207
+#: src/terminal.vala:206
 msgid "Reset and clear terminal"
 msgstr "Reiniciar y borrar el terminal"
 
-#: src/terminal.vala:211
+#: src/terminal.vala:210
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/terminal.vala:215
+#: src/terminal.vala:214
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/terminal.vala:345
+#: src/terminal.vala:344
 msgid "Use regular expressions"
 msgstr "Usar expresiones regulares"
 
-#: src/terminal.vala:665
+#: src/terminal.vala:640
 msgid "This terminal has a process running inside."
 msgstr "Este terminal contiene procesos corriendo."
 
-#: src/terminal.vala:666
+#: src/terminal.vala:641
 msgid "Closing it will kill the process."
 msgstr "Cerrarla matará el proceso."
 
-#: src/terminal.vala:667
+#: src/terminal.vala:642
 msgid "Close terminal"
 msgstr "Cerrar terminal"
 
-#: src/terminus.vala:67
+#: src/terminus.vala:68
 #, c-format
 msgid "Version %s\n"
 msgstr "Versión %s\n"
 
-#: src/terminus.vala:146
+#: src/terminus.vala:106
 msgid "Custom colors"
 msgstr "Colores personalizados"
 
@@ -351,111 +351,115 @@ msgstr "Autoocultar el puntero"
 msgid "General"
 msgstr "General"
 
-#: data/interface/properties.ui:190 data/interface/properties.ui:429
+#: data/interface/properties.ui:190 data/interface/properties.ui:430
 msgid "Built-in schemes:"
 msgstr "Esquemas incluidos:"
 
-#: data/interface/properties.ui:236 data/interface/properties.ui:722
+#: data/interface/properties.ui:236 data/interface/properties.ui:723
 msgid "Text"
 msgstr "Texto"
 
-#: data/interface/properties.ui:248 data/interface/properties.ui:734
+#: data/interface/properties.ui:248 data/interface/properties.ui:735
 msgid "Background"
 msgstr "Fondo:"
 
-#: data/interface/properties.ui:272
+#: data/interface/properties.ui:273
 msgid "Default color:"
 msgstr "Color por defecto:"
 
-#: data/interface/properties.ui:281
+#: data/interface/properties.ui:282
 msgid "Bold color:"
 msgstr "Color para negrita:"
 
-#: data/interface/properties.ui:294
+#: data/interface/properties.ui:295
 msgid "Cursor color:"
 msgstr "Color del cursor"
 
-#: data/interface/properties.ui:307
+#: data/interface/properties.ui:308
 msgid "Highlight color:"
 msgstr "Color para resaltado"
 
-#: data/interface/properties.ui:378
+#: data/interface/properties.ui:379
 msgid "<b>Text and background colors</b>"
 msgstr "<b>Colores de texto y fondo</b>"
 
-#: data/interface/properties.ui:392
+#: data/interface/properties.ui:393
 msgid "<b>Palette</b>"
 msgstr "<b>Paleta</b>"
 
-#: data/interface/properties.ui:454
+#: data/interface/properties.ui:455
 msgid "Colors palete:"
 msgstr "Paleta de colores:"
 
-#: data/interface/properties.ui:685
+#: data/interface/properties.ui:686
 msgid "<b>Top bar</b>"
 msgstr "<b>Barra superior</b>"
 
-#: data/interface/properties.ui:747
+#: data/interface/properties.ui:749
 msgid "Focused terminal:"
 msgstr "Terminal con el foco:"
 
-#: data/interface/properties.ui:759
+#: data/interface/properties.ui:762
+msgid "Focused root terminal:"
+msgstr "Terminal root con el foco:"
+
+#: data/interface/properties.ui:775
 msgid "Inactive terminal:"
 msgstr "Terminal inactivo:"
 
-#: data/interface/properties.ui:831
+#: data/interface/properties.ui:869
 msgid "Colors"
 msgstr "Colores"
 
-#: data/interface/properties.ui:857
+#: data/interface/properties.ui:895
 msgid "Scrollback lines:"
 msgstr "Lineas de scroll:"
 
-#: data/interface/properties.ui:879
+#: data/interface/properties.ui:917
 msgid "0"
 msgstr "0"
 
-#: data/interface/properties.ui:889
+#: data/interface/properties.ui:927
 msgid "Infinite Scrollback"
 msgstr "Scroll infinito"
 
-#: data/interface/properties.ui:910
+#: data/interface/properties.ui:948
 msgid "Scroll on output"
 msgstr "Scroll si hay salida"
 
-#: data/interface/properties.ui:918
+#: data/interface/properties.ui:956
 msgid "Scroll on keystroke"
 msgstr "Scroll si se pulsa una tecla"
 
-#: data/interface/properties.ui:933
+#: data/interface/properties.ui:971
 msgid "Scrolling"
 msgstr "Desplazamiento"
 
-#: data/interface/properties.ui:963
+#: data/interface/properties.ui:1001
 msgid "Keybindings"
 msgstr "Teclas"
 
-#: data/interface/properties.ui:999
+#: data/interface/properties.ui:1037
 msgid "Keybinding"
 msgstr "Tecla"
 
-#: data/interface/properties.ui:1043
+#: data/interface/properties.ui:1081
 msgid "Add"
 msgstr "Añadir"
 
-#: data/interface/properties.ui:1055
+#: data/interface/properties.ui:1093
 msgid "Delete"
 msgstr "Borrar"
 
-#: data/interface/properties.ui:1076
+#: data/interface/properties.ui:1114
 msgid "Macros"
 msgstr "Macros"
 
-#: data/interface/properties.ui:1096
+#: data/interface/properties.ui:1134
 msgid "Terminus"
 msgstr "Terminus"
 
-#: data/interface/properties.ui:1109
+#: data/interface/properties.ui:1147
 msgid ""
 "A tiled terminal emulator.\n"
 "\n"
@@ -471,7 +475,7 @@ msgstr ""
 "http://www.rastersoft.com\n"
 "rastersoft@gmail.com"
 
-#: data/interface/properties.ui:1127
+#: data/interface/properties.ui:1165
 msgid "About"
 msgstr "Acerca de"
 

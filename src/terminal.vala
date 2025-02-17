@@ -387,10 +387,7 @@ namespace Terminus {
 
                     default:
                         return false;
-
-                        break;
                 }
-                return false;
             });
             this.search_entry.activate.connect(() => {
                 this.vte_terminal.search_find_next();
@@ -468,6 +465,10 @@ namespace Terminus {
             Terminus.settings.changed.connect(this.settings_changed);
 
             this.update_title();
+            GLib.Timeout.add(500, () => {
+                this.update_title_color(); // to check for childs running as root
+                return true;
+            });
 
             // Set all the properties
             settings_changed("infinite-scroll");
@@ -627,39 +628,7 @@ namespace Terminus {
         public bool
         has_child_running()
         {
-            var      procdir = GLib.File.new_for_path("/proc");
-            var      enumerator = procdir.enumerate_children("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
-            FileInfo info = null;
-            while ((info = enumerator.next_file(null)) != null) {
-                if (info.get_file_type() != FileType.DIRECTORY) {
-                    continue;
-                }
-                var statusFile = GLib.File.new_build_filename("/proc", info.get_name(), "status");
-                if (!statusFile.query_exists(null)) {
-                    continue;
-                }
-                var       is = statusFile.read(null);
-                Bytes     data;
-                ByteArray buffer = new ByteArray();
-                while (true) {
-                    data = is.read_bytes(1024, null);
-                    if (data.get_size() == 0) {
-                        break;
-                    }
-                    buffer.append(data.get_data());
-                }
-                buffer.append({ 0 });
-                var lines = ((string) buffer.data).split("\n");
-                foreach (var line in lines) {
-                    if (line.has_prefix("PPid:")) {
-                        var ppid = int.parse(line.substring(5));
-                        if (ppid == this.pid) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return Terminus.processes.has_running_child(this.pid);
         }
 
         private void
@@ -936,7 +905,10 @@ namespace Terminus {
             if (this.last_title_css != "") {
                 this.title.remove_css_class(this.last_title_css);
             }
-            this.last_title_css = "terminaltitle" + ((this.had_focus ^ this.bell) ? "focused" : "inactive");
+            this.last_title_css = "terminaltitle" +
+                                  ((this.had_focus ^
+                                    this.bell) ? (Terminus.processes.has_root_child(this.pid) ? "rootfocused" :
+                                                  "focused") : "inactive");
             this.title.add_css_class(this.last_title_css);
         }
 
