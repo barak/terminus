@@ -242,7 +242,7 @@ namespace Terminus {
             if (this.window_properties == null) {
                 this.window_properties = new Terminus.Properties();
             }
-            this.window_properties.show();
+            this.window_properties.set_visible(true);
             this.window_properties.present();
         }
 
@@ -339,21 +339,21 @@ namespace Terminus {
 
             if (mode == 0) {
                 if (!this.guake_window.visible) {
-                    this.guake_window.show();
+                    this.guake_window.set_visible(true);
                 }
                 return;
             }
 
             if (mode == 1) {
                 if (this.guake_window.visible) {
-                    this.guake_window.hide();
+                    this.guake_window.set_visible(false);
                 }
                 return;
             }
 
             // mode 2
             if (this.guake_window.visible) {
-                this.guake_window.hide();
+                this.guake_window.set_visible(false);
             } else {
                 this.guake_window.present();
             }

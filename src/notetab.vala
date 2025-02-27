@@ -50,7 +50,7 @@ namespace Terminus {
             this.inner_box.append(this.title);
             this.inner_box.append(close_button);
             this.append(this.inner_box);
-            this.show();
+            this.set_visible(true);
             close_button.clicked.connect(() => {
                 this.close_tab();
             });

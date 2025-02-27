@@ -553,7 +553,7 @@ namespace Terminus {
                 }
                 this.split_mode = SplitAt.NONE;
             });
-            this.show();
+            this.set_visible(true);
             this.hide_search();
         }
 
@@ -581,14 +581,14 @@ namespace Terminus {
         private void
         hide_search()
         {
-            this.search_bar.hide();
+            this.search_bar.set_visible(false);
             this.vte_terminal.grab_focus();
         }
 
         private void
         show_search()
         {
-            this.search_bar.show();
+            this.search_bar.set_visible(true);
             this.search_entry.grab_focus_without_selecting();
         }
 

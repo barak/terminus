@@ -57,7 +57,7 @@ namespace Terminus {
         insert_notebook_into(Gtk.Window window)
         {
             window.set_child(this.notebook);
-            this.notebook.show();
+            this.notebook.set_visible(true);
         }
 
         public void
@@ -124,7 +124,7 @@ namespace Terminus {
             container.ended.connect((w) => {
                 this.delete_page(container);
             });
-            container.show();
+            container.set_visible(true);
             var page = this.notebook.append_page(container, notetab);
             this.notebook.set_current_page(page);
             this.notebook.set_tab_reorderable(container, true);
@@ -191,7 +191,7 @@ namespace Terminus {
         public void
         show()
         {
-            this.notebook.show();
+            this.notebook.set_visible(true);
         }
 
         public Terminus.Terminal ?

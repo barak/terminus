@@ -48,7 +48,7 @@ namespace Terminus {
             this.set_titlebar(this.headerBar);
             this.headerBar.show_title_buttons = true;
             this.headerBar.set_title_widget(new Gtk.Label("Terminus"));
-            this.headerBar.show();
+            this.headerBar.set_visible(true);
 
             this.is_guake = guake_mode;
 
@@ -85,7 +85,7 @@ namespace Terminus {
             });
 
             if (guake_mode) {
-                this.headerBar.hide();
+                this.headerBar.set_visible(false);
                 if (window_title != null) {
                     this.title = window_title;
                 }
@@ -100,7 +100,9 @@ namespace Terminus {
                     var geometry = monitor.geometry;
                     var scale = monitor.scale;
                     var width = (int) (geometry.width / scale);
-                    this.set_size_request(width, Terminus.settings.get_int("guake-height"));
+                    var height = (int) (geometry.height / scale);
+                    var desired_height = Terminus.settings.get_int("guake-height");
+                    this.set_size_request(width, desired_height);
                 });
                 this.notify.connect((sender, property) => {
                     if (property.name == "default-height") {
@@ -121,10 +123,10 @@ namespace Terminus {
 
             var new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic");
             this.headerBar.pack_start(new_window_button);
-            new_window_button.show();
+            new_window_button.set_visible(true);
             var new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic");
             this.headerBar.pack_start(new_tab_button);
-            new_tab_button.show();
+            new_tab_button.set_visible(true);
             new_tab_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_tab("", null);
             });

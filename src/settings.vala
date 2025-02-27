@@ -150,7 +150,7 @@ namespace Terminus {
             disable_palette_change = false;
 
             this.close_request.connect((w) => {
-                this.hide();
+                this.set_visible(false);
                 return true;
             });
 

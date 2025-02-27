@@ -248,7 +248,7 @@ namespace Terminus {
             this.paned.start_child = this.container1;
             this.paned.end_child = this.container2;
             this.append(this.paned);
-            this.paned.show();
+            this.paned.set_visible(true);
             this.terminal = null;
         }
 
@@ -373,7 +373,7 @@ namespace Terminus {
                 this.container1.ended.connect(this.ended_child);
                 this.container2.ended.connect(this.ended_child);
                 this.append(this.paned);
-                this.paned.show();
+                this.paned.set_visible(true);
                 this.container1.do_grab_focus();
             }
         }
