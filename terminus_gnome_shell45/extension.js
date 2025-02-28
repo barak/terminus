@@ -127,6 +127,9 @@ export default class TerminusClass {
 				return false;
 			}
 			let window = windowActor.get_meta_window();
+			if (window.get_title() !== 'TerminusGuake') {
+				return;
+			}
 			let belongs;
 			try {
 				belongs = this._currentProcess.query_window_belongs_to(window);

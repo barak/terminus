@@ -40,7 +40,6 @@ namespace Terminus {
                       string ?              working_directory,
                       string[]              commands,
                       Terminus.Base ?       terminal_base = null,
-                      string ?              window_title = null,
                       Terminus.Terminal ?   inner_terminal = null)
         {
             this.ask_close = true;
@@ -86,9 +85,7 @@ namespace Terminus {
 
             if (guake_mode) {
                 this.headerBar.set_visible(false);
-                if (window_title != null) {
-                    this.title = window_title;
-                }
+                this.title = "TerminusGuake";
 
                 if (Terminus.settings.get_int("guake-height") <= 300) {
                     Terminus.settings.set_int("guake-height", 300);

@@ -31,7 +31,6 @@ namespace Terminus {
         private Gee.List<Terminus.Window> window_list;
         private Terminus.Base ?guake_terminal = null;
         private Terminus.Window ?guake_window = null;
-        private string ?guake_title = null;
         private bool executed_hold = false;
         private GLib.SimpleAction ?copy_action = null;
         private CssManager css_manager = null;
@@ -71,16 +70,6 @@ namespace Terminus {
             if (params.help) {
                 Terminus.show_usage();
                 return true;
-            }
-            if (params.read_uuid) {
-                try {
-                    var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
-                    this.guake_title = stdinInput.read_line();
-                    stdinInput.close();
-                } catch(GLib.IOError e) {
-                    print("Error while reading STDIN. Exiting.\n");
-                    return true;
-                }
             }
             if (params.check_guake) {
                 return true;
@@ -283,11 +272,10 @@ namespace Terminus {
                                              true,
                                              working_directory,
                                              commands,
-                                             this.guake_terminal,
-                                             this.guake_title);
+                                             this.guake_terminal);
                 this.guake_window = window;
             } else {
-                window = new Terminus.Window(this, false, working_directory, commands, null, null, terminal);
+                window = new Terminus.Window(this, false, working_directory, commands, null, terminal);
             }
             window.ended.connect((w) => {
                 window_list.remove(w);
