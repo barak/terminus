@@ -86,11 +86,12 @@ namespace Terminus {
         {
             var notification_window = new Gtk.AlertDialog(title);
             notification_window.detail = subtitle;
+            notification_window.modal = true;
             notification_window.buttons = {
-                _("Cancel"), button_text
+                _("Cancel"), button_text, null
             };
             notification_window.cancel_button = 0;
-            notification_window.default_button = 1;
+            notification_window.default_button = 0;
             var result = yield notification_window.
                          choose(this.top_window,
                                 null);
@@ -99,6 +100,25 @@ namespace Terminus {
                 obj.kill_all_children();
                 obj.close();
             }
+        }
+
+        public async bool
+        ask_run_sudo_paste(string command)
+        {
+            var alert = new Gtk.AlertDialog("");
+            alert.set_message(_("You are pasting a command that will run as root"));
+            alert.set_detail(_("Ensure that you know what this command does:\n\n%s").printf(command));
+            alert.set_modal(true);
+            alert.buttons = {
+                _("Cancel"), _("Paste"), null
+            };
+            alert.set_cancel_button(0);
+            alert.set_default_button(0);
+            var result = yield alert.
+                         choose(this.top_window,
+                                null);
+
+            return result == 1;
         }
 
         public bool

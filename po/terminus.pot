@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 20:18+0100\n"
+"POT-Creation-Date: 2025-02-28 22:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/base.vala:90
+#: src/base.vala:91 src/base.vala:113
 msgid "Cancel"
 msgstr ""
 
-#: src/keybinding.vala:71 src/terminal.vala:197
+#: src/base.vala:109
+msgid "You are pasting a command that will run as root"
+msgstr ""
+
+#: src/base.vala:110
+#, c-format
+msgid ""
+"Ensure that you know what this command does:\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/base.vala:113 src/terminal.vala:191
+msgid "Paste"
+msgstr ""
+
+#: src/keybinding.vala:71 src/terminal.vala:207
 msgid "New window"
 msgstr ""
 
-#: src/keybinding.vala:72 src/terminal.vala:196
+#: src/keybinding.vala:72 src/terminal.vala:206
 msgid "New tab"
 msgstr ""
 
@@ -81,11 +97,11 @@ msgstr ""
 msgid "Show menu"
 msgstr ""
 
-#: src/keybinding.vala:86 src/terminal.vala:188
+#: src/keybinding.vala:86 src/terminal.vala:198
 msgid "Split horizontally"
 msgstr ""
 
-#: src/keybinding.vala:87 src/terminal.vala:191
+#: src/keybinding.vala:87 src/terminal.vala:201
 msgid "Split vertically"
 msgstr ""
 
@@ -97,7 +113,7 @@ msgstr ""
 msgid "Close the active tab"
 msgstr ""
 
-#: src/keybinding.vala:90 src/terminal.vala:184
+#: src/keybinding.vala:90 src/terminal.vala:194
 msgid "Select all"
 msgstr ""
 
@@ -109,7 +125,7 @@ msgstr ""
 msgid "This tab has running processes inside."
 msgstr ""
 
-#: src/notetab.vala:119 src/window.vala:58
+#: src/notetab.vala:119 src/window.vala:57
 msgid "Closing it will kill them."
 msgstr ""
 
@@ -158,28 +174,28 @@ msgstr ""
 msgid "Error: Palette file %s has text_bg color but not text_fg color\n"
 msgstr ""
 
-#: src/params.vala:119
+#: src/params.vala:114
 #, c-format
 msgid ""
 "Parameter '%s' unknown.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:128
+#: src/params.vala:123
 #, c-format
 msgid ""
 "The '%s' parameter requires a path after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:136
+#: src/params.vala:131
 #, c-format
 msgid ""
 "The '%s' parameter requires a command after it.\n"
 "\n"
 msgstr ""
 
-#: src/params.vala:145
+#: src/params.vala:140
 msgid ""
 "Usage:\n"
 "terminus [OPTION...] [-- COMMAND ...]\n"
@@ -220,64 +236,60 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: src/terminal.vala:180
+#: src/terminal.vala:190
 msgid "Copy"
 msgstr ""
 
-#: src/terminal.vala:181
-msgid "Paste"
-msgstr ""
-
-#: src/terminal.vala:203
+#: src/terminal.vala:213
 msgid "Extra"
 msgstr ""
 
-#: src/terminal.vala:205
+#: src/terminal.vala:215
 msgid "Reset terminal"
 msgstr ""
 
-#: src/terminal.vala:206
+#: src/terminal.vala:216
 msgid "Reset and clear terminal"
 msgstr ""
 
-#: src/terminal.vala:210
+#: src/terminal.vala:220
 msgid "Preferences"
 msgstr ""
 
-#: src/terminal.vala:214
+#: src/terminal.vala:224
 msgid "Close"
 msgstr ""
 
-#: src/terminal.vala:344
+#: src/terminal.vala:354
 msgid "Use regular expressions"
 msgstr ""
 
-#: src/terminal.vala:640
+#: src/terminal.vala:650
 msgid "This terminal has a process running inside."
 msgstr ""
 
-#: src/terminal.vala:641
+#: src/terminal.vala:651
 msgid "Closing it will kill the process."
 msgstr ""
 
-#: src/terminal.vala:642
+#: src/terminal.vala:652
 msgid "Close terminal"
 msgstr ""
 
-#: src/terminus.vala:68
+#: src/terminus.vala:67
 #, c-format
 msgid "Version %s\n"
 msgstr ""
 
-#: src/terminus.vala:106
+#: src/terminus.vala:95
 msgid "Custom colors"
 msgstr ""
 
-#: src/window.vala:57
+#: src/window.vala:56
 msgid "This window has running processes inside."
 msgstr ""
 
-#: src/window.vala:59
+#: src/window.vala:58
 msgid "Close window"
 msgstr ""
 

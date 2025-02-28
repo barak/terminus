@@ -143,6 +143,12 @@ namespace Terminus {
             var text = yield clipboard.
                        read_text_async(null);
 
+            if (text.contains("sudo") && text.contains("\n")) {
+                if (!yield this.main_container.ask_run_sudo_paste(text)) {
+                    return;
+                }
+            }
+
             this.vte_terminal.paste_text(text);
         }
 
