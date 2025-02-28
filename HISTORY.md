@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 3.1.0 (2025-02-28)
+  * Fix ulimit value problems
+  * Set a maximum size for Guake window
 * Version 3.0.0 (2025-02-17)
   * Migration to Gtk4
   * Added search function
