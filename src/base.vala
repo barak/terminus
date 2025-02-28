@@ -30,14 +30,14 @@ namespace Terminus {
         public signal void
         new_window();
 
-        public weak Gtk.Window ?top_window;
+        public weak Terminus.Window ?top_window;
         public weak TerminusRoot terminus_root;
         private Gtk.Notebook notebook;
 
         public Base(TerminusRoot       root,
                     string             working_directory,
                     string[] ?         commands,
-                    Gtk.Window ?       top_window,
+                    Terminus.Window ?  top_window,
                     Terminus.Terminal ?terminal = null)
         {
             this.notebook = new Gtk.Notebook();

@@ -18,7 +18,7 @@
 using Gtk;
 
 namespace Terminus {
-    class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
+    public class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
         public signal void
         ended(Terminus.Window window);
         public signal void
@@ -100,7 +100,6 @@ namespace Terminus {
                     var geometry = monitor.geometry;
                     var scale = monitor.scale;
                     var width = (int) (geometry.width / scale);
-                    var height = (int) (geometry.height / scale);
                     var desired_height = Terminus.settings.get_int("guake-height");
                     this.set_size_request(width, desired_height);
                 });
