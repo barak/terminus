@@ -43,7 +43,7 @@ export default class TerminusClass {
 		argv.push("--no-window");
 		argv.push("--nobindkey");
 
-		this._currentProcess = new LaunchSubprocess(0, "TERMINUS", "--uuid");
+		this._currentProcess = new LaunchSubprocess(0, "TERMINUS");
 		this._currentProcess.spawnv(argv);
 		this._currentProcess.subprocess.wait_async(null, () => {
 			this._reloadTime = 1000;
@@ -138,9 +138,13 @@ export default class TerminusClass {
 				window.make_above();
 				window.stick();
 				this._set_window_position(window);
+				this._set_window_size(window);
 				window.focus(0);
 				window.connect('position-changed', () => {
 					this._set_window_position(window);
+				});
+				window.connect('size-changed', () => {
+					this._set_window_size(window);
 				});
 			}
 		});
@@ -149,6 +153,15 @@ export default class TerminusClass {
 	_set_window_position(window) {
 		let area = window.get_work_area_current_monitor();
 		window.move_frame(false, area.x, area.y);
+	}
+
+	_set_window_size(window) {
+		let area = window.get_work_area_current_monitor();
+		let rectangle = window.get_frame_rect();
+		let margin = 48;
+		if (rectangle.height >= (area.height - margin)) {
+			window.move_resize_frame(true, area.x, area.y, area.width, area.height - margin);
+		}
 	}
 
 	disable() {
@@ -173,65 +186,60 @@ export default class TerminusClass {
 	}
 }
 
+
 /**
  * This class encapsulates the code to launch a subprocess that can detect whether a window belongs to it
  * It only accepts to do it under Wayland, because under X11 there is no need to do these tricks
  *
  * It is compatible with https://gitlab.gnome.org/GNOME/mutter/merge_requests/754 to simplify the code
  *
- * @param {int}    flags         Flags for the SubprocessLauncher class
- * @param {string} process_id    An string id for the debug output
- * @param {string} cmd_parameter A command line parameter to pass when running. It will be passed only under Wayland,
- *                               so, if this parameter isn't passed, the app can assume that it is running under X11.
+ * @param {int} flags Flags for the SubprocessLauncher class
+ * @param {string} process_id An string id for the debug output
  */
-var LaunchSubprocess = class {
-
-	constructor(flags, process_id, cmd_parameter) {
+class LaunchSubprocess {
+	constructor(flags, process_id) {
 		this._process_id = process_id;
-		this._cmd_parameter = cmd_parameter;
-		this._UUID = null;
-		this._flags = flags | Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_MERGE;
-		this._flags |= Gio.SubprocessFlags.STDIN_PIPE;
-		this._launcher = new Gio.SubprocessLauncher({ flags: this._flags });
+		this.cancellable = new Gio.Cancellable();
+		this._launcher = new Gio.SubprocessLauncher({ flags: flags | Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_MERGE });
+		if (Meta.is_wayland_compositor()) {
+			try {
+				this._waylandClient = Meta.WaylandClient.new(this._launcher);
+			} catch (e) {
+				this._waylandClient = Meta.WaylandClient.new(global.context, this._launcher);
+			}
+		}
 		this.subprocess = null;
 		this.process_running = false;
 	}
 
 	spawnv(argv) {
-		let UUID_string = null;
-		/*
-		 * Generate a random UUID to allow the extension to identify the window. It must be random
-		 * to avoid other programs to cheat and pose themselves as the true process. This also means that
-		 * launching the program from the command line won't give "superpowers" to it,
-		 * but will work like any other program. Of course, under X11 it doesn't matter, but it does
-		 * under Wayland.
-		 */
-		this._UUID = GLib.uuid_string_random();
-		UUID_string = this._UUID + '\n';
-		argv.push(this._cmd_parameter);
-		this.subprocess = this._launcher.spawnv(argv);
+		try {
+			if (Meta.is_wayland_compositor()) {
+				this.subprocess = this._waylandClient.spawnv(global.display, argv);
+			} else {
+				this.subprocess = this._launcher.spawnv(argv);
+			}
+		} catch (e) {
+			this.subprocess = null;
+			console.log(`Error while trying to launch TERMINUS process: ${e.message}\n${e.stack}`);
+		}
+		// This is for GLib 2.68 or greater
+		if (this._launcher.close) {
+			this._launcher.close();
+		}
+		this._launcher = null;
 		if (this.subprocess) {
 			/*
-			 * Send the UUID to the application using STDIN as a "secure channel". Sending it as a parameter
-			 * would be insecure, because another program could read it and create a window before our process,
-			 * and cheat the extension. This is done only in Wayland, because under X11 there is no need for it.
-			 *
-			 * It also reads STDOUT and STDERR and sends it to the journal using global.log(). This allows to
-			 * have any error from the desktop app in the same journal than other extensions. Every line from
-			 * the desktop program is prepended with the "process_id" parameter sent in the constructor.
-			 */
-			this.subprocess.communicate_utf8_async(UUID_string, null, (object, res) => {
-				try {
-					let [d, stdout, stderr] = object.communicate_utf8_finish(res);
-					if (stdout.length != 0) {
-						console.log(`${this._process_id}: ${stdout}`);
-					}
-				} catch (e) {
-					console.log(`${this._process_id}_Error: ${e}`);
-				}
-			});
-			this.subprocess.wait_async(null, () => {
+			     * It reads STDOUT and STDERR and sends it to the journal using console.log(). This allows to
+			     * have any error from the desktop app in the same journal than other extensions. Every line from
+			     * the desktop program is prepended with the "process_id" parameter sent in the constructor.
+			     */
+			this._dataInputStream = Gio.DataInputStream.new(this.subprocess.get_stdout_pipe());
+			this.read_output();
+			this.subprocess.wait_async(this.cancellable, () => {
 				this.process_running = false;
+				this._dataInputStream = null;
+				this.cancellable = null;
 			});
 			this.process_running = true;
 		}
@@ -242,17 +250,47 @@ var LaunchSubprocess = class {
 		this._launcher.set_cwd(cwd);
 	}
 
+	read_output() {
+		if (!this._dataInputStream) {
+			return;
+		}
+		this._dataInputStream.read_line_async(GLib.PRIORITY_DEFAULT, this.cancellable, (object, res) => {
+			try {
+				const [output, length] = object.read_line_finish_utf8(res);
+				if (length) {
+					print(`${this._process_id}: ${output}`);
+				}
+			} catch (e) {
+				if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+					return;
+				}
+				console.error(e, `${this._process_id}_Error`);
+			}
+
+			this.read_output();
+		});
+	}
+
 	/**
 	 * Queries whether the passed window belongs to the launched subprocess or not.
+	 *
 	 * @param {MetaWindow} window The window to check.
 	 */
 	query_window_belongs_to(window) {
-		if (this._UUID == null) {
-			throw new Error("No process running");
-		}
 		if (!this.process_running) {
-			throw new Error("No process running");
+			return false;
 		}
-		return (window.get_title() == this._UUID);
+
+		if (Meta.is_wayland_compositor()) {
+			return this._waylandClient.owns_window(window);
+		}
+
+		try {
+			const pid = parseInt(this.subprocess.get_identifier());
+			const appid = window.get_gtk_application_id();
+			return ((pid === window.get_pid()) && (appid == 'com.rastersoft.terminus'));
+		} catch(e) {
+			return false;
+		}
 	}
-}
+};
