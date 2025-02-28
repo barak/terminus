@@ -136,10 +136,14 @@ namespace Terminus {
             this.vte_terminal.copy_clipboard_format(Vte.Format.TEXT);
         }
 
-        public void
+        public async void
         do_paste()
         {
-            this.vte_terminal.paste_primary();
+            var clipboard = this.vte_terminal.get_clipboard();
+            var text = yield clipboard.
+                       read_text_async(null);
+
+            this.vte_terminal.paste_text(text);
         }
 
         public void
