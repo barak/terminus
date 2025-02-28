@@ -1,9 +1,17 @@
+terminus (3.2.0-Debian1) sid; urgency=low
+
+  * Fix paste
+  * Fix not being able to move windows
+  * Add a check when pasting a "sudo" command
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 28 Feb 2025 23:55:00 +0200
+
 terminus (3.1.0-Debian1) sid; urgency=low
 
   * Fix ulimit value problems
   * Set a maximum size for Guake window
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 28 Feb 2025 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 28 Feb 2025 23:50:00 +0200
 
 terminus (3.0.0-Debian1) sid; urgency=low
 

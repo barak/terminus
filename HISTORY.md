@@ -1,5 +1,9 @@
 # History of versions #
 
+* Version 3.2.0 (2025-02-28)
+  * Fix paste
+  * Fix not being able to move windows
+  * Add a check when pasting a "sudo" command
 * Version 3.1.0 (2025-02-28)
   * Fix ulimit value problems
   * Set a maximum size for Guake window

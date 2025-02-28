@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 3.1.0
+project_version: 3.2.0
 vala_version: 0.30
 
 custom: terminus_gnome_shell45/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
@@ -10,7 +10,7 @@ custom: terminus_gnome_shell45/metadata.json share/gnome-shell/extensions/showTe
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
 vala_binary: src/terminus
-*version: 3.1.0
+*version: 3.2.0
 use_gresource: extras_gresource_xml
 *vala_package: posix
 vala_check_package: gtk4
