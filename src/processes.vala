@@ -30,6 +30,7 @@ namespace Terminus {
         private int _ppid;
         private int _uid;
         private int _euid;
+        private string _command_name;
         private Gee.LinkedList<weak Process> _childs;
 
         public int pid {
@@ -41,6 +42,12 @@ namespace Terminus {
         public int ppid {
             get {
                 return this._ppid;
+            }
+        }
+
+        public string command_name {
+            get {
+                return this._command_name;
             }
         }
 
@@ -62,6 +69,20 @@ namespace Terminus {
         public bool has_child {
             get {
                 return (this._childs.size != 0);
+            }
+        }
+
+        public string ?child_name {
+            get {
+                if (this._childs.size == 0) {
+                    return null;
+                }
+                foreach (var child in this._childs) {
+                    if (child.command_name == "sudo") {
+                        return child.child_name ?? "sudo";
+                    }
+                }
+                return this._childs[0].command_name;
             }
         }
 
@@ -98,6 +119,10 @@ namespace Terminus {
                         var uid_data = line.split("\t");
                         this._uid = int.parse(uid_data[1]);
                         this._euid = int.parse(uid_data[2]);
+                        continue;
+                    }
+                    if (line.has_prefix("Name:")) {
+                        this._command_name = line.substring(5).strip();
                         continue;
                     }
                 }
@@ -153,6 +178,16 @@ namespace Terminus {
                     this.process_map.get(ppid).add_child(process.value);
                 }
             }
+        }
+
+        public string ?
+        get_child_name(int pid)
+        {
+            if (!this.process_map.has_key(pid)) {
+                return null;
+            }
+            var process = this.process_map.get(pid);
+            return process.child_name;
         }
 
         public bool

@@ -476,7 +476,7 @@ namespace Terminus {
 
             this.update_title();
             GLib.Timeout.add(500, () => {
-                this.update_title_color(); // to check for childs running as root
+                this.update_title(); // to check for childs running as root
                 return true;
             });
 
@@ -931,6 +931,9 @@ namespace Terminus {
             }
             if ((s_title == null) || (s_title == "")) {
                 s_title = this.vte_terminal.get_current_directory_uri();
+            }
+            if ((s_title == null) || (s_title == "")) {
+                s_title = Terminus.processes.get_child_name(this.pid);
             }
             if ((s_title == null) || (s_title == "")) {
                 s_title = "/bin/bash";
