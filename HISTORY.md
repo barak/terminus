@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.3.0 (2025-04-21)
+  * Show command name in top bar
 * Version 3.2.0 (2025-02-28)
   * Fix paste
   * Fix not being able to move windows
