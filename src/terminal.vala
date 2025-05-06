@@ -48,6 +48,7 @@ namespace Terminus {
         private Gtk.Box search_bar;
         private Gtk.Entry search_entry;
         private Gtk.CheckButton search_is_regex;
+        private uint refresh_title_timeout_id = 0;
         private string[] regex_special_chars = {
             "\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "[", "]"
         };
@@ -448,6 +449,7 @@ namespace Terminus {
                 });
             });
             this.vte_terminal.child_exited.connect(() => {
+                GLib.Source.remove(this.refresh_title_timeout_id);
                 this.top_container.terminal_ended(this);
                 this.ended(this);
             });
@@ -475,7 +477,7 @@ namespace Terminus {
             Terminus.settings.changed.connect(this.settings_changed);
 
             this.update_title();
-            GLib.Timeout.add(500, () => {
+            this.refresh_title_timeout_id = GLib.Timeout.add(500, () => {
                 this.update_title(); // to check for childs running as root
                 return true;
             });
@@ -938,7 +940,9 @@ namespace Terminus {
             if ((s_title == null) || (s_title == "")) {
                 s_title = "/bin/bash";
             }
-            this.top_container.set_tab_title(s_title);
+            if (this.had_focus) {
+                this.top_container.set_tab_title(s_title);
+            }
 
             this.title.use_markup = true;
             this.title.label = "<span size=\"small\">%s %ldx%ld</span>".printf(s_title,

@@ -45,6 +45,7 @@ namespace Terminus {
         private weak Terminus.Base main_container;
         private bool splited_horizontal;
         private string working_directory;
+        private uint timeout_focus = 0;
 
         private weak Terminus.Terminal ?last_focus = null;
         private bool setting_focus = false;
@@ -91,8 +92,11 @@ namespace Terminus {
         {
             if (this.last_focus != null) {
                 this.setting_focus = true;
-                GLib.Timeout.add_once(350, () => {
-                    this.last_focus.do_grab_focus();
+                this.timeout_focus = GLib.Timeout.add_once(350, () => {
+                    this.timeout_focus = 0;
+                    if (this.last_focus != null) {
+                        this.last_focus.do_grab_focus();
+                    }
                     this.setting_focus = false;
                 });
             }
@@ -106,11 +110,21 @@ namespace Terminus {
             }
         }
 
+        private void
+        remove_timeout()
+        {
+            if (this.timeout_focus != 0) {
+                GLib.Source.remove(this.timeout_focus);
+                this.timeout_focus = 0;
+            }
+        }
+
         public void
         terminal_ended(Terminus.Terminal terminal)
         {
             if (this.last_focus == terminal) {
                 this.last_focus = null;
+                this.remove_timeout();
             }
         }
 
@@ -130,6 +144,7 @@ namespace Terminus {
             this.remove(this.terminal);
             this.terminal.split_terminal.disconnect(this.split_terminal_cb);
             this.terminal.ended.disconnect(this.ended_cb);
+            this.remove_timeout();
             return retval;
         }
 
@@ -139,6 +154,7 @@ namespace Terminus {
                         string   button_text,
                         Killable obj)
         {
+            this.remove_timeout();
             this.main_container.ask_kill_childs.begin(title, subtitle, button_text, obj);
         }
 
@@ -155,6 +171,7 @@ namespace Terminus {
         public void
         ask_close_tab()
         {
+            this.remove_timeout();
             this.close_tab(this);
         }
 
@@ -169,6 +186,7 @@ namespace Terminus {
         public void
         set_terminal_child()
         {
+            this.remove_timeout();
             this.append(this.terminal);
             this.terminal.ended.connect(this.ended_cb);
 
@@ -198,6 +216,7 @@ namespace Terminus {
         public void
         ended_cb()
         {
+            this.remove_timeout();
             this.ended(this);
         }
 
@@ -206,6 +225,7 @@ namespace Terminus {
                           Terminal ?new_terminal,
                           string ?  path)
         {
+            this.remove_timeout();
             if ((where == SplitAt.TOP) || (where == SplitAt.BOTTOM)) {
                 this.splited_horizontal = true;
             } else {
@@ -257,6 +277,7 @@ namespace Terminus {
                             Terminus.Container ?sender,
                             bool                searching_up)
         {
+            this.remove_timeout();
             if (sender == null) {
                 sender = this.container1;
             }
@@ -342,6 +363,7 @@ namespace Terminus {
         {
             Terminus.Container old_container;
 
+            this.remove_timeout();
             if (child == this.container1) {
                 old_container = this.container2;
             } else {
