@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 3.4.0 (2025-05-06)
+  * Fix crash
+  * Fix tab title quick changes
 * Version 3.3.0 (2025-04-21)
   * Show command name in top bar
 * Version 3.2.0 (2025-02-28)

@@ -1,3 +1,10 @@
+terminus (3.4.0-Debian1) sid; urgency=low
+
+  * Fix crash
+  * Fix tab title quick changes
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 06 May 2025 23:55:00 +0200
+
 terminus (3.3.0-Debian1) sid; urgency=low
 
   * Show command name in top bar
