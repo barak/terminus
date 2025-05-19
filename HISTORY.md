@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.5.0 (2025-05-19)
+  * Add support for Gnome 48
 * Version 3.4.0 (2025-05-06)
   * Fix crash
   * Fix tab title quick changes
