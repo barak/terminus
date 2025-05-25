@@ -394,10 +394,18 @@ namespace Terminus {
                 this.container2 = old_container.container2;
                 this.container1.ended.connect(this.ended_child);
                 this.container2.ended.connect(this.ended_child);
+                this.container1.update_parent(this);
+                this.container2.update_parent(this);
                 this.append(this.paned);
                 this.paned.set_visible(true);
                 this.container1.do_grab_focus();
             }
+        }
+
+        public void
+        update_parent(Terminus.Container parent)
+        {
+            this.upper_container = parent;
         }
 
         public Terminus.Terminal ?

@@ -80,6 +80,7 @@ namespace Terminus {
         {
             this.container.extract_current_terminal();
             this.container.ended(this.container);
+            this.container = null;
         }
 
         public bool
