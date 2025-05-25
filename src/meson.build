@@ -5,7 +5,7 @@ cfg_terminus.set('GETTEXT_PACKAGE', 'terminus')
 cfg_terminus.set('RELEASE_NAME', 'terminus')
 cfg_terminus.set('PREFIX', get_option('prefix'))
 cfg_terminus.set('VERSION', '3.6.0')
-cfg_terminus.set('TESTSRCDIR', meson.source_root())
+cfg_terminus.set('TESTSRCDIR', meson.project_source_root())
 
 cfgfile_2 = configure_file(
 	input: 'Config.vala.base',
@@ -41,7 +41,7 @@ terminus_sources += ['terminus.vala']
 terminus_sources += ['window.vala']
 terminus_sources += [extras_gresource_xml_file_c]
 terminus_vala_args = ['--pkg','posix']
-terminus_vala_args += ['--gresources='+join_paths(meson.source_root(),'data/extras.gresource.xml')]
+terminus_vala_args += ['--gresources='+join_paths(meson.project_source_root(),'data/extras.gresource.xml')]
 terminus_link_args = ['-rdynamic']
 terminus_hfolders = ['.']
 
