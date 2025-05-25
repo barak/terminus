@@ -1,3 +1,9 @@
+terminus (3.6.0-Debian1) sid; urgency=low
+
+  * Fix crashes after closing/moving terminals
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 25 May 2025 23:55:00 +0200
+
 terminus (3.5.0-Debian1) sid; urgency=low
 
   * Add support for Gnome 48
