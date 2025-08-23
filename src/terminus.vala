@@ -20,20 +20,20 @@ using Gtk;
 using Gee;
 
 namespace Terminus {
-    TerminusRoot     main_root;
-    DnDManager       dnd_manager;
-    KeyBindings      key_bindings;
-    Macros           macros;
-    GLib.Settings    settings = null;
-    GLib.Settings    keybind_settings = null;
-    Terminus.Bindkey bindkey;
+    TerminusRoot  main_root;
+    KeyBindings   key_bindings;
+    Macros        macros;
+    Processes     processes;
+    GLib.Settings settings = null;
+    GLib.Settings keybind_settings = null;
 
     public class TerminusRoot : Gtk.Application {
         private Gee.List<Terminus.Window> window_list;
         private Terminus.Base ?guake_terminal = null;
         private Terminus.Window ?guake_window = null;
-        private string ?guake_title = null;
         private bool executed_hold = false;
+        private GLib.SimpleAction ?copy_action = null;
+        private CssManager css_manager = null;
 
         private Terminus.Parameters ?parameters = null;
 
@@ -71,21 +71,7 @@ namespace Terminus {
                 Terminus.show_usage();
                 return true;
             }
-            if (params.read_uuid) {
-                try {
-                    var stdinInput = new GLib.DataInputStream(new GLib.UnixInputStream(0, false));
-                    this.guake_title = stdinInput.read_line();
-                    stdinInput.close();
-                } catch(GLib.IOError e) {
-                    print("Error while reading STDIN. Exiting.\n");
-                    return true;
-                }
-            }
-            if (params.check_guake && (
-                    (GLib.Environment.get_variable("XDG_CURRENT_DESKTOP").index_of("GNOME") != -1) || // under Gnome Shell and family always rely on the extension
-                    (Terminus.settings.get_boolean("enable-guake-mode") == false)) ||                 // if Guake mode is disabled, don't launch it
-                (PrivateVapi.check_wayland() != 0)                                                                // don't launch it if we are in Wayland
-                ) {
+            if (params.check_guake) {
                 return true;
             }
             return false;
@@ -96,38 +82,106 @@ namespace Terminus {
         {
             Terminus.key_bindings = new Terminus.KeyBindings();
             Terminus.macros = new Terminus.Macros();
+            Terminus.processes = new Terminus.Processes();
             this.read_color_schemes(GLib.Path.build_filename(Constants.DATADIR, "terminus"));
             this.read_color_schemes(GLib.Path.build_filename(Environment.get_home_dir(),
                                                              ".local",
                                                              "share",
                                                              "terminus"));
 
+            this.css_manager = new Terminus.CssManager();
             var palette = new Terminus.Terminuspalette();
             palette.custom = true;
             palette.name = _("Custom colors");
             this.palettes.add(palette);
             this.palettes.sort(this.ComparePalettes);
 
-            var show_guake = new GLib.SimpleAction("show_guake", null);
+            var show_guake = new GLib.SimpleAction("show-guake", null);
             show_guake.activate.connect(() => {
                 this.show_hide_global(0);
             });
             this.add_action(show_guake);
-            var hide_guake = new GLib.SimpleAction("hide_guake", null);
+            var hide_guake = new GLib.SimpleAction("hide-guake", null);
             hide_guake.activate.connect(() => {
                 this.show_hide_global(1);
             });
             this.add_action(hide_guake);
-            var swap_guake = new GLib.SimpleAction("swap_guake", null);
+            var swap_guake = new GLib.SimpleAction("swap-guake", null);
             swap_guake.activate.connect(() => {
                 this.show_hide_global(2);
             });
             this.add_action(swap_guake);
-            var disable_keybind = new GLib.SimpleAction("disable_keybind", null);
-            disable_keybind.activate.connect(() => {
-                bindkey.unset_bindkey();
-            });
+            var disable_keybind = new GLib.SimpleAction("disable-keybind", null);
             this.add_action(disable_keybind);
+
+            this.copy_action = this.add_new_action("copy", (terminal) => {
+                terminal.do_copy();
+            });
+
+            this.add_new_action("paste", (terminal) => {
+                terminal.do_paste();
+            });
+
+            this.add_new_action("select-all", (terminal) => {
+                terminal.do_select_all();
+            });
+
+            this.add_new_action("hsplit", (terminal) => {
+                terminal.do_split_horizontally();
+            });
+
+            this.add_new_action("vsplit", (terminal) => {
+                terminal.do_split_vertically();
+            });
+
+            this.add_new_action("new-tab", (terminal) => {
+                terminal.do_new_tab();
+            });
+
+            this.add_new_action("new-window", (terminal) => {
+                terminal.do_new_window();
+            });
+
+            this.add_new_action("preferences", (terminal) => {
+                this.show_properties();
+            });
+
+            this.add_new_action("close", (terminal) => {
+                terminal.do_close();
+            });
+
+            this.add_new_action("reset-terminal", (terminal) => {
+                terminal.do_reset();
+            });
+
+            this.add_new_action("reset-clear-terminal", (terminal) => {
+                terminal.do_reset_clear();
+            });
+        }
+
+        public void
+        set_copy_enabled(bool enabled)
+        {
+            this.copy_action.set_enabled(enabled);
+        }
+
+        delegate void
+        action_func(Terminus.Terminal terminal);
+
+        private GLib.SimpleAction
+        add_new_action(string      name,
+                       action_func f)
+        {
+            var action = new GLib.SimpleAction(name, new GLib.VariantType("i"));
+            action.activate.connect((pid) => {
+                var terminal = this.find_terminal_by_pid(pid.get_int32());
+                if (terminal != null) {
+                    f(terminal);
+                }
+            });
+            this.add_action(action);
+            action.set_enabled(true);
+            return action;
         }
 
         protected int
@@ -137,7 +191,6 @@ namespace Terminus {
             params.parse_argv(command_line.get_arguments());
             if (this.parameters == null) {
                 this.parameters = params;
-                Terminus.bindkey = new Terminus.Bindkey(parameters.bind_keys);
             }
 
             if (params.no_window) {
@@ -148,7 +201,6 @@ namespace Terminus {
             } else {
                 this.create_window(false, params.working_directory, params.command);
             }
-            Terminus.keybind_settings.changed.connect(this.keybind_settings_changed);
             return 0;
         }
 
@@ -179,7 +231,7 @@ namespace Terminus {
             if (this.window_properties == null) {
                 this.window_properties = new Terminus.Properties();
             }
-            this.window_properties.show_all();
+            this.window_properties.set_visible(true);
             this.window_properties.present();
         }
 
@@ -202,21 +254,10 @@ namespace Terminus {
         }
 
         public void
-        keybind_settings_changed(string key)
-        {
-            if (key != "guake-mode") {
-                return;
-            }
-            Terminus.bindkey.show_guake.disconnect(this.show_hide);
-            Terminus.bindkey.set_bindkey(Terminus.keybind_settings.get_string("guake-mode"));
-            Terminus.bindkey.show_guake.connect(this.show_hide);
-        }
-
-        public void
-        create_window(bool              guake_mode,
-                      string   ?        working_directory,
-                      string[] ?        commands,
-                      Terminus.Terminal?terminal = null)
+        create_window(bool               guake_mode,
+                      string ?           working_directory,
+                      string[] ?         commands,
+                      Terminus.Terminal ?terminal = null)
         {
             Terminus.Window window;
 
@@ -225,23 +266,20 @@ namespace Terminus {
             }
             if (guake_mode) {
                 if (this.guake_terminal == null) {
-                    this.guake_terminal = new Terminus.Base(GLib.Environment.get_home_dir(), null, null);
+                    this.guake_terminal = new Terminus.Base(this, GLib.Environment.get_home_dir(), null, null);
                 }
                 window = new Terminus.Window(this,
                                              true,
                                              working_directory,
                                              commands,
-                                             this.guake_terminal,
-                                             this.guake_title);
+                                             this.guake_terminal);
                 this.guake_window = window;
-                Terminus.bindkey.show_guake.connect(this.show_hide);
             } else {
-                window = new Terminus.Window(this, false, working_directory, commands, null, null, terminal);
+                window = new Terminus.Window(this, false, working_directory, commands, null, terminal);
             }
             window.ended.connect((w) => {
                 window_list.remove(w);
                 if (w == this.guake_window) {
-                    Terminus.bindkey.show_guake.disconnect(this.show_hide);
                     this.guake_window = null;
                     this.guake_terminal = null;
                     this.create_window(true, null, null);
@@ -251,6 +289,18 @@ namespace Terminus {
                 this.create_window(false, null, null);
             });
             window_list.add(window);
+        }
+
+        public Terminus.Terminal ?
+        find_terminal_by_pid(int pid)
+        {
+            foreach (Terminus.Window window in this.window_list) {
+                var terminal = window.find_terminal_by_pid(pid);
+                if (terminal != null) {
+                    return terminal;
+                }
+            }
+            return null;
         }
 
         public void
@@ -277,25 +327,22 @@ namespace Terminus {
 
             if (mode == 0) {
                 if (!this.guake_window.visible) {
-                    this.guake_window.show();
+                    this.guake_window.set_visible(true);
                 }
                 return;
             }
 
             if (mode == 1) {
                 if (this.guake_window.visible) {
-                    this.guake_window.hide();
+                    this.guake_window.set_visible(false);
                 }
                 return;
             }
 
             // mode 2
             if (this.guake_window.visible) {
-                this.guake_window.hide();
+                this.guake_window.set_visible(false);
             } else {
-                if (PrivateVapi.check_wayland() == 0) {
-                    this.guake_window.set_screen(Gdk.Screen.get_default());
-                }
                 this.guake_window.present();
             }
         }
@@ -316,11 +363,11 @@ namespace Terminus {
                 if ((i < palette_string.length) && (color.parse(palette_string[i]))) {
                     tmp += palette_string[i];
                 } else {
-                    var v = (i < 8) ?0xAA : 0xFF;
+                    var v = (i < 8) ? 0xAA : 0xFF;
                     tmp +=
-                        "#%02X%02X%02X".printf(((v & 0x01) != 0 ?v : 0),
-                                               ((v & 0x02) != 0 ?v : 0),
-                                               ((v & 0x04) != 0 ?v : 0));
+                        "#%02X%02X%02X".printf(((v & 0x01) != 0 ? v : 0),
+                                               ((v & 0x02) != 0 ? v : 0),
+                                               ((v & 0x04) != 0 ? v : 0));
                 }
             }
             Terminus.settings.set_strv("color-palete", tmp);
@@ -340,7 +387,6 @@ main(string[] argv)
 
     Terminus.settings = new GLib.Settings("org.rastersoft.terminus");
     Terminus.keybind_settings = new GLib.Settings("org.rastersoft.terminus.keybindings");
-    Terminus.dnd_manager = new Terminus.DnDManager();
 
     Terminus.check_palette();
 

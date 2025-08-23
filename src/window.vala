@@ -18,96 +18,54 @@
 using Gtk;
 
 namespace Terminus {
-    class Fixed : Gtk.Fixed {
-        public override void
-        get_preferred_width(out int minimum_width,
-                            out int natural_width)
-        {
-            base.get_preferred_width(out minimum_width, out natural_width);
-            minimum_width = 1;
-            natural_width = 1;
-        }
-
-        public override void
-        get_preferred_height(out int minimum_height,
-                             out int natural_height)
-        {
-            base.get_preferred_height(out minimum_height, out natural_height);
-            minimum_height = 1;
-            natural_height = 1;
-        }
-    }
-
-    class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
+    public class Window : Gtk.ApplicationWindow, Killable, DnDDestination {
         public signal void
         ended(Terminus.Window window);
         public signal void
         new_window();
 
         private Gtk.HeaderBar headerBar;
-        private int current_size;
-        private int mouseY;
-        private Gtk.Paned paned;
-        private Terminus.Fixed fixed;
         private bool is_guake;
-
+        private bool ask_close;
         private Terminus.Base terminal_base;
-        private int initialized;
-
-        private Gdk.Rectangle
-        get_monitor_workarea()
-        {
-            var display = Gdk.Display.get_default();
-            var monitor = display.get_primary_monitor();
-            var workarea = monitor.get_workarea();
-            return workarea;
-        }
 
         public void
         kill_all_children()
         {
-            this.destroy();
+            this.ask_close = false;
         }
 
-        public Window(Gtk.Application    application,
-                      bool               guake_mode,
-                      string          ?  working_directory,
-                      string[]           commands,
-                      Terminus.Base   ?  terminal_base = null,
-                      string          ?  window_title = null,
-                      Terminus.Terminal ?inner_terminal = null)
+        public Window(Terminus.TerminusRoot application,
+                      bool                  guake_mode,
+                      string ?              working_directory,
+                      string[]              commands,
+                      Terminus.Base ?       terminal_base = null,
+                      Terminus.Terminal ?   inner_terminal = null)
         {
+            this.ask_close = true;
             this.headerBar = new Gtk.HeaderBar();
             this.set_titlebar(this.headerBar);
-            this.headerBar.has_subtitle = false;
-            this.headerBar.show_close_button = true;
-            this.headerBar.title = "Terminus";
-            this.headerBar.show();
+            this.headerBar.show_title_buttons = true;
+            this.headerBar.set_title_widget(new Gtk.Label("Terminus"));
+            this.headerBar.set_visible(true);
 
             this.is_guake = guake_mode;
-            this.initialized = 0;
 
-            this.type_hint = Gdk.WindowTypeHint.NORMAL;
-            this.focus_on_map = true;
-
-            this.delete_event.connect(() => {
-                if (this.terminal_base.check_if_running_processes()) {
-                    this.terminal_base.ask_kill_childs(_("This window has running processes inside."),
-                                                       _("Closing it will kill them."),
-                                                       _("Close window"),
-                                                       this);
+            this.close_request.connect(() => {
+                if (this.ask_close && this.terminal_base.check_if_running_processes()) {
+                    this.terminal_base.ask_kill_childs.begin(_("This window has running processes inside."),
+                                                             _("Closing it will kill them."),
+                                                             _("Close window"),
+                                                             this);
                     return true;
                 } else {
+                    this.ended(this);
                     return false;
                 }
             });
 
-            this.destroy.connect((w) => {
-                this.ended(this);
-            });
-
             if (terminal_base == null) {
-                this.terminal_base = new Terminus.Base(working_directory, commands, this, inner_terminal);
+                this.terminal_base = new Terminus.Base(application, working_directory, commands, this, inner_terminal);
             } else {
                 this.terminal_base = terminal_base;
                 terminal_base.top_window = this;
@@ -119,113 +77,75 @@ namespace Terminus {
             });
 
             this.show.connect_after(() => {
-                GLib.Timeout.add(500,
-                                 () => {
+                GLib.Timeout.add_once(500,
+                                      () => {
                     this.present();
-                    return false;
                 });
             });
 
             if (guake_mode) {
-                if (window_title != null) {
-                    this.title = window_title;
+                this.headerBar.set_visible(false);
+                this.title = "TerminusGuake";
+
+                if (Terminus.settings.get_int("guake-height") <= 300) {
+                    Terminus.settings.set_int("guake-height", 300);
                 }
-                this.set_properties();
-
-                this.current_size = Terminus.settings.get_int("guake-height");
-                if (this.current_size <= 0) {
-                    this.current_size = 300;
-                    Terminus.settings.set_int("guake-height", this.current_size);
-                }
-                this.map.connect_after(this.mapped);
-                this.realize.connect_after(() => {
-                    this.set_size();
+                this.map.connect_after(() => {
+                    this.unmaximize();
+                    var surface = this.get_surface();
+                    var monitor = surface.get_display().get_monitor_at_surface(surface);
+                    var geometry = monitor.geometry;
+                    var scale = monitor.scale;
+                    var width = (int) (geometry.width / scale);
+                    var desired_height = Terminus.settings.get_int("guake-height");
+                    this.set_size_request(width, desired_height);
                 });
-                this.paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
-                this.paned.wide_handle = true;
-                this.paned.events = Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
-                                    Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK;
-                this.add(this.paned);
-                this.paned.add1(this.terminal_base);
-                this.fixed = new Terminus.Fixed();
-                this.paned.add2(fixed);
-                this.mouseY = -1;
-
-                this.paned.motion_notify_event.connect((widget, event) => {
-                    if (this.mouseY < 0) {
-                        return false;
+                this.notify.connect((sender, property) => {
+                    if (property.name == "default-height") {
+                        var size = this.get_size(Gtk.Orientation.VERTICAL);
+                        if (size != Terminus.settings.get_int("guake-height")) {
+                            Terminus.settings.set_int("guake-height", size);
+                        }
                     }
-
-                    if ((event.state & Gdk.ModifierType.BUTTON1_MASK) == 0) {
-                        this.mouseY = -1;
-                        Terminus.settings.set_int("guake-height", this.current_size);
-                        return false;
-                    }
-
-                    int y;
-                    y = (int) (event.y_root);
-                    int newval = y - this.mouseY;
-                    this.current_size += newval;
-                    this.mouseY = y;
-                    if (PrivateVapi.check_wayland() == 0) {
-                        this.resize(this.get_monitor_workarea().width, this.current_size);
-                        this.set_size_request(this.get_monitor_workarea().width, this.current_size);
-                    } else {
-                        int width, height;
-                        this.get_size(out width, out height);
-                        this.resize(width, this.current_size);
-                        this.set_size_request(width, this.current_size);
-                    }
-                    this.paned.set_position(this.current_size);
-                    Terminus.settings.set_int("guake-height", this.current_size);
-                    return true;
                 });
 
-                this.paned.button_press_event.connect((widget, event) => {
-                    if (event.button != 1) {
-                        return false;
-                    }
-                    int y;
-                    y = (int) (event.y_root);
-                    this.mouseY = y;
-                    return true;
-                });
-
-                this.paned.button_release_event.connect((widget, event) => {
-                    if (event.button != 1) {
-                        return false;
-                    }
-                    this.mouseY = -1;
-                    return true;
-                });
-
-                this.paned.show_all();
+                this.terminal_base.insert_notebook_into(this);
             } else {
-                this.add(this.terminal_base);
-                this.terminal_base.show_all();
+                this.terminal_base.insert_notebook_into(this);
+                this.terminal_base.show();
                 this.present();
             }
             this.application = application;
 
-            var new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic", Gtk.IconSize.BUTTON);
+            var new_window_button = new Gtk.Button.from_icon_name("window-new-symbolic");
             this.headerBar.pack_start(new_window_button);
-            new_window_button.show_all();
-            var new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic", Gtk.IconSize.BUTTON);
+            new_window_button.set_visible(true);
+            var new_tab_button = new Gtk.Button.from_icon_name("tab-new-symbolic");
             this.headerBar.pack_start(new_tab_button);
-            new_tab_button.show_all();
+            new_tab_button.set_visible(true);
             new_tab_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_tab("", null);
             });
             new_window_button.clicked.connect(() => {
                 this.terminal_base.new_terminal_window();
             });
-            Gtk.drag_dest_set(this.headerBar, Gtk.DestDefaults.MOTION | Gtk.DestDefaults.DROP, null,
-                              Gdk.DragAction.MOVE | Gdk.DragAction.COPY | Gdk.DragAction.DEFAULT);
-            Gtk.drag_dest_set_target_list(this.headerBar, dnd_manager.targets);
-            this.headerBar.drag_drop.connect((widget, context, x, y, time) => {
-                Terminus.dnd_manager.set_destination(this);
+            var drop_target_terminal = new Gtk.DropTarget(typeof(Terminus.Terminal),
+                                                          Gdk.DragAction.COPY | Gdk.DragAction.MOVE |
+                                                          Gdk.DragAction.LINK);
+            var thiswidget = this as Gtk.Widget;
+            thiswidget.add_controller(drop_target_terminal); // there is a bug in Vala, and this fails when doing directly over 'this'
+            drop_target_terminal.drop.connect((target, drag_value, x, y) => {
+                Terminus.Terminal terminal = drag_value as Terminus.Terminal;
+                terminal.drop_terminal_into(this);
                 return true;
             });
+        }
+
+        public void
+        destroy_window()
+        {
+            this.ended(this);
+            this.destroy();
         }
 
         public void
@@ -244,45 +164,13 @@ namespace Terminus {
         ended_cb()
         {
             this.terminal_base.ended.disconnect(this.ended_cb);
-            this.destroy();
+            this.destroy_window();
         }
 
-        public void
-        mapped()
+        public Terminus.Terminal ?
+        find_terminal_by_pid(int pid)
         {
-            this.set_properties();
-            this.set_size();
-        }
-
-        private void
-        set_properties()
-        {
-            if (PrivateVapi.check_wayland() == 0) {
-                this.stick();
-                this.set_keep_above(true);
-                this.set_skip_taskbar_hint(true);
-                this.set_skip_pager_hint(true);
-            }
-            this.set_decorated(false);
-        }
-
-        private void
-        set_size()
-        {
-            if (PrivateVapi.check_wayland() == 0) {
-                var workarea = this.get_monitor_workarea();
-                this.move(workarea.x, workarea.y);
-                this.paned.set_position(this.current_size);
-                this.resize(workarea.width, this.current_size);
-                this.set_size_request(workarea.width, this.current_size);
-            } else {
-                int width, height;
-                this.get_size(out width, out height);
-                this.resize(width, this.current_size);
-                this.set_size_request(width, this.current_size);
-                this.unmaximize();
-                this.paned.set_position(this.current_size);
-            }
+            return this.terminal_base.find_terminal_by_pid(pid);
         }
     }
 }

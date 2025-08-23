@@ -26,7 +26,6 @@ namespace Terminus {
         public bool version = false;
         public bool no_window = false;
         public bool check_guake = false;
-        public bool read_uuid = false;
         public string[] command = {};
         public string ?working_directory;
 
@@ -70,10 +69,6 @@ namespace Terminus {
                 }
                 if (parameter == "--no-window") {
                     this.no_window = true;
-                    continue;
-                }
-                if (parameter == "--uuid") {
-                    this.read_uuid = true;
                     continue;
                 }
                 if (parameter == "--nobindkey") {

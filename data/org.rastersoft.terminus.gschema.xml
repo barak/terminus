@@ -31,6 +31,16 @@
       <summary>Focused background color</summary>
       <description>The default color used for the top bar text when a terminal has the keyboard focus</description>
     </key>
+    <key type="s" name="focused-root-fg-color">
+      <default>"#000000"</default>
+      <summary>Focused text color for root terminal</summary>
+      <description>The default color used for the top bar text when a terminal has the keyboard focus and has a child running as root/sudo</description>
+    </key>
+    <key type="s" name="focused-root-bg-color">
+      <default>"#FF8080"</default>
+      <summary>Focused background color for root terminal</summary>
+      <description>The default color used for the top bar text when a terminal has the keyboard focus and has a child running as root/sudo</description>
+    </key>
     <key type="s" name="inactive-fg-color">
       <default>"#000000"</default>
       <summary>Inactive text color</summary>
@@ -256,6 +266,11 @@
     <key type="s" name="select-all">
       <default><![CDATA['<Shift><Ctrl>a']]></default>
       <summary>Close the active tile</summary>
+      <description></description>
+    </key>
+    <key type="s" name="search">
+      <default><![CDATA['<Ctrl>f']]></default>
+      <summary>Shows/hides the search entry</summary>
       <description></description>
     </key>
   </schema>

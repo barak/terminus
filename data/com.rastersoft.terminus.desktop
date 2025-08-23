@@ -10,6 +10,7 @@ TryExec=terminus
 Categories=GNOME;GTK;Utility;TerminalEmulator;System;
 X-Ubuntu-Gettext-Domain=terminus
 X-Ayatana-Desktop-Shortcuts=X-NewWindow;
+
 [X-NewWindow Shortcut Group]
 Name=Open a New Window
 Exec=terminus

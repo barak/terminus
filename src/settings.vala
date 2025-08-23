@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using Gtk;
-using Gdk;
+
 
 namespace Terminus {
     class HTMLColorButton : Object {
-        private Gtk.ColorButton color_button;
-        private Gtk.ToggleButton ?toggle_button;
+        private Gtk.ColorDialogButton color_button;
+        private Gtk.CheckButton ?toggle_button;
         private string property_name;
         private ulong connect_id;
         private ulong enable_id;
@@ -34,16 +34,17 @@ namespace Terminus {
                                string ?    enable_button)
         {
             property_name = color_button.replace("_", "-");
-            this.color_button = builder.get_object(color_button) as Gtk.ColorButton;
+            this.color_button = builder.get_object(color_button) as Gtk.ColorDialogButton;
+            this.color_button.set_dialog(new Gtk.ColorDialog());
             if (enable_button != null) {
-                this.toggle_button = builder.get_object(enable_button) as Gtk.ToggleButton;
+                this.toggle_button = builder.get_object(enable_button) as Gtk.CheckButton;
                 this.enable_id = this.toggle_button.toggled.connect(() => {
                     this.set_status();
                 });
             } else {
                 this.toggle_button = null;
             }
-            this.connect_id = this.color_button.color_set.connect(() => {
+            this.connect_id = this.color_button.notify.connect(() => {
                 this.set_status();
                 this.color_set();
             });
@@ -54,7 +55,7 @@ namespace Terminus {
                 this.color_button.sensitive = parsed;
             }
             if (parsed) {
-                this.color_button.rgba = current_color;
+                this.color_button.set_rgba(current_color);
             }
         }
 
@@ -73,7 +74,7 @@ namespace Terminus {
                 }
                 this.color_button.sensitive = this.toggle_button.active;
             } else {
-                var rgba = this.color_button.rgba;
+                var rgba = this.color_button.get_rgba();
                 Terminus.settings.set_string(this.property_name, "#%02X%02X%02X".printf((uint) (255 * rgba.red),
                                                                                         (uint) (255 * rgba.green),
                                                                                         (uint) (255 * rgba.blue)));
@@ -83,7 +84,7 @@ namespace Terminus {
         public void
         set_rgba(Gdk.RGBA new_color)
         {
-            this.color_button.rgba = new_color;
+            this.color_button.set_rgba(new_color);
             this.set_status();
         }
     }
@@ -98,7 +99,7 @@ namespace Terminus {
         private Gtk.CheckButton use_custom_shell;
         private Gtk.CheckButton pointer_autohide;
         private Gtk.SpinButton scroll_value;
-        private Gtk.Button custom_font;
+        private Gtk.FontDialogButton custom_font;
 
         private HTMLColorButton fg_color;
         private HTMLColorButton bg_color;
@@ -109,50 +110,56 @@ namespace Terminus {
         private HTMLColorButton highlight_color_bg;
         private HTMLColorButton focused_fg_color;
         private HTMLColorButton focused_bg_color;
+        private HTMLColorButton focused_root_fg_color;
+        private HTMLColorButton focused_root_bg_color;
         private HTMLColorButton inactive_fg_color;
         private HTMLColorButton inactive_bg_color;
 
-        private Gtk.ColorButton[] palette_colors;
+        private Gtk.ColorDialogButton[] palette_colors;
 
-        private Gtk.ComboBox color_scheme;
-        private Gtk.ListStore color_schemes;
-        private Gtk.ComboBox palette_scheme;
-        private Gtk.ListStore palette_schemes;
-        private Gtk.ComboBox cursor_shape;
-        private Gtk.ListStore keybindings;
+        private Gtk.DropDown color_scheme;
+        private Gtk.StringList color_schemes;
+        private Terminus.Terminuspalette[] colors;
+        private Gtk.DropDown palette_scheme;
+        private Gtk.StringList palette_schemes;
+        private Terminus.Terminuspalette[] palettes;
+        private Gtk.DropDown cursor_shape;
         private Gtk.Entry custom_shell;
 
+        private GLib.ListStore keybindings_store;
+        private Gtk.ColumnView keybindings_view;
+        private Gtk.SingleSelection keybindings_model;
         private EditingKeybindMode editing_keybind;
         private bool changing_guake;
         private string old_keybind;
-        private Gtk.TreePath old_keybind_path;
+        private uint old_keybind_pos;
         private bool disable_palette_change;
 
-        private Gtk.TreeView macros_view;
-        private Gtk.ListStore macros_store;
+        private Gtk.ColumnView macros_view;
+        private GLib.ListStore macros_store;
+        private Gtk.SingleSelection macros_model;
         private Gtk.Button add_macro;
         private Gtk.Button delete_macro;
         private Gtk.Entry macro_keybinding;
         private Gtk.Entry macro_command;
-        private string? selected_key;
+
 
         public Properties()
         {
-            this.selected_key = null;
             this.editing_keybind = EditingKeybindMode.NONE;
             disable_palette_change = false;
 
-            this.delete_event.connect((w) => {
-                this.hide();
+            this.close_request.connect((w) => {
+                this.set_visible(false);
                 return true;
             });
 
             var      main_window = new Gtk.Builder();
-            string[] elements =
-            { "properties_notebook", "color_schemes", "palette_schemes", "scroll_lines", "transparency_level",
-              "cursor_liststore", "macros_store", "macro_keybinding", "macro_command", "add_macro", "delete_macro" };
+            string[] elements = {
+                "properties_notebook", "scroll_lines", "add_macro", "delete_macro"
+            };
             main_window.add_objects_from_resource("/com/rastersoft/terminus/interface/properties.ui", elements);
-            this.add(main_window.get_object("properties_notebook") as Gtk.Widget);
+            this.set_child(main_window.get_object("properties_notebook") as Gtk.Widget);
 
             var label_version = main_window.get_object("label_version") as Gtk.Label;
             label_version.label = _("Version %s").printf(Constants.VERSION);
@@ -163,11 +170,24 @@ namespace Terminus {
                 this.custom_shell.sensitive = this.use_custom_shell.active;
             });
             this.pointer_autohide = main_window.get_object("pointer_autohide") as Gtk.CheckButton;
-            this.custom_font = main_window.get_object("custom_font") as Gtk.Button;
+            this.custom_font = main_window.get_object("custom_font") as Gtk.FontDialogButton;
+            this.custom_font.set_dialog(new Gtk.FontDialog());
             use_system_font.toggled.connect(() => {
                 this.custom_font.sensitive = this.use_system_font.active;
             });
 
+            var focused_label = main_window.get_object("terminal-title-focused") as Gtk.Label;
+            var focused_root_label = main_window.get_object("terminal-title-root-focused") as Gtk.Label;
+            var inactive_label = main_window.get_object("terminal-title-inactive") as Gtk.Label;
+            var default_label = main_window.get_object("default-color") as Gtk.Label;
+            focused_label.add_css_class("terminaltitlefocused");
+            focused_label.halign = Gtk.Align.FILL;
+            focused_root_label.add_css_class("terminaltitlerootfocused");
+            focused_root_label.halign = Gtk.Align.FILL;
+            inactive_label.add_css_class("terminaltitleinactive");
+            inactive_label.halign = Gtk.Align.FILL;
+            default_label.add_css_class("terminalbase");
+            default_label.halign = Gtk.Align.FILL;
             this.fg_color = new HTMLColorButton(main_window, "fg_color", null);
             this.bg_color = new HTMLColorButton(main_window, "bg_color", null);
             this.bold_color = new HTMLColorButton(main_window, "bold_color", "use_bold_color");
@@ -177,20 +197,22 @@ namespace Terminus {
             this.highlight_color_bg = new HTMLColorButton(main_window, "highlight_bg_color", "use_highlight_color");
             this.focused_fg_color = new HTMLColorButton(main_window, "focused_fg_color", null);
             this.focused_bg_color = new HTMLColorButton(main_window, "focused_bg_color", null);
+            this.focused_root_fg_color = new HTMLColorButton(main_window, "focused_root_fg_color", null);
+            this.focused_root_bg_color = new HTMLColorButton(main_window, "focused_root_bg_color", null);
             this.inactive_fg_color = new HTMLColorButton(main_window, "inactive_fg_color", null);
             this.inactive_bg_color = new HTMLColorButton(main_window, "inactive_bg_color", null);
-
             this.use_bold_color = main_window.get_object("use_bold_color") as Gtk.CheckButton;
             this.use_cursor_color = main_window.get_object("use_cursor_color") as Gtk.CheckButton;
             this.use_highlight_color = main_window.get_object("use_highlight_color") as Gtk.CheckButton;
-
-            this.color_scheme = main_window.get_object("color_scheme") as Gtk.ComboBox;
-            this.color_schemes = main_window.get_object("color_schemes") as Gtk.ListStore;
-            this.palette_scheme = main_window.get_object("palette_scheme") as Gtk.ComboBox;
-            this.palette_schemes = main_window.get_object("palette_schemes") as Gtk.ListStore;
-            this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.ComboBox;
-            this.macros_store = main_window.get_object("macros_store") as Gtk.ListStore;
-            this.macros_view = main_window.get_object("macros_view") as Gtk.TreeView;
+            this.color_scheme = main_window.get_object("color_scheme") as Gtk.DropDown;
+            this.color_schemes = new Gtk.StringList(null);
+            this.color_scheme.set_model(this.color_schemes);
+            this.palette_scheme = main_window.get_object("palette_scheme") as Gtk.DropDown;
+            this.palette_schemes = new Gtk.StringList(null);
+            this.palette_scheme.set_model(this.palette_schemes);
+            this.cursor_shape = main_window.get_object("cursor_shape") as Gtk.DropDown;
+            this.macros_store = new GLib.ListStore(typeof(Gtk.StringList));
+            this.macros_view = main_window.get_object("macros_view") as Gtk.ColumnView;
             this.macro_keybinding = main_window.get_object("macro_keybinding") as Gtk.Entry;
             this.macro_command = main_window.get_object("macro_command") as Gtk.Entry;
             this.add_macro = main_window.get_object("add_macro") as Gtk.Button;
@@ -205,12 +227,15 @@ namespace Terminus {
             this.macro_keybinding.changed.connect(() => {
                 this.update_macro_state();
             });
-            this.macro_keybinding.focus_in_event.connect(() => {
+            var focus_controller = new Gtk.EventControllerFocus();
+            this.macro_keybinding.add_controller(focus_controller);
+            focus_controller.enter.connect(() => {
                 this.editing_keybind = EditingKeybindMode.MACRO;
-                return false;
             });
-            this.macro_keybinding.key_press_event.connect((ev) => {
-                if (this.on_key_press(ev)) {
+            var key_controller = new Gtk.EventControllerKey();
+            this.macro_keybinding.add_controller(key_controller);
+            key_controller.key_pressed.connect((controller, keyval, keycode, state) => {
+                if (this.on_key_press(controller, keyval, keycode, state)) {
                     this.focus(DirectionType.RIGHT);
                 }
                 return true;
@@ -219,18 +244,18 @@ namespace Terminus {
                 this.add_macro_to_config();
             });
             this.delete_macro.clicked.connect(() => {
-                if (this.selected_key == null) {
+                var macro = this.macros_model.get_selected_item() as Gtk.StringList;
+                if (macro == null) {
                     return;
                 }
                 GLib.Variant[] entries = {};
-                foreach(var entry in Terminus.settings.get_value("macros")) {
-                    if (entry.get_child_value(0).get_string() != this.selected_key) {
+                foreach (var entry in Terminus.settings.get_value("macros")) {
+                    if (entry.get_child_value(0).get_string() != macro.get_string(0)) {
                         entries += entry;
                     }
                 }
                 var new_settings = new GLib.Variant.array(new GLib.VariantType("(sss)"), entries);
                 Terminus.settings.set_value("macros", new_settings);
-                this.selected_key = null;
                 this.update_macros_list();
             });
 
@@ -241,29 +266,44 @@ namespace Terminus {
             string[] palette_string = Terminus.settings.get_strv("color-palete");
             var      tmpcolor = Gdk.RGBA();
             for (int i = 0; i < 16; i++) {
-                Gtk.ColorButton palette_button = main_window.get_object("palette%d".printf(i)) as Gtk.ColorButton;
+                Gtk.ColorDialogButton palette_button =
+                    main_window.get_object("palette%d".printf(i)) as Gtk.ColorDialogButton;
+                palette_button.set_dialog(new Gtk.ColorDialog());
                 tmpcolor.parse(palette_string[i]);
                 palette_button.set_rgba(tmpcolor);
                 this.palette_colors += palette_button;
             }
-
             foreach (var button in this.palette_colors) {
-                button.color_set.connect(() => {
+                button.notify.connect(() => {
                     this.updated_palette();
                 });
             }
 
-            this.palette_scheme.changed.connect(() => {
-                var selected = this.palette_scheme.get_active();
-                if (selected < 0) {
+            this.colors = {};
+            foreach (var scheme in Terminus.main_root.palettes) {
+                if ((!scheme.custom) && (scheme.text_fg == null)) {
+                    continue;
+                }
+                this.color_schemes.append(scheme.name);
+                colors += scheme;
+            }
+            this.color_scheme.set_selected(this.get_current_scheme());
+
+            this.palettes = {};
+            foreach (var scheme in Terminus.main_root.palettes) {
+                if ((!scheme.custom) && (scheme.get_palette().length == 0)) {
+                    continue;
+                }
+                this.palette_schemes.append(scheme.name);
+                palettes += scheme;
+            }
+
+            this.palette_scheme.notify.connect((spec) => {
+                if (spec.get_name() != "selected") {
                     return;
                 }
-                Gtk.TreeIter iter;
-                this.palette_scheme.get_active_iter(out iter);
-                GLib.Value selectedCell;
-                this.palette_schemes.get_value(iter, 1, out selectedCell);
-                selected = selectedCell.get_int();
-                var scheme = Terminus.main_root.palettes[selected];
+                var selected = (int) this.palette_scheme.get_selected();
+                var scheme = palettes[selected];
                 if (scheme.custom) {
                     return;
                 }
@@ -277,17 +317,12 @@ namespace Terminus {
                 this.updated_palette();
             });
 
-            this.color_scheme.changed.connect(() => {
-                var selected = this.color_scheme.get_active();
-                if (selected < 0) {
+            this.color_scheme.notify.connect((spec) => {
+                if (spec.get_name() != "selected") {
                     return;
                 }
-                Gtk.TreeIter iter;
-                this.color_scheme.get_active_iter(out iter);
-                GLib.Value selectedCell;
-                this.color_schemes.get_value(iter, 1, out selectedCell);
-                selected = selectedCell.get_int();
-                var scheme = Terminus.main_root.palettes[selected];
+                var selected = (int) this.color_scheme.get_selected();
+                var scheme = colors[selected];
                 if (scheme.custom) {
                     return;
                 }
@@ -296,10 +331,10 @@ namespace Terminus {
             });
 
             this.fg_color.color_set.connect(() => {
-                this.color_scheme.set_active(this.get_current_scheme());
+                this.color_scheme.set_selected(this.get_current_scheme());
             });
             this.bg_color.color_set.connect(() => {
-                this.color_scheme.set_active(this.get_current_scheme());
+                this.color_scheme.set_selected(this.get_current_scheme());
             });
 
             var scroll_lines = main_window.get_object("scroll_lines") as Gtk.Adjustment;
@@ -313,10 +348,9 @@ namespace Terminus {
 
             this.custom_shell = main_window.get_object("command_shell") as Gtk.Entry;
 
-            Terminus.settings.bind("cursor-shape", this.cursor_shape, "active", GLib.SettingsBindFlags.DEFAULT);
+            Terminus.settings.bind("cursor-shape", this.cursor_shape, "selected", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("use-system-font", this.use_system_font, "active",
                                    GLib.SettingsBindFlags.DEFAULT | GLib.SettingsBindFlags.INVERT_BOOLEAN);
-            Terminus.settings.bind("terminal-font", this.custom_font, "font_name", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("scroll-lines", scroll_lines, "value", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("infinite-scroll", this.infinite_scroll, "active", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("scroll-on-output", main_window.get_object(
@@ -333,91 +367,113 @@ namespace Terminus {
             Terminus.settings.bind("use-custom-shell", this.use_custom_shell, "active", GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("pointer-autohide", this.pointer_autohide, "active", GLib.SettingsBindFlags.DEFAULT);
 
-            int counter = -1;
-            foreach (var scheme in Terminus.main_root.palettes) {
-                counter++;
-                if ((!scheme.custom) && (scheme.text_fg == null)) {
-                    continue;
-                }
-                Gtk.TreeIter iter;
-                this.color_schemes.append(out iter);
-                var name = GLib.Value(typeof(string));
-                name.set_string(scheme.name);
-                this.color_schemes.set_value(iter, 0, name);
-                var id = GLib.Value(typeof(int));
-                id.set_int(counter);
-                this.color_schemes.set_value(iter, 1, id);
+            var                    system_font = Terminus.settings.get_boolean("use-system-font");
+            Pango.FontDescription ?font_desc;
+            if (system_font) {
+                font_desc = null;
+            } else {
+                var font = Terminus.settings.get_string("terminal-font");
+                font_desc = Pango.FontDescription.from_string(font);
             }
-            this.color_scheme.set_active(this.get_current_scheme());
+            this.custom_font.font_desc = font_desc;
+            this.custom_font.notify.connect((spec) => {
+                if (spec.get_name() != "font-desc") {
+                    return;
+                }
+                Terminus.settings.set_string("terminal-font", this.custom_font.font_desc.to_string());
+            });
 
             this.custom_shell.sensitive = this.use_custom_shell.active;
             this.custom_font.sensitive = this.use_system_font.active;
             this.scroll_value.sensitive = !this.infinite_scroll.active;
 
-            counter = -1;
-            foreach (var scheme in Terminus.main_root.palettes) {
-                counter++;
-                if ((!scheme.custom) && (scheme.get_palette().length == 0)) {
-                    continue;
-                }
-                Gtk.TreeIter iter;
-                this.palette_schemes.append(out iter);
-                var name = GLib.Value(typeof(string));
-                name.set_string(scheme.name);
-                this.palette_schemes.set_value(iter, 0, name);
-                var id = GLib.Value(typeof(int));
-                id.set_int(counter);
-                this.palette_schemes.set_value(iter, 1, id);
-            }
-            this.palette_scheme.set_active(this.get_current_palette());
+            this.palette_scheme.set_selected(this.get_current_palette());
 
-            macros_view.activate_on_single_click = true;
-            macros_view.row_activated.connect(this.keymacro_clicked_cb);
-
+            this.macros_model = new Gtk.SingleSelection(this.macros_store);
             this.update_macros_list();
+            // Populate the macros Gtk.ColumnView
+            var macro_factory = new Gtk.SignalListItemFactory();
+            macro_factory.setup.connect((factory, object) => this.factory_setup(factory, object as Gtk.ListItem));
+            macro_factory.bind.connect((factory, object) => this.factory_value_bind(factory, object as Gtk.ListItem,
+                                                                                    0));
+            var command_factory = new Gtk.SignalListItemFactory();
+            command_factory.setup.connect((factory, object) => this.factory_setup(factory, object as Gtk.ListItem));
+            command_factory.bind.connect((factory, object) => this.factory_value_bind(factory, object as Gtk.ListItem,
+                                                                                      1));
+            this.macros_view.set_model(this.macros_model);
+            this.macros_view.append_column(new Gtk.ColumnViewColumn(_("Keybind"), macro_factory));
+            this.macros_view.append_column(new Gtk.ColumnViewColumn(_("Command"), command_factory));
 
-            this.keybindings = new Gtk.ListStore(3, typeof(string), typeof(string), typeof(string));
+            this.keybindings_store = new GLib.ListStore(typeof(Gtk.StringList));
+            this.keybindings_model = new Gtk.SingleSelection(this.keybindings_store);
             foreach (var kb in Terminus.key_bindings.key_binding_list) {
-                this.add_keybinding(kb.description, kb.name);
+                var new_keybinding = new Gtk.StringList(null);
+                new_keybinding.append(kb.description);
+                new_keybinding.append(Terminus.keybind_settings.get_string(kb.name));
+                new_keybinding.append(kb.name);
+                this.keybindings_store.append(new_keybinding);
             }
-            var keybindings_view = main_window.get_object("keybindings") as Gtk.TreeView;
-            keybindings_view.activate_on_single_click = true;
-            keybindings_view.row_activated.connect(this.keybind_clicked_cb);
-            keybindings_view.set_model(this.keybindings);
-            var cell = new Gtk.CellRendererText();
-            keybindings_view.insert_column_with_attributes(-1, _("Action"), cell, "text", 0);
-            keybindings_view.insert_column_with_attributes(-1, _("Key"), cell, "text", 1);
+            this.keybindings_view = main_window.get_object("keybindings") as Gtk.ColumnView;
+            var keybindings_action_factory = new Gtk.SignalListItemFactory();
+            keybindings_action_factory.setup.connect((factory, object) => this.factory_setup(factory,
+                                                                                             object as Gtk.ListItem));
+            keybindings_action_factory.bind.connect((factory, object) => this.factory_value_bind(factory,
+                                                                                                 object as Gtk.ListItem,
+                                                                                                 0));
+            var keybindings_key_factory = new Gtk.SignalListItemFactory();
+            keybindings_key_factory.setup.connect((factory, object) => this.factory_setup(factory,
+                                                                                          object as Gtk.ListItem));
+            keybindings_key_factory.bind.connect((factory, object) => this.factory_value_bind(factory,
+                                                                                              object as Gtk.ListItem,
+                                                                                              1));
+            this.keybindings_view.set_model(this.keybindings_model);
+            this.keybindings_view.append_column(new Gtk.ColumnViewColumn(_("Action"), keybindings_action_factory));
+            this.keybindings_view.append_column(new Gtk.ColumnViewColumn(_("Key"), keybindings_key_factory));
 
-            this.events = Gdk.EventMask.KEY_PRESS_MASK;
-            keybindings_view.key_press_event.connect((event) => {
-                this.on_key_press(event);
+            var controller = new Gtk.GestureClick();
+            this.keybindings_view.add_controller(controller);
+            controller.released.connect(() => { this.keybind_clicked_cb(); });
+
+            var key_controller2 = new Gtk.EventControllerKey();
+            keybindings_view.add_controller(key_controller2);
+            key_controller2.key_pressed.connect((controller, keyval, keycode, state) => {
+                this.on_key_press(controller, keyval, keycode, state);
                 return false;
             });
+        }
+
+        private void
+        factory_setup(Gtk.ListItemFactory factory,
+                      Gtk.ListItem        item)
+        {
+            item.set_child(new Gtk.Label(""));
+        }
+
+        private void
+        factory_value_bind(Gtk.ListItemFactory factory,
+                           Gtk.ListItem        item,
+                           int                 index)
+        {
+            var label = item.get_child() as Gtk.Label;
+            var elements_list = item.get_item() as Gtk.StringList;
+            label.set_label(elements_list.get_string(index));
+            if (index == 0) {
+                label.justify = Gtk.Justification.LEFT;
+                label.halign = Gtk.Align.START;
+            }
         }
 
         private void
         update_macros_list()
         {
             var macros = Terminus.settings.get_value("macros");
-            int counter = 0;
-            this.macros_store.clear();
-            foreach(var entry in macros) {
-                Gtk.TreeIter iter;
-                this.macros_store.append(out iter);
-                var key = GLib.Value(typeof(string));
-                var key_string = entry.get_child_value(0).get_string();
-                key.set_string(key_string);
-                var command = GLib.Value(typeof(string));
-                var command_string = entry.get_child_value(1).get_string();
-                command.set_string(command_string);
-                var program = GLib.Value(typeof(string));
-                var program_string = entry.get_child_value(2).get_string();
-                program.set_string(program_string);
-                this.macros_store.set_value(iter, 0, key);
-                this.macros_store.set_value(iter, 1, command);
-                counter++;
+            this.macros_store.remove_all();
+            foreach (var entry in macros) {
+                var new_macro = new Gtk.StringList(null);
+                new_macro.append(entry.get_child_value(0).get_string());
+                new_macro.append(entry.get_child_value(1).get_string());
+                this.macros_store.append(new_macro);
             }
-            this.selected_key = null;
             this.macro_keybinding.text = "";
             this.macro_command.text = "";
             this.update_macro_state();
@@ -436,8 +492,8 @@ namespace Terminus {
             var new_entry = new GLib.Variant("(sss)", keybind, command, "");
 
             GLib.Variant[] entries = {};
-            bool found = false;
-            foreach(var entry in Terminus.settings.get_value("macros")) {
+            bool           found = false;
+            foreach (var entry in Terminus.settings.get_value("macros")) {
                 if (entry.get_child_value(0).get_string() == keybind) {
                     entries += new_entry;
                     found = true;
@@ -467,7 +523,7 @@ namespace Terminus {
             bool     changed = false;
             int      i = 0;
             foreach (var button in this.palette_colors) {
-                var color = button.rgba;
+                var color = button.get_rgba();
                 var color_str =
                     "#%02X%02X%02X".printf((int) (color.red * 255), (int) (color.green * 255),
                                            (int) (color.blue * 255));
@@ -479,7 +535,7 @@ namespace Terminus {
             }
             if (changed) {
                 Terminus.settings.set_strv("color-palete", new_palette);
-                this.palette_scheme.set_active(this.get_current_palette());
+                this.palette_scheme.set_selected(this.get_current_palette());
             }
         }
 
@@ -520,39 +576,9 @@ namespace Terminus {
         }
 
         private void
-        add_keybinding(string name,
-                       string setting)
-        {
-            Gtk.TreeIter iter;
-            this.keybindings.append(out iter);
-            this.keybindings.set(iter, 0, name, 1, Terminus.keybind_settings.get_string(setting), 2, setting);
-        }
-
-
-        public void
-        keymacro_clicked_cb(TreePath       path,
-                            TreeViewColumn column)
-        {
-            Gtk.TreeIter iter;
-            GLib.Value   val;
-
-            this.macros_store.get_iter(out iter, path);
-            this.macros_store.get_value(iter, 0, out val);
-            this.macro_keybinding.set_text(val.get_string());
-            this.selected_key = val.get_string();
-            this.macros_store.get_value(iter, 1, out val);
-            this.macro_command.set_text(val.get_string());
-            this.update_macro_state();
-        }
-
-        private void
         update_macro_state()
         {
-            TreePath? path;
-            TreeViewColumn? column;
-
-            this.macros_view.get_cursor(out path, out column);
-            if (path == null) {
+            if (this.macros_model.get_selected_item() == null) {
                 this.delete_macro.sensitive = false;
             } else {
                 this.delete_macro.sensitive = true;
@@ -565,30 +591,38 @@ namespace Terminus {
             }
         }
 
-        public void
-        keybind_clicked_cb(TreePath       path,
-                           TreeViewColumn column)
+        private void
+        update_keybinding_entry(uint   position,
+                                string new_text)
         {
-            Gtk.TreeIter iter;
-            GLib.Value   val;
+            Gtk.StringList replacement[] = {
+                new Gtk.StringList(null)
+            };
+            var            entry = keybindings_store.get_item(position) as Gtk.StringList;
+            replacement[0].append(entry.get_string(0));
+            replacement[0].append(new_text);
+            replacement[0].append(entry.get_string(2));
+            this.keybindings_store.splice(position, 1, replacement);
+        }
+
+        public void
+        keybind_clicked_cb()
+        {
+            var selected = keybindings_model.get_selected_item() as Gtk.StringList;
+            var position = keybindings_model.get_selected();
 
             if (this.editing_keybind != EditingKeybindMode.NONE) {
                 this.editing_keybind = EditingKeybindMode.NONE;
-                this.keybindings.get_iter(out iter, this.old_keybind_path);
-                this.keybindings.set(iter, 1, this.old_keybind);
+                this.update_keybinding_entry(this.old_keybind_pos, this.old_keybind);
                 if (this.changing_guake) {
                     Terminus.keybind_settings.set_string("guake-mode", old_keybind);
                 }
             } else {
                 this.editing_keybind = EditingKeybindMode.KEYBIND;
-                this.keybindings.get_iter(out iter, path);
-                this.keybindings.get_value(iter, 1, out val);
-                this.old_keybind = val.get_string();
-                this.old_keybind_path = path;
-                this.keybindings.set(iter, 1, "...");
-                this.keybindings.get_value(iter, 2, out val);
-                if ("guake-mode" == val.get_string()) {
-                    Terminus.bindkey.unset_bindkey();
+                this.old_keybind = selected.get_string(1);
+                this.old_keybind_pos = position;
+                this.update_keybinding_entry(position, " ");
+                if ("guake-mode" == selected.get_string(2)) {
                     this.changing_guake = true;
                 } else {
                     this.changing_guake = false;
@@ -597,13 +631,16 @@ namespace Terminus {
         }
 
         public bool
-        on_key_press(Gdk.EventKey eventkey)
+        on_key_press(Gtk.EventControllerKey key_controller,
+                     uint                   keyval,
+                     uint                   keycode,
+                     Gdk.ModifierType       state)
         {
             if (this.editing_keybind == EditingKeybindMode.NONE) {
                 return false;
             }
 
-            switch (eventkey.keyval) {
+            switch (keyval) {
             case Gdk.Key.Shift_L:
             case Gdk.Key.Shift_R:
             case Gdk.Key.Control_L:
@@ -624,28 +661,24 @@ namespace Terminus {
             }
 
             // avoid mod2 and other odd mods
-            eventkey.state &= Gdk.ModifierType.SHIFT_MASK |
-                              Gdk.ModifierType.CONTROL_MASK |
-                              Gdk.ModifierType.SUPER_MASK |
-                              Gdk.ModifierType.META_MASK |
-                              Gdk.ModifierType.HYPER_MASK |
-                              Gdk.ModifierType.MOD1_MASK;
+            state &= Gdk.ModifierType.SHIFT_MASK |
+                     Gdk.ModifierType.CONTROL_MASK |
+                     Gdk.ModifierType.SUPER_MASK |
+                     Gdk.ModifierType.META_MASK |
+                     Gdk.ModifierType.HYPER_MASK |
+                     Gdk.ModifierType.ALT_MASK;
 
-            if ((eventkey.keyval >= 'a') && (eventkey.keyval <= 'z')) {
-                eventkey.keyval &= ~32;
+            if ((keyval >= 'a') && (keyval <= 'z')) {
+                keyval &= ~32;
             }
 
-            var new_keybind = Gtk.accelerator_name(eventkey.keyval, eventkey.state);
+            var new_keybind = Gtk.accelerator_name(keyval, state);
 
             if (this.editing_keybind == EditingKeybindMode.KEYBIND) {
-                Gtk.TreeIter iter;
-                Value        val;
-
-                this.keybindings.get_iter(out iter, this.old_keybind_path);
-                this.keybindings.set(iter, 1, new_keybind);
-                this.keybindings.get_value(iter, 2, out val);
-                var key = val.get_string();
+                var keybind = this.keybindings_model.get_selected_item() as Gtk.StringList;
+                var key = keybind.get_string(2);
                 Terminus.keybind_settings.set_string(key, new_keybind);
+                this.update_keybinding_entry(this.old_keybind_pos, new_keybind);
             } else {
                 // macro
                 this.macro_keybinding.text = new_keybind;

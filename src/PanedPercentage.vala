@@ -26,21 +26,46 @@ namespace Terminus {
      * the panel).
      */
 
-    public class PanedPercentage : Gtk.Paned {
-        private int current_paned_position;
-        private int current_paned_size;
+    public class PanedPercentage : Gtk.Widget {
+        private Gtk.Paned ?paned = null;
         private double desired_paned_percentage;
-        private bool changed_paned_size;
+        private bool button_pressed;
         private bool horizontal;
+
+        public Gtk.Widget ?start_child {
+            get {
+                return this.paned.start_child;
+            }
+            set {
+                this.paned.start_child = value;
+            }
+        }
+
+        public Gtk.Widget ?end_child {
+            get {
+                return this.paned.end_child;
+            }
+            set {
+                this.paned.end_child = value;
+            }
+        }
 
         public PanedPercentage(Gtk.Orientation orientation,
                                double          percentage)
         {
-            this.current_paned_position = -1;
-            this.current_paned_size = -1;
-            this.changed_paned_size = false;
+            this.set_layout_manager(new Gtk.BinLayout());
+            this.paned = new Gtk.Paned(orientation);
+            this.paned.set_parent(this);
+            this.paned.hexpand = true;
+            this.paned.vexpand = true;
+            this.paned.halign = Gtk.Align.FILL;
+            this.paned.valign = Gtk.Align.FILL;
+            this.button_pressed = false;
 
-            this.orientation = orientation;
+            this.destroy.connect(() => {
+                this.paned.unparent();
+            });
+
             if (orientation == Gtk.Orientation.VERTICAL) {
                 this.horizontal = true;
             } else {
@@ -48,38 +73,34 @@ namespace Terminus {
             }
             this.desired_paned_percentage = percentage;
 
+            var controller = new Gtk.GestureClick();
+            controller.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+            this.add_controller(controller);
+            controller.pressed.connect(() => {
+                this.button_pressed = true;
+            });
+            controller.released.connect(() => {
+                this.button_pressed = false;
+            });
+
             /*
              * This is a trick to ensure that the paned remains with the same relative
              * position, no mater if the user resizes the window
              */
 
-            this.size_allocate.connect_after((allocation) => {
-                if (this.horizontal) {
-                    if (this.current_paned_size != allocation.height) {
-                        this.current_paned_size = allocation.height;
-                        this.changed_paned_size = true;
-                    }
-                } else {
-                    if (this.current_paned_size != allocation.width) {
-                        this.current_paned_size = allocation.width;
-                        this.changed_paned_size = true;
-                    }
-                }
-            });
+            this.paned.notify.connect((pspec) => {
+                switch (pspec.get_name()) {
+                    case "max-position":
+                        this.paned.position = (int) (((double) this.paned.max_position) * this.desired_paned_percentage);
+                        break;
 
-            this.draw.connect((cr) => {
-                if (changed_paned_size) {
-                    this.current_paned_position = (int) (this.current_paned_size * this.desired_paned_percentage);
-                    this.set_position(this.current_paned_position);
-                    this.changed_paned_size = false;
-                } else {
-                    if (this.position != this.current_paned_position) {
-                        this.current_paned_position = this.position;
-                        this.desired_paned_percentage = ((double) this.current_paned_position) /
-                                                        ((double) this.current_paned_size);
-                    }
+                    case "position":
+                        if (this.button_pressed) {
+                            this.desired_paned_percentage = ((double) this.paned.position) /
+                                                            ((double) this.paned.max_position);
+                        }
+                        break;
                 }
-                return false;
             });
         }
     }

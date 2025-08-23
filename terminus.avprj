@@ -1,28 +1,20 @@
 ### AutoVala Project ###
 autovala_version: 30
 project_name: terminus
-project_version: 2.4.2
+project_version: 3.6.0
 vala_version: 0.30
 
-if GNOME44
-custom: terminus_gnome_shell/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
-custom: terminus_gnome_shell/metadata.json share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
-else
 custom: terminus_gnome_shell45/extension.js share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
 custom: terminus_gnome_shell45/metadata.json share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com
-end
 
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
-*vapidir: src/vapidir
-
 vala_binary: src/terminus
-*version: 2.4.2
+*version: 3.6.0
 use_gresource: extras_gresource_xml
-vala_vapi: checkwayland.vapi
 *vala_package: posix
-vala_check_package: gdk-3.0
-vala_check_package: gtk+-3.0
+vala_check_package: gtk4
+vala_check_package: vte-2.91-gtk4
 *vala_check_package: cairo
 *vala_check_package: gee-0.8
 *vala_check_package: gio-2.0
@@ -30,13 +22,11 @@ vala_check_package: gtk+-3.0
 *vala_check_package: glib-2.0
 *vala_check_package: gobject-2.0
 *vala_check_package: harfbuzz-gobject
-*vala_check_package: keybinder-3.0
 *vala_check_package: pango
-*vala_check_package: vte-2.91
 *vala_source: PanedPercentage.vala
 *vala_source: base.vala
-*vala_source: bindkeys.vala
 *vala_source: container.vala
+*vala_source: css.vala
 *vala_source: definitions.vala
 *vala_source: dndManager.vala
 *vala_source: keybinding.vala
@@ -44,11 +34,11 @@ vala_check_package: gtk+-3.0
 *vala_source: notetab.vala
 *vala_source: palete.vala
 *vala_source: params.vala
+*vala_source: processes.vala
 *vala_source: settings.vala
 *vala_source: terminal.vala
 *vala_source: terminus.vala
 *vala_source: window.vala
-*c_source: checkwayland.c
 h_folder: .
 
 
@@ -57,9 +47,8 @@ h_folder: .
 *translate: glade data/interface/properties.ui
 *translate: vala src/PanedPercentage.vala
 *translate: vala src/base.vala
-*translate: vala src/bindkeys.vala
-*translate: c src/checkwayland.c
 *translate: vala src/container.vala
+*translate: vala src/css.vala
 *translate: vala src/definitions.vala
 *translate: vala src/dndManager.vala
 *translate: vala src/keybinding.vala
@@ -67,6 +56,7 @@ h_folder: .
 *translate: vala src/notetab.vala
 *translate: vala src/palete.vala
 *translate: vala src/params.vala
+*translate: vala src/processes.vala
 *translate: vala src/settings.vala
 *translate: vala src/terminal.vala
 *translate: vala src/terminus.vala
@@ -78,7 +68,7 @@ h_folder: .
 
 binary: data/terminus_showhide
 
-*desktop: data/terminus.desktop
+*desktop: data/com.rastersoft.terminus.desktop
 
 *autostart: data/terminus_autorun.desktop
 

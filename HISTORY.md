@@ -1,5 +1,33 @@
 # History of versions #
 
+* Version 3.6.0 (2025-05-25)
+  * Fix crashes after closing/moving terminals
+* Version 3.5.0 (2025-05-19)
+  * Add support for Gnome 48
+* Version 3.4.0 (2025-05-06)
+  * Fix crash
+  * Fix tab title quick changes
+* Version 3.3.0 (2025-04-21)
+  * Show command name in top bar
+* Version 3.2.0 (2025-02-28)
+  * Fix paste
+  * Fix not being able to move windows
+  * Add a check when pasting a "sudo" command
+* Version 3.1.0 (2025-02-28)
+  * Fix ulimit value problems
+  * Set a maximum size for Guake window
+* Version 3.0.0 (2025-02-17)
+  * Migration to Gtk4
+  * Added search function
+  * Added visual bell notification
+  * Added URL detection in the buffer
+  * Show in the top bar if the terminal has a root/sudo process
+* Version 2.6.0 (2025-01-19)
+  * Fixed reload when killen in guake mode
+* Version 2.5.1 (2025-01-16)
+  * Added support for Gnome Shell 47
+* Version 2.5.0 (2025-01-04)
+  * Open new subterminals in the same path than the current one
 * Version 2.4.2 (2024-08-22)
   * Fix build
 * Version 2.4.1 (2024-05-10)
