@@ -1,3 +1,10 @@
+terminus (3.6.0-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix FTBFS with CMake 4. (Closes: #1113567)
+
+ -- Adrian Bunk <bunk@debian.org>  Sun, 30 Nov 2025 06:06:21 +0200
+
 terminus (3.6.0-1) unstable; urgency=medium
 
   * Update debian/watch uscan support due to gitlab churn
