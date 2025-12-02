@@ -216,15 +216,21 @@ class LaunchSubprocess {
 	}
 
 	spawnv(argv) {
-		try {
-			if (Meta.is_wayland_compositor()) {
-				this.subprocess = this._waylandClient.spawnv(global.display, argv);
-			} else {
-				this.subprocess = this._launcher.spawnv(argv);
+                if (Meta.WaylandClient.new_subprocess) {
+                    // New API introduced in https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/4491
+                    this._waylandClient = Meta.WaylandClient.new_subprocess (global.context, this._launcher, argv);
+                    this.subprocess = this._waylandClient.get_subprocess();
+                } else {
+			try {
+				if (Meta.is_wayland_compositor()) {
+					this.subprocess = this._waylandClient.spawnv(global.display, argv);
+				} else {
+					this.subprocess = this._launcher.spawnv(argv);
+				}
+			} catch (e) {
+				this.subprocess = null;
+				console.log(`Error while trying to launch TERMINUS process: ${e.message}\n${e.stack}`);
 			}
-		} catch (e) {
-			this.subprocess = null;
-			console.log(`Error while trying to launch TERMINUS process: ${e.message}\n${e.stack}`);
 		}
 		// This is for GLib 2.68 or greater
 		if (this._launcher.close) {
