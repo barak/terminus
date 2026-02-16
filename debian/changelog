@@ -1,3 +1,9 @@
+terminus (3.6.0-3) unstable; urgency=medium
+
+  * Switch build system from cmake to meson to avoid blhc whining
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 16 Feb 2026 14:10:20 +0000
+
 terminus (3.6.0-2) unstable; urgency=medium
 
   * Track upstream Gnome 49 support

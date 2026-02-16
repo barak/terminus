@@ -3,10 +3,12 @@ Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Section: misc
 Standards-Version: 4.7.3
 Build-Depends: debhelper-compat (= 13),
-	valac, libatk1.0-dev, libcairo2-dev,
+	valac,
+	meson, ninja-build,
+	libatk1.0-dev, libcairo2-dev,
 	libgtk-3-dev, libgdk-pixbuf-2.0-dev, libgee-0.8-dev,
 	libglib2.0-dev, libpango1.0-dev,
-	libvte-2.91-gtk4-dev, libx11-dev, cmake, intltool
+	libvte-2.91-gtk4-dev, libx11-dev, intltool
 Homepage: https://gitlab.com/rastersoft/terminus
 Vcs-Git: https://salsa.debian.org/debian/terminus.git
 Vcs-Browser: https://salsa.debian.org/debian/terminus

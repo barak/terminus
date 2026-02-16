@@ -1,14 +1,9 @@
 #!/usr/bin/make -f
 
-include /usr/share/dpkg/pkg-info.mk
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-VALAFLAGS:=$(foreach w,$(CPPFLAGS) $(CFLAGS) $(LDFLAGS),-X $(w))
 
 %:
-	dh $@
-
-override_dh_auto_configure:
-	dh_auto_configure -- -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF
+	dh $@ --buildsystem=meson
 
 execute_after_dh_auto_install:
 	@echo "Remove inappropriate file installed by upstream build scripts."
