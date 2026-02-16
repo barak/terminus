@@ -1,3 +1,4 @@
-version=4
-opts="searchmode=plain" \
- https://gitlab.com/rastersoft/@PACKAGE@/tags?sort=updated_desc -/archive/v?\d[\d.]+/@PACKAGE@-@ANY_VERSION@@ARCHIVE_EXT@
+Version: 5
+
+Template: GitLab
+Dist: https://gitlab.com/rastersoft/@PACKAGE@
