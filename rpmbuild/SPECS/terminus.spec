@@ -1,7 +1,7 @@
 Name: terminus
 Version: 3.7.0
 Release: 1
-License: Unknown/not set
+License: GPL-3.0-only
 Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator
 
 BuildRequires: gcc
@@ -12,7 +12,8 @@ BuildRequires: gtk4-devel
 BuildRequires: libgee-devel
 BuildRequires: glib2-devel
 BuildRequires: vte291-gtk4-devel
-BuildRequires: cmake
+BuildRequires: meson
+BuildRequires: ninja-build
 BuildRequires: gettext
 BuildRequires: pkgconf-pkg-config
 BuildRequires: make
@@ -42,11 +43,11 @@ A new terminal for XWindows and Wayland
 
 %build
 mkdir -p ${RPM_BUILD_DIR}
-cd ${RPM_BUILD_DIR}; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ../..
-make -C ${RPM_BUILD_DIR}
+cd ${RPM_BUILD_DIR}; meson setup _build --prefix=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF
+meson compile -C ${RPM_BUILD_DIR}/_setup
 
 %install
-make install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}
+meson install -C $(BUILDDIR)/_build --destdir=%{buildroot}
 
 %post
 glib-compile-schemas /usr/share/glib-2.0/schemas
