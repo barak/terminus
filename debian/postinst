@@ -9,6 +9,6 @@ case "$1" in
         # Alternatives
         update-alternatives --quiet \
             --install /usr/bin/x-terminal-emulator \
-	      x-terminal-emulator /usr/bin/terminus 20
+            x-terminal-emulator /usr/bin/terminus 20
         ;;
 esac

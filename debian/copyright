@@ -1,9 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: terminus
+Upstream-Contact: Sergio Costas Rodriguez <rastersoft@gmail.com>
 Source: https://gitlab.com/rastersoft/terminus
 
 Files:     *
-Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
+Copyright: 2016-2026 (C) Raster Software Vigo (Sergio Costas)
 License:   GPL-3.0
 
 Files:     cmake/*
@@ -14,7 +15,7 @@ Copyright: 2009-2010 Jakob Westhoff
 License:   BSD-2-Clause
 
 Files:     debian/*
-Copyright: 2016 (C) Raster Software Vigo (Sergio Costas)
+Copyright: 2016-2026 (C) Raster Software Vigo (Sergio Costas)
            2018 Barak A. Pearlmutter <bap@debian.org>
 License:   GPL-3.0+
 

@@ -4,7 +4,7 @@ set -e
 
 case "$1" in
     remove|deconfigure)
-	# Alternatives
-	update-alternatives --quiet --remove x-terminal-emulator /usr/bin/terminus
-	;;
+        # Alternatives
+        update-alternatives --quiet --remove x-terminal-emulator /usr/bin/terminus
+        ;;
 esac
