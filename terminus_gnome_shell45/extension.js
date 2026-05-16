@@ -200,11 +200,16 @@ export default class TerminusClass {
  * @param {string} process_id An string id for the debug output
  */
 class LaunchSubprocess {
+	is_wayland_compositor() {
+		return Meta.is_wayland_compositor === undefined ||
+			Meta.is_wayland_compositor();
+	}
+
 	constructor(flags, process_id) {
 		this._process_id = process_id;
 		this.cancellable = new Gio.Cancellable();
 		this._launcher = new Gio.SubprocessLauncher({ flags: flags | Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_MERGE });
-		if (Meta.is_wayland_compositor()) {
+		if (this.is_wayland_compositor()) {
 			try {
 				this._waylandClient = Meta.WaylandClient.new(this._launcher);
 			} catch (e) {
@@ -216,13 +221,13 @@ class LaunchSubprocess {
 	}
 
 	spawnv(argv) {
-                if (Meta.WaylandClient.new_subprocess) {
-                    // New API introduced in https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/4491
-                    this._waylandClient = Meta.WaylandClient.new_subprocess (global.context, this._launcher, argv);
-                    this.subprocess = this._waylandClient.get_subprocess();
-                } else {
+		if (Meta.WaylandClient.new_subprocess) {
+			// New API introduced in https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/4491
+			this._waylandClient = Meta.WaylandClient.new_subprocess (global.context, this._launcher, argv);
+			this.subprocess = this._waylandClient.get_subprocess();
+		} else {
 			try {
-				if (Meta.is_wayland_compositor()) {
+				if (this.is_wayland_compositor()) {
 					this.subprocess = this._waylandClient.spawnv(global.display, argv);
 				} else {
 					this.subprocess = this._launcher.spawnv(argv);
@@ -290,7 +295,7 @@ class LaunchSubprocess {
 			return false;
 		}
 
-		if (Meta.is_wayland_compositor()) {
+		if (this.is_wayland_compositor()) {
 			return this._waylandClient.owns_window(window);
 		}
 
