@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 3.7.1 (2026-05-16)
+  * Add support for Gnome 50
+  * Add license to RPM file
 * Version 3.7.0 (2026-02-21)
   * Add support for Gnome 49
   * Select text in search field when switching to it
