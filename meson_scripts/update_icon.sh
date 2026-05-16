@@ -6,7 +6,7 @@ if [[ -z "${DESTDIR}" ]]; then
 	else
 		prefix="${MESON_INSTALL_PREFIX}"
 	fi
-    datadir="${prefix}/share"
+	datadir="${prefix}/share"
 	echo Updating icon cache at ${datadir}/icons/hicolor...
 	gtk-update-icon-cache -qtf "${datadir}/icons/hicolor"
 fi
