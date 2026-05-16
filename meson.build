@@ -22,7 +22,6 @@ pango_dep = dependency('pango')
 subdir('po')
 cfg_dbus_data = configuration_data()
 cfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))
-meson.add_install_script('meson_scripts/update_icon.sh')
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','extension.js'))
 
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','metadata.json'))
@@ -46,6 +45,8 @@ endif
 dbus_cfg_com_rastersoft_terminus_service_base = configure_file(input: 'data/dbus/com.rastersoft.terminus.service.base',output: 'com.rastersoft.terminus.service', configuration: cfg_dbus_data)
 install_data(dbus_cfg_com_rastersoft_terminus_service_base,install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','services'))
 install_data('data/org.rastersoft.terminus.gschema.xml', install_dir: join_paths(get_option('prefix'),get_option('datadir'), 'glib-2.0', 'schemas'))
-meson.add_install_script('meson_scripts/install_schemas.sh')
 install_data('data/icons/terminus.svg',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'icons','hicolor/scalable/apps'))
 subdir('src')
+
+gnome = import('gnome')
+gnome.post_install(gtk_update_icon_cache: true, glib_compile_schemas: true)
