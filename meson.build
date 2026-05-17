@@ -28,8 +28,7 @@ extras_gresource_xml_generator = generator(find_program('glib-compile-resources'
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'terminus'),join_paths(meson.current_source_dir(),'data/local','','*'))
-
+subdir('data/local')
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc','terminus'),join_paths(meson.current_source_dir(),'doc','','*'))
 
 installfile_1 = files('data/terminus_showhide')
