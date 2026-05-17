@@ -82,3 +82,5 @@ binary: data/terminus_showhide
 *build_external_program: gtk-update-icon-cache gtk-update-icon-cache.3.0
 *build_external_program: glib-compile-schemas
 
+meson: install_symlink('com.rastersoft.terminus.desktop', install_dir: join_paths(get_option('prefix'), 'share', 'xdg-terminals'), pointing_to: '../applications/com.rastersoft.terminus.desktop')
+

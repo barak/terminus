@@ -1,7 +1,7 @@
 project('terminus',
   ['c','vala'],
   version: '3.7.1',
-  meson_version: '>=0.57.0')
+  meson_version: '>=0.61.0')
 
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
@@ -42,6 +42,7 @@ dbus_cfg_com_rastersoft_terminus_service_base = configure_file(input: 'data/dbus
 install_data(dbus_cfg_com_rastersoft_terminus_service_base,install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','services'))
 install_data('data/org.rastersoft.terminus.gschema.xml', install_dir: join_paths(get_option('prefix'),get_option('datadir'), 'glib-2.0', 'schemas'))
 install_data('data/icons/terminus.svg',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'icons','hicolor/scalable/apps'))
+install_symlink('com.rastersoft.terminus.desktop', install_dir: join_paths(get_option('prefix'), 'share', 'xdg-terminals'), pointing_to: '../applications/com.rastersoft.terminus.desktop')
 subdir('src')
 
 gnome = import('gnome')
