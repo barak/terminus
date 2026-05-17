@@ -12,4 +12,3 @@ install_data(join_paths(meson.current_source_dir(), 'linux_console.color_scheme'
 install_data(join_paths(meson.current_source_dir(), 'terminal.color_scheme'), install_dir: join_paths(get_option('prefix'), get_option('datadir'), 'terminus'))
 install_data(join_paths(meson.current_source_dir(), 'rxvt.color_scheme'), install_dir: join_paths(get_option('prefix'), get_option('datadir'), 'terminus'))
 install_data(join_paths(meson.current_source_dir(), 'solarized.color_scheme'), install_dir: join_paths(get_option('prefix'), get_option('datadir'), 'terminus'))
-install_data(join_paths(meson.current_source_dir(), 'test/prueba.txt'), install_dir: join_paths(get_option('prefix'), get_option('datadir'), 'terminus'))
