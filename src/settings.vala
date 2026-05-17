@@ -90,6 +90,7 @@ namespace Terminus {
     }
 
     class Properties : Gtk.Window {
+        static string terminus_desktop = "com.rastersoft.terminus.desktop";
         private Gtk.CheckButton use_system_font;
         private Gtk.CheckButton infinite_scroll;
         private Gtk.CheckButton enable_guake_mode;
@@ -142,7 +143,63 @@ namespace Terminus {
         private Gtk.Button delete_macro;
         private Gtk.Entry macro_keybinding;
         private Gtk.Entry macro_command;
+        private Gtk.Button set_as_default;
 
+        private bool check_is_default_in_file(string filepath) {
+            var file = GLib.File.new_for_path(filepath);
+            var dis = new DataInputStream(file.read());
+            string line;
+            while ((line = dis.read_line(null)) != null) {
+                line = line.strip();
+                if (line == "") {
+                    continue;
+                }
+                return (line == Properties.terminus_desktop);
+            }
+            return false;
+        }
+
+        private bool check_is_default() {
+            bool is_default = true;
+            var config = GLib.Dir.open(Path.build_filename(GLib.Environment.get_home_dir(), ".config"));
+            string ?name = null;
+            while((name = config.read_name()) != null) {
+                if (!name.has_suffix("xdg-terminals.list")) {
+                    continue;
+                }
+                if (!this.check_is_default_in_file(Path.build_filename(GLib.Environment.get_home_dir(), ".config", name))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void set_terminus_as_default() {
+            var config = GLib.Dir.open(Path.build_filename(GLib.Environment.get_home_dir(), ".config"));
+            string ?name = null;
+            string[] entries;
+            while((name = config.read_name()) != null) {
+                if (!name.has_suffix("xdg-terminals.list")) {
+                    continue;
+                }
+                var file = GLib.File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(), ".config", name));
+                var dis = new DataInputStream(file.read());
+                string line;
+                entries = { Properties.terminus_desktop };
+                while ((line = dis.read_line(null)) != null) {
+                    if (line == Properties.terminus_desktop) {
+                        continue;
+                    }
+                    entries += line;
+                }
+                file.delete();
+                var dos = file.create(FileCreateFlags.NONE);
+                var stream = new DataOutputStream(dos);
+                foreach (var entry in entries) {
+                    stream.put_string("%s\n".printf(entry));
+                }
+            }
+        }
 
         public Properties()
         {
@@ -217,6 +274,14 @@ namespace Terminus {
             this.macro_command = main_window.get_object("macro_command") as Gtk.Entry;
             this.add_macro = main_window.get_object("add_macro") as Gtk.Button;
             this.delete_macro = main_window.get_object("delete_macro") as Gtk.Button;
+            this.set_as_default = main_window.get_object("set_as_default") as Gtk.Button;
+            this.show.connect(() => {
+                this.set_as_default.set_sensitive(!this.check_is_default());
+            });
+            this.set_as_default.clicked.connect(() => {
+                this.set_terminus_as_default();
+                this.set_as_default.set_sensitive(!this.check_is_default());
+            });
 
             this.macro_command.changed.connect(() => {
                 this.update_macro_state();

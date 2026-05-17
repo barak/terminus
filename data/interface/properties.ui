@@ -160,6 +160,19 @@
                 </layout>
               </object>
             </child>
+            <child>
+              <object class="GtkButton" id="set_as_default">
+                <property name="label" translatable="yes">Set as default terminal</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">7</property>
+                  <property name="column-span">2</property>
+                </layout>
+              </object>
+            </child>
           </object>
         </child>
         <child type="tab">
