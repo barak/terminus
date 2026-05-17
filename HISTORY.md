@@ -4,6 +4,8 @@
   * Add support for Gnome 50
   * Add license to RPM file
   * New .spec file for RPM (thanks to Mellado)
+  * Generates a symlink for xdg-terminals
+  * Updated meson files
 * Version 3.7.0 (2026-02-21)
   * Add support for Gnome 49
   * Select text in search field when switching to it

@@ -1,9 +1,12 @@
 terminus (3.7.1-Debian1) sid; urgency=low
 
   * Add support for Gnome 50
-  * Add license to RPM build
+  * Add license to RPM file
+  * New .spec file for RPM (thanks to Mellado)
+  * Generates a symlink for xdg-terminals
+  * Updated meson files
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 21 Feb 2026 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 16 May 2026 23:55:00 +0200
 
 terminus (3.7.0-Debian1) sid; urgency=low
 
