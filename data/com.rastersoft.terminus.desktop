@@ -15,6 +15,6 @@ X-TerminalArgExec=--
 X-TerminalArgDir=--working-directory
 X-Ubuntu-Gettext-Domain=terminus
 
-[Desktop Action new-windo]
+[Desktop Action new-window]
 Name=New Window
 Exec=terminus
