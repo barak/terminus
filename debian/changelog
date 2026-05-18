@@ -5,6 +5,7 @@ terminus (3.7.1-Debian1) sid; urgency=low
   * New .spec file for RPM (thanks to Mellado)
   * Generates a symlink for xdg-terminals
   * Updated meson files
+  * Allows to be set as the default terminal
 
  -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 16 May 2026 23:55:00 +0200
 
