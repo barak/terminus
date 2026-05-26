@@ -1,7 +1,7 @@
 project('terminus',
   ['c','vala'],
-  version: '3.6.0',
-  meson_version: '>=0.56.0')
+  version: '3.7.1',
+  meson_version: '>=0.61.0')
 
 add_global_arguments('-DGETTEXT_PACKAGE="terminus"',language: 'c')
 
@@ -22,19 +22,14 @@ pango_dep = dependency('pango')
 subdir('po')
 cfg_dbus_data = configuration_data()
 cfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))
-meson.add_install_script('meson_scripts/update_icon.sh')
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','extension.js'))
-
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'),join_paths(meson.current_source_dir(),'terminus_gnome_shell45','metadata.json'))
-
+install_data(join_paths(meson.current_source_dir(), 'terminus_gnome_shell45', 'extension.js'), install_dir: join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'))
+install_data(join_paths(meson.current_source_dir(), 'terminus_gnome_shell45', 'metadata.json'), install_dir: join_paths(get_option('prefix'),'share/gnome-shell/extensions/showTerminusQuakeWindow@rastersoft.com'))
 extras_gresource_xml_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/data' , '--generate-source', '--target=@BUILD_DIR@/extras.gresource.xml.c', '@INPUT@'], output: '@PLAINNAME@.c')
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'terminus'),join_paths(meson.current_source_dir(),'data/local','','*'))
-
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc','terminus'),join_paths(meson.current_source_dir(),'doc','','*'))
-
+subdir('data/local')
+subdir('doc')
 installfile_1 = files('data/terminus_showhide')
 install_data(installfile_1, install_dir: get_option('bindir'))
 install_data('data/com.rastersoft.terminus.desktop',install_dir:join_paths(get_option('prefix'),get_option('datadir'),'applications'))
@@ -46,6 +41,9 @@ endif
 dbus_cfg_com_rastersoft_terminus_service_base = configure_file(input: 'data/dbus/com.rastersoft.terminus.service.base',output: 'com.rastersoft.terminus.service', configuration: cfg_dbus_data)
 install_data(dbus_cfg_com_rastersoft_terminus_service_base,install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','services'))
 install_data('data/org.rastersoft.terminus.gschema.xml', install_dir: join_paths(get_option('prefix'),get_option('datadir'), 'glib-2.0', 'schemas'))
-meson.add_install_script('meson_scripts/install_schemas.sh')
 install_data('data/icons/terminus.svg',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'icons','hicolor/scalable/apps'))
+install_symlink('com.rastersoft.terminus.desktop', install_dir: join_paths(get_option('prefix'), 'share', 'xdg-terminals'), pointing_to: '../applications/com.rastersoft.terminus.desktop')
 subdir('src')
+
+gnome = import('gnome')
+gnome.post_install(gtk_update_icon_cache: true, glib_compile_schemas: true)

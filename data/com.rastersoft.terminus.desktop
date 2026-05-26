@@ -1,17 +1,20 @@
 [Desktop Entry]
-Icon=terminus
-Type=Application
-Exec=terminus
-Hidden=false
-NoDisplay=false
 Name=Terminus
 Comment=A terminal with the capabilities of Guake and Terminator
+Keywords=shell;prompt;command;commandline;cmd;ptyxis;terminal;cli;console;
 TryExec=terminus
-Categories=GNOME;GTK;Utility;TerminalEmulator;System;
-X-Ubuntu-Gettext-Domain=terminus
-X-Ayatana-Desktop-Shortcuts=X-NewWindow;
-
-[X-NewWindow Shortcut Group]
-Name=Open a New Window
 Exec=terminus
-TargetEnvironment=Unity
+Icon=terminus
+Type=Application
+Categories=GNOME;GTK;System;TerminalEmulator;Utility;
+StartupNotify=true
+SingleMainWindow=false
+Actions=new-window;
+X-ExecArg=--
+X-TerminalArgExec=--
+X-TerminalArgDir=--working-directory
+X-Ubuntu-Gettext-Domain=terminus
+
+[Desktop Action new-window]
+Name=New Window
+Exec=terminus

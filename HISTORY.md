@@ -1,5 +1,15 @@
 # History of versions #
 
+* Version 3.7.1 (2026-05-16)
+  * Add support for Gnome 50
+  * Add license to RPM file
+  * New .spec file for RPM (thanks to Mellado)
+  * Generates a symlink for xdg-terminals
+  * Updated meson files
+  * Allows to be set as the default terminal
+* Version 3.7.0 (2026-02-21)
+  * Add support for Gnome 49
+  * Select text in search field when switching to it
 * Version 3.6.0 (2025-05-25)
   * Fix crashes after closing/moving terminals
 * Version 3.5.0 (2025-05-19)
