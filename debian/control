@@ -1,7 +1,7 @@
 Source: terminus
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Section: misc
-Standards-Version: 4.7.3
+Standards-Version: 4.7.4
 Build-Depends: debhelper-compat (= 13),
 	valac,
 	meson, ninja-build,
