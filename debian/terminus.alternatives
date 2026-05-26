@@ -3,4 +3,4 @@ Link: /usr/bin/x-terminal-emulator
 Alternative: /usr/bin/terminus
 Dependents:
   /usr/share/man/man1/x-terminal-emulator.1.gz x-terminal-emulator.1.gz /usr/share/man/man1/terminus.1.gz
-Priority: 20
+Priority: 40

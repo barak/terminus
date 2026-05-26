@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+include /usr/share/dpkg/pkg-info.mk
 
 %:
 	dh $@ --buildsystem=meson
@@ -12,17 +13,12 @@ execute_after_dh_auto_install:
 override_dh_installchangelogs:
 	dh_installchangelogs HISTORY.md
 
-# override_dh_installman: debian/terminus.1
-# 	dh_installman
-
-override_dh_dwz:
-	@echo "skipping dh_dwz which gets a mysterious error:"
-	@echo "dh_dwz: dwz -q -- debian/terminus/usr/bin/terminus returned exit code 1"
+# execute_before_dh_installman: debian/terminus.1
 
 # Automatically-generated man page.
 # Do this manually:
-#  rm debian/terminus.1
 #  debian/rules build
+#  rm debian/terminus.1
 #  debian/rules TERMINUS=obj-*/src/terminus debian/terminus.1
 TERMINUS=terminus
 debian/terminus.1:
