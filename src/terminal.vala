@@ -498,12 +498,10 @@ namespace Terminus {
             // set DnD
 
             var drag_source = new Gtk.DragSource();
+            var drag_value = Value(typeof(Terminus.Terminal));
+            drag_value.set_object(this);
+            drag_source.content = new Gdk.ContentProvider.for_value(drag_value);
             this.title.add_controller(drag_source);
-            drag_source.prepare.connect((source, x, y) => {
-                var drag_value = Value(typeof(Terminus.Terminal));
-                drag_value.set_object(this);
-                return new Gdk.ContentProvider.for_value(drag_value);
-            });
             drag_source.drag_cancel.connect((source, drag, reason) => {
                 // drop outside, in a new window
                 this.extract_from_container();
