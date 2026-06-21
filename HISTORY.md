@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.8.0 ()
+  * Fix DnD
 * Version 3.7.1 (2026-05-16)
   * Add support for Gnome 50
   * Add license to RPM file
