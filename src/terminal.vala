@@ -83,12 +83,6 @@ namespace Terminus {
             this.container = null;
         }
 
-        public bool
-        accepts_drop(Terminal terminal)
-        {
-            return true;
-        }
-
         public void
         drop_terminal(Terminal terminal)
         {

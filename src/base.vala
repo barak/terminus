@@ -72,12 +72,6 @@ namespace Terminus {
             this.new_terminal_tab("", null, terminal);
         }
 
-        public bool
-        accepts_drop(Terminal terminal)
-        {
-            return true;
-        }
-
         public async void
         ask_kill_childs(string   title,
                         string   subtitle,

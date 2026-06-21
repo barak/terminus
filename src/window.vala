@@ -154,12 +154,6 @@ namespace Terminus {
             this.terminal_base.new_terminal_tab("", null, terminal);
         }
 
-        public bool
-        accepts_drop(Terminal terminal)
-        {
-            return true;
-        }
-
         public void
         ended_cb()
         {
