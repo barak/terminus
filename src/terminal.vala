@@ -473,6 +473,9 @@ namespace Terminus {
                 });
             });
             this.vte_terminal.child_exited.connect(() => {
+                if (this.pending_drops_id != 0) {
+                    GLib.Source.remove(this.pending_drops_id);
+                }
                 GLib.Source.remove(this.refresh_title_timeout_id);
                 this.top_container.terminal_ended(this);
                 this.ended(this);
