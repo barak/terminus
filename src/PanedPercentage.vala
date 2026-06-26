@@ -61,6 +61,11 @@ namespace Terminus {
             this.paned.halign = Gtk.Align.FILL;
             this.paned.valign = Gtk.Align.FILL;
             this.button_pressed = false;
+            this.paned.resize_start_child = true;
+            this.paned.resize_end_child = true;
+            this.paned.shrink_start_child = true;
+            this.paned.shrink_end_child = true;
+            this.paned.wide_handle = true;
 
             this.destroy.connect(() => {
                 this.paned.unparent();

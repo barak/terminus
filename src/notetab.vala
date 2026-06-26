@@ -105,12 +105,6 @@ namespace Terminus {
             this.main_container.new_terminal_tab("", null, terminal);
         }
 
-        public bool
-        accepts_drop(Terminal terminal)
-        {
-            return true;
-        }
-
         private void
         close_tab()
         {

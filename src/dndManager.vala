@@ -23,7 +23,10 @@ namespace Terminus {
     public interface DnDDestination : Object {
         public abstract void
         drop_terminal(Terminal terminal);
-        public abstract bool
-        accepts_drop(Terminal terminal);
+    }
+
+    public struct PendingDrop {
+        public Terminus.Terminal dropped_terminal {get; set;}
+        public SplitAt split_mode {get; set;}
     }
 }

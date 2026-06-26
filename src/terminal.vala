@@ -19,6 +19,7 @@
 using Vte;
 using Gtk;
 using Gdk;
+using Gee;
 
 using GLib;
 using Posix;
@@ -52,6 +53,8 @@ namespace Terminus {
         private string[] regex_special_chars = {
             "\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "[", "]"
         };
+        private Gee.List<PendingDrop?> pending_drops;
+        private uint pending_drops_id = 0;
 
         public signal void
         ended(Terminus.Terminal terminal);
@@ -81,12 +84,6 @@ namespace Terminus {
             this.container.extract_current_terminal();
             this.container.ended(this.container);
             this.container = null;
-        }
-
-        public bool
-        accepts_drop(Terminal terminal)
-        {
-            return true;
         }
 
         public void
@@ -249,12 +246,38 @@ namespace Terminus {
             this.container = container;
         }
 
+        public void
+        dropped_terminal(Terminus.Terminal terminal, SplitAt split_mode)
+        {
+            var dropped = PendingDrop();
+            dropped.dropped_terminal = terminal;
+            dropped.split_mode = split_mode;
+            this.pending_drops.add(dropped);
+            if (this.pending_drops_id != 0) {
+                GLib.Source.remove(this.pending_drops_id);
+            }
+            this.pending_drops_id = GLib.Idle.add_once(() => {
+                this.vte_terminal.set_clear_background(true);
+                if (this.last_css != "") {
+                    this.vte_terminal.remove_css_class(this.last_css);
+                    this.last_css = "";
+                }
+                foreach(var pending_drop in this.pending_drops) {
+                    this.split_mode = pending_drop.split_mode;
+                    pending_drop.dropped_terminal.drop_terminal_into(this);
+                }
+                this.pending_drops.clear();
+                this.pending_drops_id = 0;
+            });
+        }
+
         public Terminal(Terminus.Base      main_container,
                         string             working_directory,
                         string[] ?         commands,
                         Terminus.Container top_container,
                         Terminus.Container container)
         {
+            this.pending_drops = new Gee.LinkedList<PendingDrop?>();
             this.container = container;
             // when creating a new terminal, it must take the focus
             had_focus = true;
@@ -450,6 +473,9 @@ namespace Terminus {
                 });
             });
             this.vte_terminal.child_exited.connect(() => {
+                if (this.pending_drops_id != 0) {
+                    GLib.Source.remove(this.pending_drops_id);
+                }
                 GLib.Source.remove(this.refresh_title_timeout_id);
                 this.top_container.terminal_ended(this);
                 this.ended(this);
@@ -498,12 +524,10 @@ namespace Terminus {
             // set DnD
 
             var drag_source = new Gtk.DragSource();
+            var drag_value = Value(typeof(Terminus.Terminal));
+            drag_value.set_object(this);
+            drag_source.content = new Gdk.ContentProvider.for_value(drag_value);
             this.title.add_controller(drag_source);
-            drag_source.prepare.connect((source, x, y) => {
-                var drag_value = Value(typeof(Terminus.Terminal));
-                drag_value.set_object(this);
-                return new Gdk.ContentProvider.for_value(drag_value);
-            });
             drag_source.drag_cancel.connect((source, drag, reason) => {
                 // drop outside, in a new window
                 this.extract_from_container();
@@ -516,13 +540,7 @@ namespace Terminus {
                                                           Gdk.DragAction.LINK);
             this.vte_terminal.add_controller(drop_target_terminal);
             drop_target_terminal.drop.connect((target, drag_value, x, y) => {
-                this.vte_terminal.set_clear_background(true);
-                if (this.last_css != "") {
-                    this.vte_terminal.remove_css_class(this.last_css);
-                    this.last_css = "";
-                }
-                var terminal = drag_value as Terminus.Terminal;
-                terminal.drop_terminal_into(this);
+                this.dropped_terminal(drag_value as Terminus.Terminal, this.split_mode);
                 return true;
             });
             drop_target_terminal.motion.connect((target, x, y) => {
