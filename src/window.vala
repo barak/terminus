@@ -44,7 +44,9 @@ namespace Terminus {
         {
             this.ask_close = true;
             this.headerBar = new Gtk.HeaderBar();
-            this.set_titlebar(this.headerBar);
+            if (guake_mode || !Terminus.settings.get_boolean("use-native-headerbar")) {
+                this.set_titlebar(this.headerBar);
+            }
             this.headerBar.show_title_buttons = true;
             this.headerBar.set_title_widget(new Gtk.Label("Terminus"));
             this.headerBar.set_visible(true);

@@ -94,6 +94,7 @@ namespace Terminus {
         private Gtk.CheckButton use_system_font;
         private Gtk.CheckButton infinite_scroll;
         private Gtk.CheckButton enable_guake_mode;
+        private Gtk.CheckButton use_native_headerbar;
         private Gtk.CheckButton use_bold_color;
         private Gtk.CheckButton use_cursor_color;
         private Gtk.CheckButton use_highlight_color;
@@ -410,6 +411,7 @@ namespace Terminus {
             });
 
             this.enable_guake_mode = main_window.get_object("enable_guake_mode") as Gtk.CheckButton;
+            this.use_native_headerbar = main_window.get_object("use_native_headerbar") as Gtk.CheckButton;
 
             this.custom_shell = main_window.get_object("command_shell") as Gtk.Entry;
 
@@ -425,6 +427,8 @@ namespace Terminus {
                                        "scroll_on_keystroke") as Gtk.CheckButton, "active",
                                    GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("enable-guake-mode", this.enable_guake_mode, "active",
+                                   GLib.SettingsBindFlags.DEFAULT);
+            Terminus.settings.bind("use-native-headerbar", this.use_native_headerbar, "active",
                                    GLib.SettingsBindFlags.DEFAULT);
             Terminus.settings.bind("terminal-bell", main_window.get_object(
                                        "terminal_bell") as Gtk.CheckButton, "active", GLib.SettingsBindFlags.DEFAULT);
