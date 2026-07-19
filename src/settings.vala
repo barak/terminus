@@ -300,11 +300,10 @@ namespace Terminus {
             });
             var key_controller = new Gtk.EventControllerKey();
             this.macro_keybinding.add_controller(key_controller);
-            key_controller.key_pressed.connect((controller, keyval, keycode, state) => {
+            key_controller.key_released.connect((controller, keyval, keycode, state) => {
                 if (this.on_key_press(controller, keyval, keycode, state)) {
                     this.focus(DirectionType.RIGHT);
                 }
-                return true;
             });
             this.add_macro.clicked.connect(() => {
                 this.add_macro_to_config();
@@ -667,7 +666,7 @@ namespace Terminus {
             Gtk.StringList replacement[] = {
                 new Gtk.StringList(null)
             };
-            var            entry = keybindings_store.get_item(position) as Gtk.StringList;
+            var entry = keybindings_store.get_item(position) as Gtk.StringList;
             replacement[0].append(entry.get_string(0));
             replacement[0].append(new_text);
             replacement[0].append(entry.get_string(2));

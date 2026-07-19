@@ -1,5 +1,5 @@
 Name: terminus
-Version: 3.9.0
+Version: 3.10.0
 Release: 1%{?dist}
 License: GPL-3.0-only
 Summary: X and Wayland terminal that mixes the capabilities of Guake and Terminator

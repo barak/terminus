@@ -1,3 +1,10 @@
+terminus (3.10.0-Debian1) sid; urgency=low
+
+  * Support using native headerbar
+  * Fixed macro key configuration
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 19 Jul 2026 23:55:00 +0200
+
 terminus (3.9.0-Debian1) sid; urgency=low
 
   * Clear GLib source on terminal close
