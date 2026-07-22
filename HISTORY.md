@@ -1,5 +1,8 @@
 # History of versions #
 
+* Version 3.10.0 (2026-07-19)
+  * Support using native headerbar
+  * Fixed macro key configuration
 * Version 3.9.0 (2026-06-24)
   * Clear GLib source on terminal close
 * Version 3.8.0 (2026-06-22)

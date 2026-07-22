@@ -1,8 +1,9 @@
 pkgname=terminus-rastersoft
-pkgver=3.9.0
-pkgrel=2
+pkgver=3.10.0
+pkgrel=1
 pkgdesc="X & Wayland terminal that mixes the capabilities of Guake and Terminator"
 license=('GPL3')
+url="https://www.rastersoft.com/programas/terminus.html"
 arch=('i686' 'x86_64')
 depends=( 'atk' 'glib2' 'cairo' 'gtk4' 'pango' 'gdk-pixbuf2' 'libgee' 'vte4' 'zlib' 'gnutls' 'libx11' )
 makedepends=( 'vala' 'glibc' 'atk' 'cairo' 'gtk4' 'gdk-pixbuf2' 'libgee' 'glib2' 'pango' 'vte4' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' )
