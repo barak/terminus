@@ -1,3 +1,9 @@
+terminus (3.11.0-Debian1) sid; urgency=low
+
+  * Create the xdg-terminals.list if it doesn't exist
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 25 Jul 2026 23:55:00 +0200
+
 terminus (3.10.0-Debian1) sid; urgency=low
 
   * Support using native headerbar
