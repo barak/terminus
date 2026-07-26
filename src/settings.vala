@@ -163,27 +163,31 @@ namespace Terminus {
         private bool check_is_default() {
             bool is_default = true;
             var config = GLib.Dir.open(Path.build_filename(GLib.Environment.get_home_dir(), ".config"));
+            bool found = false;
             string ?name = null;
             while((name = config.read_name()) != null) {
                 if (!name.has_suffix("xdg-terminals.list")) {
                     continue;
                 }
+                found = true;
                 if (!this.check_is_default_in_file(Path.build_filename(GLib.Environment.get_home_dir(), ".config", name))) {
                     return false;
                 }
             }
-            return true;
+            return found;
         }
 
-        private void set_terminus_as_default() {
+        private bool set_terminus_as_default() {
             var config = GLib.Dir.open(Path.build_filename(GLib.Environment.get_home_dir(), ".config"));
             string ?name = null;
             string[] entries;
+            bool found = false;
             while((name = config.read_name()) != null) {
                 if (!name.has_suffix("xdg-terminals.list")) {
                     continue;
                 }
-                var file = GLib.File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(), ".config", name));
+                found = true;
+                var file = GLib.File.new_build_filename(GLib.Environment.get_home_dir(), ".config", name);
                 var dis = new DataInputStream(file.read());
                 string line;
                 entries = { Properties.terminus_desktop };
@@ -200,6 +204,7 @@ namespace Terminus {
                     stream.put_string("%s\n".printf(entry));
                 }
             }
+            return found;
         }
 
         public Properties()
@@ -280,7 +285,11 @@ namespace Terminus {
                 this.set_as_default.set_sensitive(!this.check_is_default());
             });
             this.set_as_default.clicked.connect(() => {
-                this.set_terminus_as_default();
+                if (!this.set_terminus_as_default()) {
+                    var cfg = GLib.File.new_build_filename(GLib.Environment.get_home_dir(), ".config", "xdg-terminals.list");
+                    cfg.create(GLib.FileCreateFlags.NONE, null);
+                    this.set_terminus_as_default();
+                }
                 this.set_as_default.set_sensitive(!this.check_is_default());
             });
 
