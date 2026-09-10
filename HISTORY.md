@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.12.0 (2026-09-11)
+  * Fix dock icon when opening a new window
 * Version 3.11.0 (2026-07-25)
   * Create the xdg-terminals.list if it doesn't exist
 * Version 3.10.0 (2026-07-19)
