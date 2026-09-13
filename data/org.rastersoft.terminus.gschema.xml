@@ -161,6 +161,16 @@
       <summary>Maximum lenght for tab text</summary>
       <description>The maximum lenght for the text in each tab.</description>
     </key>
+    <key type="i" name="default-columns">
+      <default>80</default>
+      <summary>Number of columns when creating a new window.</summary>
+      <description></description>
+    </key>
+    <key type="i" name="default-rows">
+      <default>25</default>
+      <summary>Number of rows when creating a new window.</summary>
+      <description></description>
+    </key>
     <!--<key type="" name="">
       <default></default>
       <summary></summary>

@@ -60,6 +60,12 @@ namespace Terminus {
             this.notebook.set_visible(true);
         }
 
+        public bool
+        is_first_terminal()
+        {
+            return this.notebook.get_n_pages() == 0;
+        }
+
         public void
         set_copy_enabled(bool enabled)
         {

@@ -101,6 +101,8 @@ namespace Terminus {
         private Gtk.CheckButton use_custom_shell;
         private Gtk.CheckButton pointer_autohide;
         private Gtk.SpinButton scroll_value;
+        private Gtk.SpinButton columns_spinbutton;
+        private Gtk.SpinButton rows_spinbutton;
         private Gtk.FontDialogButton custom_font;
 
         private HTMLColorButton fg_color;
@@ -219,10 +221,15 @@ namespace Terminus {
 
             var      main_window = new Gtk.Builder();
             string[] elements = {
-                "properties_notebook", "scroll_lines", "add_macro", "delete_macro"
+                "properties_notebook", "scroll_lines", "add_macro", "delete_macro", "columns_adj", "rows_adj"
             };
             main_window.add_objects_from_resource("/com/rastersoft/terminus/interface/properties.ui", elements);
             this.set_child(main_window.get_object("properties_notebook") as Gtk.Widget);
+
+            var columns_adj = main_window.get_object("columns_adj") as Gtk.Adjustment;
+            Terminus.settings.bind("default-columns", columns_adj, "value", GLib.SettingsBindFlags.DEFAULT);
+            var rows_adj = main_window.get_object("rows_adj") as Gtk.Adjustment;
+            Terminus.settings.bind("default-rows", rows_adj, "value", GLib.SettingsBindFlags.DEFAULT);
 
             var label_version = main_window.get_object("label_version") as Gtk.Label;
             label_version.label = _("Version %s").printf(Constants.VERSION);
