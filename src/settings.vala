@@ -219,6 +219,16 @@ namespace Terminus {
                 return true;
             });
 
+            this.hide.connect(()=>{
+                if (this.editing_keybind != EditingKeybindMode.NONE) {
+                    this.editing_keybind = EditingKeybindMode.NONE;
+                    this.update_keybinding_entry(this.old_keybind_pos, this.old_keybind);
+                    if (this.changing_guake) {
+                        Terminus.keybind_settings.set_string("guake-mode", old_keybind);
+                    }
+                }
+            });
+
             var      main_window = new Gtk.Builder();
             string[] elements = {
                 "properties_notebook", "scroll_lines", "add_macro", "delete_macro", "columns_adj", "rows_adj"
