@@ -1,3 +1,10 @@
+terminus (3.13.0-Debian1) sid; urgency=low
+
+  * Allow to set the default rows and columns size
+  * Fixed macro editing bug
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 13 Sep 2026 23:55:00 +0200
+
 terminus (3.12.0-Debian1) sid; urgency=low
 
   * Fix dock icon when opening a new window
