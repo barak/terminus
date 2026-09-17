@@ -42,6 +42,7 @@ namespace Terminus {
                       Terminus.Base ?       terminal_base = null,
                       Terminus.Terminal ?   inner_terminal = null)
         {
+            Object (application: application);
             this.ask_close = true;
             this.headerBar = new Gtk.HeaderBar();
             if (guake_mode || !Terminus.settings.get_boolean("use-native-headerbar")) {

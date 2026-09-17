@@ -58,6 +58,7 @@ namespace Terminus {
 
         public signal void
         ended(Terminus.Terminal terminal);
+
         public signal void
         split_terminal(SplitAt            where,
                        Terminus.Terminal ?new_terminal,
@@ -327,6 +328,9 @@ namespace Terminus {
             this.vte_terminal.vexpand = true;
             this.hexpand = true;
             this.vexpand = true;
+            if (main_container.is_first_terminal()) {
+                this.vte_terminal.set_size(Terminus.settings.get_int("default-columns"), Terminus.settings.get_int("default-rows"));
+            }
             // regex for URIs: search for anything that begins with http:// or https:// and continues until
             // a blank space, but remove any period, comma, colon or semicolon at the end.
             var regex = new Vte.Regex.for_match("https?://.+?(?= |: |; |, |\\. )", -1, RegExMultilineFlag);
