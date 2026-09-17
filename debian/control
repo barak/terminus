@@ -2,7 +2,7 @@ Source: terminus
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Section: misc
 Standards-Version: 4.7.4
-Build-Depends: debhelper-compat (= 13),
+Build-Depends: debhelper-compat (= 14),
 	valac,
 	meson, ninja-build,
 	libcairo2-dev,
@@ -15,7 +15,7 @@ Vcs-Browser: https://salsa.debian.org/debian/terminus
 
 Package: terminus
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libglib2.0-bin
+Depends: libglib2.0-bin
 Description: Drop-down or in-window terminal for X11 and Wayland
  A new-generation (post-Guake) terminal for X11 and Wayland featuring
  a hot-key Quake-console-like drop-down mode. Other features include a

@@ -1,3 +1,10 @@
+terminus (3.13.0-1) unstable; urgency=medium
+
+  * New upstream version
+  * Debhelper 14
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 17 Sep 2026 11:03:35 +0100
+
 terminus (3.11.0-1) unstable; urgency=medium
 
   * New upstream version
