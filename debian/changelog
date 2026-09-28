@@ -1,3 +1,9 @@
+terminus (3.14.0-Debian1) sid; urgency=low
+
+  * Fixed show/hide script (Thanks to barak1)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 28 Sep 2026 23:55:00 +0200
+
 terminus (3.13.0-Debian1) sid; urgency=low
 
   * Allow to set the default rows and columns size

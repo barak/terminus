@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.14.0 (2026-09-28)
+  * Fixed show/hide script (Thanks to barak1)
 * Version 3.13.0 (2026-09-13)
   * Allow to set the default rows and columns size
   * Fixed macro editing bug
