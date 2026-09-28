@@ -1,3 +1,9 @@
+terminus (3.13.0-2) unstable; urgency=medium
+
+  * Fix terminus_showhide (closes: #1149130)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 28 Sep 2026 16:56:30 +0100
+
 terminus (3.13.0-1) unstable; urgency=medium
 
   * New upstream version

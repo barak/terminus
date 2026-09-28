@@ -1,0 +1,20 @@
+From: "Barak A. Pearlmutter" <barak+git@pearlmutter.net>
+Date: Mon, 28 Sep 2026 16:53:28 +0100
+Subject: update showhide interface
+
+See https://bugs.debian.org/1149130
+
+The data/terminus_showhide script is incompatible with the D-Bus
+interface exposed by Terminus 3.13.0, this patch updates it.
+---
+ data/terminus_showhide | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/terminus_showhide b/data/terminus_showhide
+index 3f702f7..fbf7738 100755
+--- a/data/terminus_showhide
++++ b/data/terminus_showhide
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-dbus-send --session --print-reply --dest=com.rastersoft.terminus /com/rastersoft/terminus com.rastersoft.terminus.SwapGuake
++gdbus call --session --dest com.rastersoft.terminus --object-path /com/rastersoft/terminus --method org.gtk.Actions.Activate swap-guake [] {}
