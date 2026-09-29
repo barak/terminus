@@ -1,5 +1,7 @@
 # History of versions #
 
+* Version 3.14.1 (2026-09-29)
+  * Updated translations
 * Version 3.14.0 (2026-09-28)
   * Fixed show/hide script (Thanks to barak1)
 * Version 3.13.0 (2026-09-13)
