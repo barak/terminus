@@ -1,3 +1,11 @@
+terminus (3.14.1-1) unstable; urgency=medium
+
+  * New upstream version
+    - Updated translations
+    - Show/hide script fixed
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 29 Sep 2026 15:13:16 +0100
+
 terminus (3.13.0-2) unstable; urgency=medium
 
   * Fix terminus_showhide (closes: #1149130)
