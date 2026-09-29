@@ -1,2 +1,2 @@
 #!/bin/sh
-dbus-send --session --print-reply --dest=com.rastersoft.terminus /com/rastersoft/terminus com.rastersoft.terminus.SwapGuake
+gdbus call --session --dest com.rastersoft.terminus --object-path /com/rastersoft/terminus --method org.gtk.Actions.Activate swap-guake [] {}
